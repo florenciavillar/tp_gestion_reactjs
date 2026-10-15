@@ -1,8 +1,22 @@
 :root {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Barlow Condensed', var(--font-body);
+
+  --color-primary: #3b7d3f;
+  --color-error: #c0392b;
+  --color-text: #1e1e1e;
+  --color-text-muted: #5c5c5c;
+  --color-placeholder: #b3b3b3;
+  --color-border: #d9d9d9;
+  --color-surface: #ffffff;
+  --color-background: #fef7ff;
+  --color-button: #2c2c2c;
+  --color-button-hover: #444444;
+
+  font-family: var(--font-body);
   line-height: 1.5;
-  color: #1f2328;
-  background-color: #ffffff;
+  color: var(--color-text);
+  background-color: var(--color-background);
 }
 
 * {
