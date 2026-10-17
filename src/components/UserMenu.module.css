@@ -1,0 +1,162 @@
+.container {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  padding: 0.5rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.trigger:hover {
+  border-color: var(--color-text-muted);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.trigger svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 10;
+  width: max-content;
+  min-width: 220px;
+  max-width: calc(100vw - 2rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.12);
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.name {
+  font-weight: 700;
+}
+
+.email {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.list {
+  margin: 0;
+  padding: 0.25rem 0;
+  list-style: none;
+}
+
+.item {
+  display: block;
+  width: 100%;
+  padding: 0.625rem 1rem;
+  font: inherit;
+  text-align: left;
+  color: var(--color-text);
+  background: none;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--color-background);
+}
+
+.item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.dialog {
+  width: min(360px, calc(100vw - 2rem));
+  padding: 0;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.2);
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.dialogBody {
+  padding: 1.5rem;
+}
+
+.dialogTitle {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dialogText {
+  margin: 0 0 1.5rem;
+  color: var(--color-text-muted);
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.cancel,
+.confirm {
+  padding: 0.625rem 1.25rem;
+  font: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancel {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.cancel:hover {
+  border-color: var(--color-text-muted);
+}
+
+.confirm {
+  color: #ffffff;
+  background: var(--color-button);
+  border: 1px solid var(--color-button);
+}
+
+.confirm:hover {
+  background: var(--color-button-hover);
+}
+
+.cancel:focus-visible,
+.confirm:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
