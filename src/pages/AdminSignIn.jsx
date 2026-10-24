@@ -27,11 +27,11 @@ function AdminSignIn() {
     } catch (err) {
       if (err.code === 'LOGIN_NOT_POSSIBLE') {
         // Mismo mensaje para un email desconocido o una cuenta sin activar (HU-06).
-        setError('We could not send a code to that email. Check it and try again.')
+        setError('No pudimos mandar un código a ese email. Revisalo y probá de nuevo.')
       } else if (err.status === 422) {
-        setError('Enter a valid email')
+        setError('Ingresá un email válido')
       } else {
-        setError(waitMessage(err) ?? 'Something went wrong. Please try again.')
+        setError(waitMessage(err) ?? 'Algo salió mal. Probá de nuevo.')
       }
     } finally {
       setSubmitting(false)
@@ -60,17 +60,17 @@ function AdminSignIn() {
             onVerify={handleVerify}
             onResend={handleResend}
             onBack={() => setSent(null)}
-            submitLabel="Log in"
+            submitLabel="Ingresar"
           />
         ) : (
           <>
-            <Link to="/sign-in" className={styles.back} aria-label="Back">
+            <Link to="/sign-in" className={styles.back} aria-label="Volver">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
             </Link>
 
-            <h1 className={styles.title}>Admin Login</h1>
+            <h1 className={styles.title}>Ingreso Admins</h1>
 
             {notice && <p className={styles.message} role="status">{notice}</p>}
 
@@ -81,7 +81,7 @@ function AdminSignIn() {
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="example@gmail.com"
+                  placeholder="ejemplo@gmail.com"
                   autoComplete="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
@@ -94,7 +94,7 @@ function AdminSignIn() {
               </div>
 
               <button type="submit" className={styles.button} disabled={submitting}>
-                {submitting ? 'Sending code…' : 'Send code'}
+                {submitting ? 'Enviando código…' : 'Enviar código'}
               </button>
             </form>
           </>
