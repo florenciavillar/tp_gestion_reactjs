@@ -1,55 +1,28 @@
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import Logo from '../components/Logo.jsx'
-import PasswordInput from '../components/PasswordInput.jsx'
 import styles from './Auth.module.css'
 
+// Pantalla inicial (HU-00): dos puertas, una para socios y otra para admins. Cada una tiene sus cuentas.
 function SignIn() {
-  function handleSubmit(event) {
-    event.preventDefault()
-    // TODO: llamar al backend cuando exista el endpoint de login
-  }
+  // Aviso que deja la pantalla anterior (por ejemplo, la sesión cerrada).
+  const notice = useLocation().state?.notice
 
   return (
     <main className={styles.page}>
       <Logo />
 
       <section className={styles.card}>
-        <h1 className={styles.title}>Login</h1>
+        <h1 className={styles.title}>Welcome</h1>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <div className={styles.field}>
-            <label htmlFor="email" className={styles.label}>Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="example@gmail.com"
-              autoComplete="email"
-              required
-              className={styles.input}
-            />
-          </div>
+        {notice && <p className={styles.message} role="status">{notice}</p>}
 
-          <div className={styles.field}>
-            <label htmlFor="password" className={styles.label}>Password</label>
-            <PasswordInput
-              id="password"
-              name="password"
-              placeholder="********"
-              autoComplete="current-password"
-              required
-              className={styles.input}
-            />
-          </div>
-
-          <button type="submit" className={styles.button}>Sign In</button>
-        </form>
-
-        {/* TODO: apuntar a la pantalla de recuperar contraseña cuando exista */}
-        <a href="#" className={styles.forgot}>Forgot password?</a>
+        <nav className={styles.doors} aria-label="Choose how to log in">
+          <Link to="/sign-in/member" className={styles.door}>Member access</Link>
+          <Link to="/sign-in/admin" className={styles.doorSecondary}>Admin access</Link>
+        </nav>
 
         <p className={styles.switch}>
-          Don&apos;t have an account yet? <Link to="/sign-up" className={styles.switchLink}>Sign Up</Link>
+          First time as a member? <Link to="/sign-up" className={styles.switchLink}>Activate your account</Link>
         </p>
       </section>
     </main>

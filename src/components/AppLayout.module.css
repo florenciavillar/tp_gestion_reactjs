@@ -1,0 +1,7 @@
+/* Flota sobre la pantalla para no correr el contenido centrado de cada página. */
+.header {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+}
