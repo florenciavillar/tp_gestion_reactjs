@@ -76,6 +76,9 @@ function UserMenu() {
           <div className={styles.header}>
             <span className={styles.name}>{user.name}</span>
             <span className={styles.email}>{user.email}</span>
+            <span className={`${styles.role} ${user.role === 'admin' ? styles.roleAdmin : styles.roleMember}`}>
+              {user.role === 'admin' ? 'Admin' : 'Socio'}
+            </span>
           </div>
           <ul className={styles.list}>
             <li><Link to="/profile" className={styles.item} onClick={close}>Perfil</Link></li>
@@ -86,7 +89,7 @@ function UserMenu() {
               </>
             )}
             <li>
-              <button type="button" className={styles.item} onClick={askLogout}>Cerrar Sesión</button>
+              <button type="button" className={`${styles.item} ${styles.danger}`} onClick={askLogout}>Cerrar Sesión</button>
             </li>
           </ul>
         </div>

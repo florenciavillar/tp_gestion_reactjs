@@ -10,7 +10,7 @@ function EventSlot() {
       <Logo />
 
       <section className={styles.card}>
-        <Link to="/" className={styles.back} aria-label="Volver a los eventos">
+        <Link to="/events" className={styles.back} aria-label="Volver a los eventos">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>

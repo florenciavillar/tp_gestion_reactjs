@@ -1,26 +1,35 @@
+/* Pantallas de acceso: césped cortado en franjas, con la tarjeta blanca encima. */
 .page {
-  min-height: 100vh;
+  --logo-text: var(--color-white);
+  min-height: calc(100vh - var(--topbar-height, 0px));
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2.5rem 1rem;
   gap: 1.5rem;
+  background-color: var(--color-pitch);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0.07) 0 64px,
+    transparent 64px 128px
+  );
 }
 
 .card {
   position: relative;
   width: 100%;
-  max-width: 384px;
+  max-width: 400px;
   padding: 2rem 1.75rem 1.5rem;
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 28px rgb(17 17 17 / 0.28);
 }
 
 .back {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
+  top: 2rem; /* alineado con la primera línea del título */
+  left: 1.25rem;
+  z-index: 1;
   display: flex;
   padding: 0.375rem;
   color: var(--color-text);
@@ -31,11 +40,7 @@
 }
 
 .back:hover {
-  background: var(--color-background);
-}
-
-.back:focus-visible {
-  outline: 2px solid var(--color-primary);
+  background: var(--color-tint);
 }
 
 .back svg {
@@ -52,9 +57,18 @@
   margin: 0 0 1.5rem;
   text-align: center;
   font-family: var(--font-heading);
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 800;
   line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Con botón de volver, el título reserva el mismo espacio a ambos lados:
+   no lo tapa y queda centrado. */
+.card:has(.back) .title {
+  padding-inline: 2.25rem;
+  overflow-wrap: anywhere;
 }
 
 .form {
@@ -71,15 +85,17 @@
 
 .label {
   font-size: 1rem;
+  font-weight: 600;
 }
 
 .input {
-  padding: 0.75rem 1rem;
+  min-height: var(--control-height);
+  padding: 0.625rem 1rem;
   font: inherit;
   color: var(--color-text);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
 }
 
 .input::placeholder {
@@ -92,9 +108,9 @@
 }
 
 .input:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: -1px;
-  border-color: transparent;
+  outline: none;
+  border-color: var(--color-pitch);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-lime) 45%, transparent);
 }
 
 .message {
@@ -105,27 +121,57 @@
 
 .error {
   margin: 0;
+  padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  color: var(--color-error);
+  font-weight: 600;
+  color: var(--color-red);
+  background: color-mix(in srgb, var(--color-red) 8%, white);
+  border-left: 4px solid var(--color-red);
+  border-radius: 4px;
 }
 
-.button {
-  padding: 0.75rem;
+/* Botón principal (formularios) y puertas de acceso comparten el mismo estilo. */
+.button,
+.door,
+.doorSecondary {
+  display: block;
+  min-height: var(--control-height);
+  padding: 0.625rem 1rem;
   font: inherit;
-  color: #ffffff;
-  background: var(--color-button);
-  border: none;
-  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
-.button:hover:not(:disabled) {
+.button,
+.door {
+  color: var(--color-on-primary);
+  background: var(--color-button);
+  border: 2px solid var(--color-button);
+}
+
+.button:hover:not(:disabled),
+.door:hover {
   background: var(--color-button-hover);
+  border-color: var(--color-button-hover);
 }
 
 .button:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: default;
+}
+
+.doorSecondary {
+  color: var(--color-pitch);
+  background: var(--color-surface);
+  border: 2px solid var(--color-pitch);
+}
+
+.doorSecondary:hover {
+  background: var(--color-tint);
 }
 
 .forgot {
@@ -145,7 +191,7 @@
 
 .switchLink {
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--color-pitch);
   text-decoration: none;
 }
 
@@ -157,41 +203,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-.door,
-.doorSecondary {
-  display: block;
-  padding: 0.75rem;
-  border-radius: 8px;
-  text-align: center;
-  text-decoration: none;
-}
-
-.door {
-  color: #ffffff;
-  background: var(--color-button);
-  border: 1px solid var(--color-button);
-}
-
-.door:hover {
-  background: var(--color-button-hover);
-}
-
-.doorSecondary {
-  color: var(--color-text);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-}
-
-.doorSecondary:hover {
-  border-color: var(--color-text-muted);
-}
-
-.door:focus-visible,
-.doorSecondary:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
 }
 
 .codeInput {
@@ -218,11 +229,6 @@
   cursor: default;
 }
 
-.linkButton:focus-visible {
-  outline: 2px solid var(--color-primary);
-  border-radius: 4px;
-}
-
 .choices {
   display: flex;
   flex-wrap: wrap;
@@ -242,4 +248,8 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
+}
+
+.choice input {
+  accent-color: var(--color-pitch);
 }

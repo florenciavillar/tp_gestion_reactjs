@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
-import { Outlet, useLocation } from 'react-router'
+import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { useAuth } from './authContext.js'
 import UserMenu from './UserMenu.jsx'
 import styles from './AppLayout.module.css'
 
-// Marco de las pantallas con sesión: el menú de usuario queda arriba a la derecha.
+// Marco de las pantallas con sesión: la barra superior lleva la marca y las opciones a la izquierda y el menú de usuario a la derecha.
 function AppLayout() {
   const { pathname } = useLocation()
   const { refreshUser } = useAuth()
@@ -15,12 +15,21 @@ function AppLayout() {
   }, [pathname, refreshUser])
 
   return (
-    <>
+    <div className={styles.shell}>
       <header className={styles.header}>
+        <Link to="/" className={styles.brand}>Pasión de 10</Link>
+        <nav className={styles.nav} aria-label="Principal">
+          <NavLink
+            to="/events"
+            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+          >
+            Eventos
+          </NavLink>
+        </nav>
         <UserMenu />
       </header>
       <Outlet />
-    </>
+    </div>
   )
 }
 
