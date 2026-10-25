@@ -1,19 +1,20 @@
 function duration(seconds) {
-  if (!seconds) return 'a moment'
-  if (seconds < 60) return `${seconds} seconds`
+  if (!seconds) return 'un momento'
+  if (seconds === 1) return '1 segundo'
+  if (seconds < 60) return `${seconds} segundos`
   const minutes = Math.ceil(seconds / 60)
-  return minutes === 1 ? '1 minute' : `${minutes} minutes`
+  return minutes === 1 ? '1 minuto' : `${minutes} minutos`
 }
 
 // Mensajes de los 429 del backend, con el tiempo de espera del header Retry-After.
 export function waitMessage(err) {
   switch (err.code) {
     case 'TOO_MANY_ATTEMPTS':
-      return `Too many requests. Please try again in ${duration(err.retryAfter)}.`
+      return `Demasiados pedidos. Probá de nuevo en ${duration(err.retryAfter)}.`
     case 'RESEND_COOLDOWN':
-      return `We already sent you a code. You can request another one in ${duration(err.retryAfter)}.`
+      return `Ya te mandamos un código. Podés pedir otro en ${duration(err.retryAfter)}.`
     case 'IDENTIFIER_LOCKED':
-      return `Too many failed attempts. Please try again in ${duration(err.retryAfter)}.`
+      return `Demasiados intentos fallidos. Probá de nuevo en ${duration(err.retryAfter)}.`
     default:
       return undefined
   }

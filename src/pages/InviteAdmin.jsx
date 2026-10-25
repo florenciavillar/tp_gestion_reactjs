@@ -5,10 +5,10 @@ import { createAdmin } from '../services/auth.js'
 import styles from './Auth.module.css'
 
 const ERRORS = {
-  EMAILS_DO_NOT_MATCH: 'The emails do not match',
-  ACCOUNT_ALREADY_EXISTS: 'There is already an admin account with this email.',
-  INVITATION_PENDING: 'This email already has a pending invitation. It expires 48 hours after it was sent.',
-  FORBIDDEN: 'Only admins can invite other admins.',
+  EMAILS_DO_NOT_MATCH: 'Los emails no coinciden',
+  ACCOUNT_ALREADY_EXISTS: 'Ya existe una cuenta de admin con este email.',
+  INVITATION_PENDING: 'Este email ya tiene una invitación pendiente. Vence a las 48 horas de enviada.',
+  FORBIDDEN: 'Solo los admins pueden invitar a otros admins.',
 }
 
 // Solo admins (HU-07): crea la cuenta pendiente y manda la invitación. El email se escribe dos
@@ -39,8 +39,8 @@ function InviteAdmin() {
       form.reset()
     } catch (err) {
       if (ERRORS[err.code]) setError(ERRORS[err.code])
-      else if (err.status === 422) setError('Enter a valid name and email')
-      else setError('Something went wrong. Please try again.')
+      else if (err.status === 422) setError('Ingresá un nombre y un email válidos')
+      else setError('Algo salió mal. Probá de nuevo.')
     } finally {
       setSubmitting(false)
     }
@@ -51,23 +51,23 @@ function InviteAdmin() {
       <Logo />
 
       <section className={styles.card}>
-        <Link to="/" className={styles.back} aria-label="Back to home">
+        <Link to="/" className={styles.back} aria-label="Volver al inicio">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
 
-        <h1 className={styles.title}>Invite Admin</h1>
+        <h1 className={styles.title}>Invitar Admin</h1>
 
         {sentTo && (
           <p className={styles.message} role="status">
-            Invitation sent to <strong>{sentTo}</strong>. The link expires in 48 hours.
+            Enviamos la invitación a <strong>{sentTo}</strong>. El link vence en 48 horas.
           </p>
         )}
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
-            <label htmlFor="name" className={styles.label}>Name</label>
+            <label htmlFor="name" className={styles.label}>Nombre</label>
             <input
               id="name"
               name="name"
@@ -85,7 +85,7 @@ function InviteAdmin() {
               id="email"
               name="email"
               type="email"
-              placeholder="example@gmail.com"
+              placeholder="ejemplo@gmail.com"
               autoComplete="off"
               required
               className={styles.input}
@@ -93,12 +93,12 @@ function InviteAdmin() {
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="emailConfirmation" className={styles.label}>Confirm email</label>
+            <label htmlFor="emailConfirmation" className={styles.label}>Confirmá el email</label>
             <input
               id="emailConfirmation"
               name="emailConfirmation"
               type="email"
-              placeholder="example@gmail.com"
+              placeholder="ejemplo@gmail.com"
               autoComplete="off"
               required
               aria-invalid={error ? 'true' : undefined}
@@ -109,7 +109,7 @@ function InviteAdmin() {
           </div>
 
           <button type="submit" className={styles.button} disabled={submitting}>
-            {submitting ? 'Sending…' : 'Send invitation'}
+            {submitting ? 'Enviando…' : 'Enviar invitación'}
           </button>
         </form>
       </section>

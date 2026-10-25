@@ -12,7 +12,7 @@ function Home() {
   return (
     <main className={styles.page}>
       <Logo />
-      <h1 className={styles.greeting}>Welcome, {user.name}</h1>
+      <h1 className={styles.greeting}>Hola, {user.name}</h1>
       {notice && <p className={styles.notice} role="status">{notice}</p>}
     </main>
   )

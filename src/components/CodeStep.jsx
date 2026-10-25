@@ -5,8 +5,8 @@ import styles from '../pages/Auth.module.css'
 const RESEND_SECONDS = 60
 
 const ERRORS = {
-  INVALID_CODE: 'The code is incorrect or expired. You can request a new one.',
-  TOO_MANY_FAILED_ATTEMPTS: 'Too many failed attempts. Request a new code in 15 minutes.',
+  INVALID_CODE: 'El código es incorrecto o venció. Podés pedir uno nuevo.',
+  TOO_MANY_FAILED_ATTEMPTS: 'Demasiados intentos fallidos. Pedí un código nuevo en 15 minutos.',
 }
 
 // Segundo paso de la activación y del login: el código de 6 dígitos que llegó por mail.
@@ -34,7 +34,7 @@ function CodeStep({ emailHint, onVerify, onResend, onBack, submitLabel }) {
     try {
       await onVerify(code)
     } catch (err) {
-      setError(ERRORS[err.code] ?? 'Something went wrong. Please try again.')
+      setError(ERRORS[err.code] ?? 'Algo salió mal. Probá de nuevo.')
       setSubmitting(false)
     }
   }
@@ -45,31 +45,31 @@ function CodeStep({ emailHint, onVerify, onResend, onBack, submitLabel }) {
     try {
       setHint(await onResend())
       setCode('')
-      setNotice('We sent you a new code.')
+      setNotice('Te mandamos un código nuevo.')
       setResendIn(RESEND_SECONDS)
     } catch (err) {
       if (err.retryAfter) setResendIn(err.retryAfter)
-      setError(waitMessage(err) ?? 'Something went wrong. Please try again.')
+      setError(waitMessage(err) ?? 'Algo salió mal. Probá de nuevo.')
     }
   }
 
   return (
     <>
-      <button type="button" className={styles.back} onClick={onBack} aria-label="Back">
+      <button type="button" className={styles.back} onClick={onBack} aria-label="Volver">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
       </button>
 
-      <h1 className={styles.title}>Enter your code</h1>
+      <h1 className={styles.title}>Ingresá tu código</h1>
 
       <p className={styles.message} role="status">
-        {notice || <>We sent a 6-digit code to <strong>{hint}</strong>. It expires in 10 minutes.</>}
+        {notice || <>Te mandamos un código de 6 dígitos a <strong>{hint}</strong>. Vence en 10 minutos.</>}
       </p>
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>
-          <label htmlFor="code" className={styles.label}>Code</label>
+          <label htmlFor="code" className={styles.label}>Código</label>
           <input
             id="code"
             name="code"
@@ -91,7 +91,7 @@ function CodeStep({ emailHint, onVerify, onResend, onBack, submitLabel }) {
         </div>
 
         <button type="submit" className={styles.button} disabled={submitting || code.length !== 6}>
-          {submitting ? 'Checking…' : submitLabel}
+          {submitting ? 'Verificando…' : submitLabel}
         </button>
       </form>
 
@@ -101,7 +101,7 @@ function CodeStep({ emailHint, onVerify, onResend, onBack, submitLabel }) {
         onClick={handleResend}
         disabled={resendIn > 0}
       >
-        {resendIn > 0 ? `Resend code in ${resendIn}s` : 'Resend code'}
+        {resendIn > 0 ? `Reenviar código en ${resendIn}s` : 'Reenviar código'}
       </button>
     </>
   )

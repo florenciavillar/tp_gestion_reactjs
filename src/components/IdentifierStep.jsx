@@ -35,11 +35,11 @@ function IdentifierStep({ label, placeholder, submitLabel, request, onSent, erro
         setError(invalidMessage)
       } else if (err.code === 'IDENTIFIER_TYPE_REQUIRED') {
         setAskType(true)
-        setError('That number matches more than one member. Tell us which one it is.')
+        setError('Ese número coincide con más de un socio. Indicanos cuál es.')
       } else {
         const message = errorMessage(err)
         if (message !== null) {
-          setError(message ?? waitMessage(err) ?? 'Something went wrong. Please try again.')
+          setError(message ?? waitMessage(err) ?? 'Algo salió mal. Probá de nuevo.')
         }
       }
       setSubmitting(false)
@@ -72,7 +72,7 @@ function IdentifierStep({ label, placeholder, submitLabel, request, onSent, erro
 
       {askType && (
         <fieldset className={styles.choices}>
-          <legend className={styles.label}>This number is my…</legend>
+          <legend className={styles.label}>Este número es mi…</legend>
           <label className={styles.choice}>
             <input type="radio" name="type" value="dni" checked={type === 'dni'} onChange={() => setType('dni')} />
             DNI
@@ -85,13 +85,13 @@ function IdentifierStep({ label, placeholder, submitLabel, request, onSent, erro
               checked={type === 'member_id'}
               onChange={() => setType('member_id')}
             />
-            Member number
+            Número de socio
           </label>
         </fieldset>
       )}
 
       <button type="submit" className={styles.button} disabled={submitting}>
-        {submitting ? 'Sending code…' : submitLabel}
+        {submitting ? 'Enviando código…' : submitLabel}
       </button>
     </form>
   )

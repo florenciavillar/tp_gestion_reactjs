@@ -4,13 +4,13 @@ import Logo from '../components/Logo.jsx'
 import { acceptAdminInvitation } from '../services/auth.js'
 import styles from './Auth.module.css'
 
-const ASK_AGAIN = 'Ask an admin to send you a new invitation.'
+const ASK_AGAIN = 'Pedile a un admin que te mande una invitación nueva.'
 
 const ERRORS = {
-  INVALID_TOKEN: `This link is not valid. ${ASK_AGAIN}`,
-  TOKEN_USED: 'This link was already used. Your account is active: log in with your email.',
-  TOKEN_EXPIRED: `This link has expired. ${ASK_AGAIN}`,
-  TOKEN_REPLACED: `This link was replaced by a newer invitation. Use the latest email or ${ASK_AGAIN.toLowerCase()}`,
+  INVALID_TOKEN: `Este link no es válido. ${ASK_AGAIN}`,
+  TOKEN_USED: 'Este link ya se usó. Tu cuenta está activa: ingresá con tu email.',
+  TOKEN_EXPIRED: `Este link venció. ${ASK_AGAIN}`,
+  TOKEN_REPLACED: `Este link fue reemplazado por una invitación más nueva. Usá el último email o ${ASK_AGAIN.toLowerCase()}`,
 }
 
 // Link de la invitación de admin (HU-08): abrirlo activa la cuenta, sin formulario.
@@ -28,10 +28,10 @@ function AdminInvitation() {
       .then(({ email_hint }) => {
         navigate('/sign-in/admin', {
           replace: true,
-          state: { notice: `Your admin account (${email_hint}) is active. Log in with your email.` },
+          state: { notice: `Tu cuenta de admin (${email_hint}) está activa. Ingresá con tu email.` },
         })
       })
-      .catch((err) => setError(ERRORS[err.code] ?? 'Something went wrong. Please try again.'))
+      .catch((err) => setError(ERRORS[err.code] ?? 'Algo salió mal. Probá de nuevo.'))
   }, [token, navigate])
 
   return (
@@ -39,15 +39,15 @@ function AdminInvitation() {
       <Logo />
 
       <section className={styles.card}>
-        <h1 className={styles.title}>Admin Invitation</h1>
+        <h1 className={styles.title}>Invitación de admin</h1>
 
         {error ? (
           <>
             <p className={styles.error} role="alert">{error}</p>
-            <Link to="/sign-in/admin" className={styles.forgot}>Go to admin login</Link>
+            <Link to="/sign-in/admin" className={styles.forgot}>Ir al ingreso de admins</Link>
           </>
         ) : (
-          <p className={styles.message} role="status">Activating your account…</p>
+          <p className={styles.message} role="status">Activando tu cuenta…</p>
         )}
       </section>
     </main>

@@ -28,13 +28,11 @@ function App() {
   )
 }
 
-// Mientras se recupera la sesión guardada no se muestra nada, para no saltar al login y volver.
-// Con `role`, un usuario de otro rol vuelve a la home (el back igual rechaza sus pedidos).
 function RequireAuth({ role, children }) {
   const { user, loading, sessionExpired } = useAuth()
   if (loading) return null
   if (!user) {
-    const state = sessionExpired ? { notice: 'Your session has expired. Please log in again.' } : undefined
+    const state = sessionExpired ? { notice: 'Tu sesión venció. Volvé a ingresar.' } : undefined
     return <Navigate to="/sign-in" replace state={state} />
   }
   if (role && user.role !== role) return <Navigate to="/" replace />

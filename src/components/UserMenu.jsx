@@ -63,7 +63,7 @@ function UserMenu() {
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-controls={menuId}
-        aria-label="Account menu"
+        aria-label="Menú de la cuenta"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="8" r="4" />
@@ -78,12 +78,12 @@ function UserMenu() {
             <span className={styles.email}>{user.email}</span>
           </div>
           <ul className={styles.list}>
-            <li><Link to="/profile" className={styles.item} onClick={close}>Profile</Link></li>
+            <li><Link to="/profile" className={styles.item} onClick={close}>Perfil</Link></li>
             {user.role === 'admin' && (
-              <li><Link to="/admin/invite" className={styles.item} onClick={close}>Invite admin</Link></li>
+              <li><Link to="/admin/invite" className={styles.item} onClick={close}>Invitar Admin</Link></li>
             )}
             <li>
-              <button type="button" className={styles.item} onClick={askLogout}>Log out</button>
+              <button type="button" className={styles.item} onClick={askLogout}>Cerrar Sesión</button>
             </li>
           </ul>
         </div>
@@ -97,14 +97,14 @@ function UserMenu() {
         onClose={() => buttonRef.current?.focus()}
       >
         <div className={styles.dialogBody}>
-          <h2 id={dialogTitleId} className={styles.dialogTitle}>Log out?</h2>
-          <p className={styles.dialogText}>You will need a new code from your email to log in again.</p>
+          <h2 id={dialogTitleId} className={styles.dialogTitle}>¿Cerrar sesión?</h2>
+          <p className={styles.dialogText}>Para volver a ingresar vas a necesitar un código nuevo, que te llega por email.</p>
           <div className={styles.dialogActions}>
             <button type="button" className={styles.cancel} onClick={() => dialogRef.current.close()} autoFocus>
-              Cancel
+              Cancelar
             </button>
             <button type="button" className={styles.confirm} onClick={handleLogout}>
-              Log out
+              Cerrar sesión
             </button>
           </div>
         </div>

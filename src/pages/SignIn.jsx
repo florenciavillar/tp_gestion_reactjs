@@ -12,17 +12,17 @@ function SignIn() {
       <Logo />
 
       <section className={styles.card}>
-        <h1 className={styles.title}>Welcome</h1>
+        <h1 className={styles.title}>Bienvenido</h1>
 
         {notice && <p className={styles.message} role="status">{notice}</p>}
 
-        <nav className={styles.doors} aria-label="Choose how to log in">
-          <Link to="/sign-in/member" className={styles.door}>Member access</Link>
-          <Link to="/sign-in/admin" className={styles.doorSecondary}>Admin access</Link>
+        <nav className={styles.doors} aria-label="Elegí cómo ingresar">
+          <Link to="/sign-in/member" className={styles.door}>Acceso socios</Link>
+          <Link to="/sign-in/admin" className={styles.doorSecondary}>Acceso admins</Link>
         </nav>
 
         <p className={styles.switch}>
-          First time as a member? <Link to="/sign-up" className={styles.switchLink}>Activate your account</Link>
+          ¿Primera vez como socio? <Link to="/sign-up" className={styles.switchLink}>Activá tu cuenta</Link>
         </p>
       </section>
     </main>
