@@ -30,8 +30,9 @@ export class ApiError extends Error {
   constructor(method, path, status, detail, retryAfter) {
     super(`${method} ${path} falló: ${status}`)
     this.status = status
-    this.code = typeof detail === 'string' ? detail : detail?.code
-    this.reason = typeof detail?.message === 'string' ? detail.message : undefined
+    const errorObj = detail?.error || detail
+    this.code = typeof errorObj === 'string' ? errorObj : errorObj?.code
+    this.reason = typeof errorObj?.message === 'string' ? errorObj.message : (typeof detail === 'string' ? detail : undefined)
     this.retryAfter = retryAfter
   }
 }
@@ -82,4 +83,49 @@ export async function apiGetPage(path) {
 
 export function apiPost(path, body) {
   return request('POST', path, body)
+}
+
+export async function apiUpload(path, formData) {
+  const token = getToken()
+  const headers = {}
+  if (token) headers.Authorization = `Bearer ${token}`
+
+  const response = await fetch(`${API_URL}${path}`, {
+    method: 'POST',
+    headers,
+    body: formData,
+  })
+  const data = await response.json().catch(() => null)
+  if (response.status === 401 && token) onSessionRejected?.()
+  if (!response.ok) {
+    const detail = data?.detail ?? data?.error
+    throw new ApiError('POST', path, response.status, detail)
+  }
+  return data
+}
+
+export async function apiDownload(path, defaultFilename = 'archivo.csv') {
+  const token = getToken()
+  const headers = {}
+  if (token) headers.Authorization = `Bearer ${token}`
+
+  const response = await fetch(`${API_URL}${path}`, {
+    method: 'GET',
+    headers,
+  })
+  if (response.status === 401 && token) onSessionRejected?.()
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+    const detail = data?.detail ?? data?.error
+    throw new ApiError('GET', path, response.status, detail)
+  }
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = defaultFilename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  window.URL.revokeObjectURL(url)
 }
