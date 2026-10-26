@@ -1,0 +1,182 @@
+.card {
+  max-width: 480px;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 1rem;
+  padding: 0.625rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.row dt {
+  color: var(--color-text-muted);
+}
+
+.row dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.note {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.help {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.classes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.classes legend {
+  margin-bottom: 0.25rem;
+  padding: 0;
+}
+
+.classOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.classOption:hover {
+  border-color: var(--color-text-muted);
+}
+
+.classOption:has(input:checked) {
+  border-color: var(--color-primary);
+  outline: 1px solid var(--color-primary);
+}
+
+.classOption:has(input:focus-visible) {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.classOption input {
+  margin: 0.25rem 0 0;
+  accent-color: var(--color-primary);
+}
+
+.classText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.className {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.classDetail {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.defaultTag {
+  padding: 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.dialog {
+  width: min(400px, calc(100vw - 2rem));
+  padding: 0;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.2);
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.dialogBody {
+  padding: 1.5rem;
+}
+
+.dialogTitle {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dialogText {
+  margin: 0 0 0.75rem;
+}
+
+.dialogWarning {
+  margin: 0 0 1.5rem;
+  color: var(--color-text-muted);
+}
+
+.dialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.cancel,
+.confirm {
+  padding: 0.625rem 1.25rem;
+  font: inherit;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancel {
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.cancel:hover {
+  border-color: var(--color-text-muted);
+}
+
+.confirm {
+  color: #ffffff;
+  background: var(--color-button);
+  border: 1px solid var(--color-button);
+}
+
+.confirm:hover {
+  background: var(--color-button-hover);
+}
+
+.cancel:focus-visible,
+.confirm:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}

@@ -23,13 +23,15 @@ export function setToken(token) {
   }
 }
 
-// `code` es el `detail` que devuelve el backend (por ejemplo MEMBER_NOT_FOUND), para elegir el mensaje.
+// `code` sale del `detail` que devuelve el backend, para elegir el mensaje. En auth `detail` es el
+// código (por ejemplo MEMBER_NOT_FOUND); en eventos es `{ code, message }`, con el motivo en español.
 // `retryAfter`: segundos a esperar cuando el backend responde 429.
 export class ApiError extends Error {
-  constructor(method, path, status, code, retryAfter) {
+  constructor(method, path, status, detail, retryAfter) {
     super(`${method} ${path} falló: ${status}`)
     this.status = status
-    this.code = typeof code === 'string' ? code : undefined
+    this.code = typeof detail === 'string' ? detail : detail?.code
+    this.reason = typeof detail?.message === 'string' ? detail.message : undefined
     this.retryAfter = retryAfter
   }
 }
@@ -43,6 +45,11 @@ export function setSessionRejectedHandler(handler) {
 }
 
 async function request(method, path, body) {
+  const { data } = await send(method, path, body)
+  return data
+}
+
+async function send(method, path, body) {
   const token = getToken()
   const headers = {}
   if (body) headers['Content-Type'] = 'application/json'
@@ -59,11 +66,18 @@ async function request(method, path, body) {
     const retryAfter = Number(response.headers.get('Retry-After')) || undefined
     throw new ApiError(method, path, response.status, data?.detail, retryAfter)
   }
-  return data
+  return { data, response }
 }
 
 export function apiGet(path) {
   return request('GET', path)
+}
+
+// Listas paginadas del backend: la página viene en el cuerpo y el total en el header X-Total-Count.
+export async function apiGetPage(path) {
+  const { data, response } = await send('GET', path)
+  const header = response.headers.get('X-Total-Count')
+  return { items: data, total: header === null ? data.length : Number(header) }
 }
 
 export function apiPost(path, body) {

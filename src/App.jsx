@@ -3,10 +3,12 @@ import AppLayout from './components/AppLayout.jsx'
 import { useAuth } from './components/authContext.js'
 import AdminInvitation from './pages/AdminInvitation.jsx'
 import AdminSignIn from './pages/AdminSignIn.jsx'
+import EventSlot from './pages/EventSlot.jsx'
 import Home from './pages/Home.jsx'
 import InviteAdmin from './pages/InviteAdmin.jsx'
 import MemberSignIn from './pages/MemberSignIn.jsx'
 import Profile from './pages/Profile.jsx'
+import PublishEvent from './pages/PublishEvent.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SignUp from './pages/SignUp.jsx'
 
@@ -17,6 +19,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/invite" element={<RequireAuth role="admin"><InviteAdmin /></RequireAuth>} />
+        <Route path="/admin/events/:id/publish" element={<RequireAuth role="admin"><PublishEvent /></RequireAuth>} />
+        <Route path="/member/events/:id/slot" element={<RequireAuth role="member"><EventSlot /></RequireAuth>} />
       </Route>
       <Route path="/sign-in" element={<GuestOnly><SignIn /></GuestOnly>} />
       <Route path="/sign-in/member" element={<GuestOnly><MemberSignIn /></GuestOnly>} />
