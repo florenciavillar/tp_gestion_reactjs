@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import Logo from '../components/Logo.jsx'
 import PendingEvents from '../components/PendingEvents.jsx'
 import UpcomingEvents from '../components/UpcomingEvents.jsx'
@@ -18,7 +18,22 @@ function Home() {
       <h1 className={styles.greeting}>Hola, {user.name}</h1>
       {notice && <p className={styles.notice} role="status">{notice}</p>}
       {user.role === 'member' && <UpcomingEvents />}
-      {user.role === 'admin' && <PendingEvents />}
+      {user.role === 'admin' && (
+        <>
+          <div className={styles.adminBanner}>
+            <div className={styles.adminBannerText}>
+              <h2 className={styles.adminBannerTitle}>Carga de Asistencias y Actividades</h2>
+              <p className={styles.adminBannerDescription}>
+                Subí asistencias por CSV, registrá actividades recurrentes y aprobá reemplazos.
+              </p>
+            </div>
+            <Link to="/admin/attendance" className={styles.adminBannerButton}>
+              Cargar Asistencias
+            </Link>
+          </div>
+          <PendingEvents />
+        </>
+      )}
     </main>
   )
 }

@@ -80,7 +80,10 @@ function UserMenu() {
           <ul className={styles.list}>
             <li><Link to="/profile" className={styles.item} onClick={close}>Perfil</Link></li>
             {user.role === 'admin' && (
-              <li><Link to="/admin/invite" className={styles.item} onClick={close}>Invitar Admin</Link></li>
+              <>
+                <li><Link to="/admin/attendance" className={styles.item} onClick={close}>Cargar Asistencias</Link></li>
+                <li><Link to="/admin/invite" className={styles.item} onClick={close}>Invitar Admin</Link></li>
+              </>
             )}
             <li>
               <button type="button" className={styles.item} onClick={askLogout}>Cerrar Sesión</button>

@@ -20,3 +20,50 @@
   text-align: center;
   color: var(--color-primary);
 }
+
+.adminBanner {
+  width: 100%;
+  max-width: 640px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.adminBannerText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.adminBannerTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.adminBannerDescription {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.adminBannerButton {
+  flex-shrink: 0;
+  background: var(--color-button);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+}
+
+.adminBannerButton:hover {
+  background: var(--color-button-hover);
+}
