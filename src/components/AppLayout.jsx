@@ -7,7 +7,7 @@ import styles from './AppLayout.module.css'
 // Marco de las pantallas con sesión: la barra superior lleva la marca y las opciones a la izquierda y el menú de usuario a la derecha.
 function AppLayout() {
   const { pathname } = useLocation()
-  const { refreshUser } = useAuth()
+  const { user, refreshUser } = useAuth()
 
   // Si la sesión venció mientras la pantalla estaba abierta, la próxima navegación lo detecta (HU-11).
   useEffect(() => {
@@ -25,6 +25,14 @@ function AppLayout() {
           >
             Eventos
           </NavLink>
+          {user?.role === 'admin' && (
+            <NavLink
+              to="/admin/formula"
+              className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+            >
+              Fórmula
+            </NavLink>
+          )}
         </nav>
         <UserMenu />
       </header>

@@ -57,3 +57,18 @@ export function formatRemaining(seconds) {
   if (hours > 0) return minutes > 0 ? `${hours} h ${minutes} min` : `${hours} h`
   return `${minutes} min`
 }
+
+const dateTimeFormat = new Intl.DateTimeFormat('es-AR', {
+  timeZone: TIME_ZONE,
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+})
+
+// "26/10/2026 14:30"
+export function formatDateTime(iso) {
+  return dateTimeFormat.format(new Date(iso)).replace(',', '')
+}
