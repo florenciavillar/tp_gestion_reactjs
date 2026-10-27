@@ -34,9 +34,16 @@ export function unlockFormula(reason) {
   return apiPost('/admin/formulas/unlock', { reason })
 }
 
+// HU-13: explicación de las reglas vigentes del club del socio. El club sale de la cuenta.
+// { status: 'published' | 'none', message, rules_version, formula, explanation, notice }
+export function getRankingExplanation() {
+  return apiGet('/member/scoring/explanation')
+}
+
 const ERRORS = {
   FORBIDDEN: 'Solo los admins pueden gestionar la fórmula.',
   ADMIN_WITHOUT_CLUB: 'Tu cuenta no tiene un club asignado.',
+  MEMBER_WITHOUT_CLUB: 'Tu cuenta no tiene un club asignado. Consultá con el club.',
   REASON_REQUIRED: 'Indicá el motivo.',
   GENERIC: 'Algo salió mal. Probá de nuevo.',
 }

@@ -25,6 +25,14 @@ function AppLayout() {
           >
             Eventos
           </NavLink>
+          {user?.role === 'member' && (
+            <NavLink
+              to="/ranking/explanation"
+              className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+            >
+              Cómo se calcula
+            </NavLink>
+          )}
           {user?.role === 'admin' && (
             <NavLink
               to="/admin/formula"
@@ -34,7 +42,9 @@ function AppLayout() {
             </NavLink>
           )}
         </nav>
-        <UserMenu />
+        <div className={styles.menu}>
+          <UserMenu />
+        </div>
       </header>
       <Outlet />
     </div>

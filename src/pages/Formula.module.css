@@ -202,3 +202,8 @@
 .pair {
   display: contents;
 }
+
+/* Aviso que va arriba de la explicación (HU-13), separado del primer título. */
+.bannerSpaced {
+  margin-bottom: 1rem;
+}
