@@ -40,11 +40,18 @@ function PendingEvents() {
 
   return (
     <section className={styles.section} aria-labelledby={headingId}>
-      <h2 id={headingId} className={styles.heading}>Eventos pendientes de publicar</h2>
-      <p className={styles.muted}>
-        Los envía el club. Elegí la clase de cada Partido o los puntos de cada evento institucional y
-        publicalo. Si se cumple el plazo, se publica solo con los valores por defecto.
-      </p>
+      <div className={styles.headerRow}>
+        <div className={styles.headerText}>
+          <h2 id={headingId} className={styles.heading}>Eventos pendientes de publicar</h2>
+          <p className={styles.muted}>
+            Los envía el club. Elegí la clase de cada Partido o los puntos de cada evento institucional y
+            publicalo. Si se cumple el plazo, se publica solo con los valores por defecto.
+          </p>
+        </div>
+        <Link to="/admin/attendance" className={styles.secondary}>
+          Cargar Asistencias
+        </Link>
+      </div>
 
       {state.status === 'loading' && <p className={styles.muted}>Cargando eventos…</p>}
 
@@ -66,7 +73,7 @@ function PendingEvents() {
                 <li key={evento.id_interno} className={styles.card}>
                   <div className={styles.cardTop}>
                     <h3 className={styles.cardTitle}>{evento.titulo}</h3>
-                    <span className={styles.type}>{eventTypeLabel(evento.tipo)}</span>
+                    <span className={`${styles.type} ${String(evento.tipo).toLowerCase() === 'partido' ? '' : styles.typeInstitutional}`}>{eventTypeLabel(evento.tipo)}</span>
                   </div>
 
                   <dl className={styles.meta}>

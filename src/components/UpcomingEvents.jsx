@@ -38,7 +38,7 @@ function UpcomingEvents() {
             <li key={evento.id_interno} className={styles.card}>
               <div className={styles.cardTop}>
                 <h3 className={styles.cardTitle}>{evento.titulo}</h3>
-                <span className={styles.type}>{evento.tipo}</span>
+                <span className={`${styles.type} ${evento.tipo === 'Partido' ? '' : styles.typeInstitutional}`}>{evento.tipo}</span>
               </div>
 
               <dl className={styles.meta}>

@@ -4,29 +4,30 @@
   height: 140px;
 }
 
+/* Las páginas sobre verde definen --logo-text en blanco. */
 .text {
   font-family: var(--font-body);
   font-size: 20px;
   font-weight: 800;
   letter-spacing: 3px;
-  fill: var(--color-text);
+  fill: var(--logo-text, var(--color-ink));
 }
 
 .ballFill {
-  fill: #ffffff;
+  fill: var(--color-white);
 }
 
 .patch {
-  fill: var(--color-primary);
+  fill: var(--color-ink);
 }
 
 .seam {
-  stroke: var(--color-primary);
+  stroke: var(--color-ink);
   stroke-width: 2;
 }
 
 .ballOutline {
   fill: none;
-  stroke: var(--color-primary);
+  stroke: var(--color-ink);
   stroke-width: 3;
 }

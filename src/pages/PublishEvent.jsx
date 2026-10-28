@@ -91,7 +91,7 @@ function PublishEvent() {
     try {
       await publishEvent(evento.id_interno, match ? { clase } : { puntos: Number(puntos) })
       const applied = match ? `con Clase ${clase}` : `con ${Number(puntos)} puntos`
-      navigate('/', { replace: true, state: { notice: `Publicaste «${evento.titulo}» ${applied}.` } })
+      navigate('/events', { replace: true, state: { notice: `Publicaste «${evento.titulo}» ${applied}.` } })
     } catch (err) {
       setSubmitError(publishErrorMessage(err))
       setSubmitting(false)
@@ -108,7 +108,7 @@ function PublishEvent() {
       <Logo />
 
       <section className={`${authStyles.card} ${styles.card}`}>
-        <Link to="/" className={authStyles.back} aria-label="Volver a los eventos pendientes">
+        <Link to="/events" className={authStyles.back} aria-label="Volver a los eventos pendientes">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>

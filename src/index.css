@@ -2,16 +2,34 @@
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-heading: 'Barlow Condensed', var(--font-body);
 
-  --color-primary: #3b7d3f;
-  --color-error: #c0392b;
-  --color-text: #1e1e1e;
-  --color-text-muted: #5c5c5c;
-  --color-placeholder: #b3b3b3;
-  --color-border: #d9d9d9;
-  --color-surface: #ffffff;
-  --color-background: #fef7ff;
-  --color-button: #2c2c2c;
-  --color-button-hover: #444444;
+  /* Paleta de fútbol */
+  --color-pitch: #3b7a57; /* verde césped */
+  --color-pitch-dark: #2e6244; /* hover del verde césped (derivado) */
+  --color-lime: #4cbb17; /* verde campo brillante: solo acentos y fondos con texto negro */
+  --color-white: #ffffff;
+  --color-ink: #111111; /* negro balón */
+  --color-yellow: #ffcc00; /* tarjeta amarilla: advertencias */
+  --color-red: #d60019; /* tarjeta roja: errores y acciones destructivas */
+  --color-red-dark: #a80014; /* hover del rojo (derivado) */
+  --color-tint: color-mix(in srgb, var(--color-pitch) 12%, white);
+
+  /* Roles (los nombres se mantienen para no tocar el resto del código) */
+  --color-primary: var(--color-pitch);
+  --color-on-primary: var(--color-white);
+  --color-error: var(--color-red);
+  --color-text: var(--color-ink);
+  --color-text-muted: #4a4f4c;
+  --color-placeholder: #8a918c;
+  --color-border: #cfd9d2;
+  --color-surface: var(--color-white);
+  --color-background: #f3f7f4;
+  --color-button: var(--color-pitch);
+  --color-button-hover: var(--color-pitch-dark);
+
+  --radius: 10px;
+  --radius-sm: 8px;
+  --shadow-card: 0 2px 10px rgb(17 17 17 / 0.08);
+  --control-height: 44px;
 
   font-family: var(--font-body);
   line-height: 1.5;
@@ -25,4 +43,16 @@
 
 body {
   margin: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
