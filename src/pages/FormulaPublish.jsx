@@ -64,6 +64,13 @@ function FormulaPublish() {
   const cutoffReached = Boolean(detail?.season_cutoff?.reached)
   const isAdjusting = Boolean(detail?.is_in_force)
   const blocked = locked || (isAdjusting && cutoffReached)
+  const hasChanges = isAdjusting
+    ? Object.keys(detail?.values ?? {}).some((key) => {
+        const orig = String(detail.values[key]).replace(',', '.')
+        const curr = String(values[key] ?? '').trim().replace(',', '.')
+        return Number(orig) !== Number(curr) || curr === ''
+      })
+    : true
   const violations = preview && !preview.valid ? preview.violations : []
   const byParameter = Object.fromEntries(violations.filter((v) => v.parameter).map((v) => [v.parameter, v.message]))
   const general = violations.filter((v) => !v.parameter)
@@ -93,6 +100,10 @@ function FormulaPublish() {
 
   async function handlePublish(event) {
     event.preventDefault()
+    if (isAdjusting && !hasChanges) {
+      setError('No modificaste ningún parámetro. Cambiá al menos un valor para continuar.')
+      return
+    }
     const result = await runPreview()
     if (result?.valid) setConfirming(true)
   }
@@ -232,12 +243,16 @@ function FormulaPublish() {
                 </button>
               )}
 
+              {isAdjusting && !hasChanges && !blocked && (
+                <p className={styles.hint}>Modificá al menos un parámetro para poder ajustar la fórmula.</p>
+              )}
+
               {!confirming && (
                 <div className={styles.actions}>
                   <button type="button" className={authStyles.doorSecondary} onClick={runPreview} disabled={busy || blocked}>
                     Ver vista previa
                   </button>
-                  <button type="submit" className={authStyles.button} disabled={busy || blocked}>
+                  <button type="submit" className={authStyles.button} disabled={busy || blocked || (isAdjusting && !hasChanges)}>
                     {busy ? 'Revisando…' : isAdjusting ? 'Ajustar parámetros' : 'Publicar'}
                   </button>
                 </div>
