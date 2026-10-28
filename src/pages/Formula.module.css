@@ -1,0 +1,209 @@
+/* Pantallas de la fórmula (HU-27): tarjeta ancha con secciones. */
+.card {
+  max-width: 760px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.muted {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.notice {
+  margin: 0 0 1rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-ink);
+  background: var(--color-lime);
+  border-radius: var(--radius-sm);
+}
+
+.banner {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  background: color-mix(in srgb, var(--color-yellow) 25%, white);
+  border-left: 4px solid var(--color-yellow);
+  border-radius: 4px;
+}
+
+.pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-pitch);
+  background: var(--color-tint);
+  border-radius: 999px;
+}
+
+.pillLocked {
+  color: var(--color-red-dark);
+  background: color-mix(in srgb, var(--color-red) 10%, white);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.375rem 1rem;
+  margin: 0;
+}
+
+.summary dt {
+  color: var(--color-text-muted);
+}
+
+.summary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.table th,
+.table td {
+  padding: 0.5rem 0.5rem 0.5rem 0;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid var(--color-border);
+}
+
+.table th {
+  font-weight: 600;
+}
+
+.catalog {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalogItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.catalogHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.catalogName {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.actions > * {
+  flex: 1 1 12rem;
+}
+
+.list {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.5;
+}
+
+.param {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--color-tint);
+  border: 2px solid var(--color-pitch);
+  border-radius: var(--radius-sm);
+}
+
+.confirmText {
+  margin: 0;
+  font-weight: 600;
+}
+
+.violations {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.5;
+}
+
+.textarea {
+  min-height: 5rem;
+  resize: vertical;
+}
+
+.details summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.25rem 0;
+}
+
+/* Solo para lectores de pantalla. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Cada par término-valor de una lista de definiciones queda en la grilla de .summary. */
+.pair {
+  display: contents;
+}
+
+/* Aviso que va arriba de la explicación (HU-13), separado del primer título. */
+.bannerSpaced {
+  margin-bottom: 1rem;
+}

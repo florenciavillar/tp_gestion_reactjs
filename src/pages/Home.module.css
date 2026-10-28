@@ -49,3 +49,22 @@
   background: var(--color-button-hover);
 }
 
+
+/* Acceso secundario del socio (HU-13): mismo tamaño que .cta, con borde en vez de relleno. */
+.secondary {
+  display: inline-block;
+  min-height: var(--control-height);
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
+  color: var(--color-button);
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid var(--color-button);
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.secondary:hover {
+  color: var(--color-on-primary);
+  background: var(--color-button-hover);
+}

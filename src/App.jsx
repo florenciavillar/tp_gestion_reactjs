@@ -6,11 +6,14 @@ import AdminSignIn from './pages/AdminSignIn.jsx'
 import AttendanceManagement from './pages/AttendanceManagement.jsx'
 import EventSlot from './pages/EventSlot.jsx'
 import Events from './pages/Events.jsx'
+import FormulaPublish from './pages/FormulaPublish.jsx'
+import FormulaSettings from './pages/FormulaSettings.jsx'
 import Home from './pages/Home.jsx'
 import InviteAdmin from './pages/InviteAdmin.jsx'
 import MemberSignIn from './pages/MemberSignIn.jsx'
 import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
+import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SignUp from './pages/SignUp.jsx'
 
@@ -23,7 +26,10 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/invite" element={<RequireAuth role="admin"><InviteAdmin /></RequireAuth>} />
         <Route path="/admin/attendance" element={<RequireAuth role="admin"><AttendanceManagement /></RequireAuth>} />
+        <Route path="/admin/formula" element={<RequireAuth role="admin"><FormulaSettings /></RequireAuth>} />
+        <Route path="/admin/formula/:id/:version" element={<RequireAuth role="admin"><FormulaPublish /></RequireAuth>} />
         <Route path="/admin/events/:id/publish" element={<RequireAuth role="admin"><PublishEvent /></RequireAuth>} />
+        <Route path="/ranking/explanation" element={<RequireAuth role="member"><RankingExplanationPage /></RequireAuth>} />
         <Route path="/member/events/:id/slot" element={<RequireAuth role="member"><EventSlot /></RequireAuth>} />
       </Route>
       <Route path="/sign-in" element={<GuestOnly><SignIn /></GuestOnly>} />

@@ -20,6 +20,11 @@ function Home() {
       <Link to="/events" className={styles.cta}>
         Ver eventos
       </Link>
+      {user.role === 'member' && (
+        <Link to="/ranking/explanation" className={styles.secondary}>
+          ¿Cómo se calcula mi puntaje?
+        </Link>
+      )}
     </main>
   )
 }
