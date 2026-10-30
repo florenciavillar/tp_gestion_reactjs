@@ -64,11 +64,11 @@ function FormulaPublish() {
   const cutoffReached = Boolean(detail?.season_cutoff?.reached)
   const isAdjusting = Boolean(detail?.is_in_force)
   const blocked = locked || (isAdjusting && cutoffReached)
+  // Vacío cuenta como cambio aunque el original sea 0: Number('') === 0.
   const hasChanges = isAdjusting
-    ? Object.keys(detail?.values ?? {}).some((key) => {
-        const orig = String(detail.values[key]).replace(',', '.')
-        const curr = String(values[key] ?? '').trim().replace(',', '.')
-        return Number(orig) !== Number(curr) || curr === ''
+    ? Object.entries(detail.values).some(([key, original]) => {
+        const current = String(values[key] ?? '').trim().replaceAll(',', '.')
+        return current === '' || Number(current) !== Number(original)
       })
     : true
   const violations = preview && !preview.valid ? preview.violations : []
@@ -100,10 +100,6 @@ function FormulaPublish() {
 
   async function handlePublish(event) {
     event.preventDefault()
-    if (isAdjusting && !hasChanges) {
-      setError('No modificaste ningún parámetro. Cambiá al menos un valor para continuar.')
-      return
-    }
     const result = await runPreview()
     if (result?.valid) setConfirming(true)
   }
@@ -161,7 +157,7 @@ function FormulaPublish() {
                 Motivo: {detail.lock.reason}
               </p>
             )}
-            {cutoffReached && (
+            {isAdjusting && cutoffReached && (
               <p className={styles.banner} role="status">
                 {detail.season_cutoff.message}
               </p>
