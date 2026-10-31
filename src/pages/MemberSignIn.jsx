@@ -65,7 +65,11 @@ function MemberSignIn() {
 
             <h1 className={styles.title}>Ingreso de socios</h1>
 
-            {notice && <p className={styles.message} role="status">{notice}</p>}
+            {notice && (
+              <p className={styles.message} role="status">
+                {notice}
+              </p>
+            )}
 
             <IdentifierStep
               label="DNI, número de socio o email"
@@ -81,7 +85,10 @@ function MemberSignIn() {
         )}
 
         <p className={styles.switch}>
-          ¿Primera vez? <Link to="/sign-up" className={styles.switchLink}>Activá tu cuenta</Link>
+          ¿Primera vez?{' '}
+          <Link to="/sign-up" className={styles.switchLink}>
+            Activá tu cuenta
+          </Link>
         </p>
       </section>
     </main>

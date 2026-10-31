@@ -110,16 +110,10 @@ function AttendanceManagement() {
     setAttendanceError(null)
 
     try {
-      const res = await uploadAttendanceCSV(
-        selectedEventId,
-        attendanceFile,
-        confirmReplace,
-      )
+      const res = await uploadAttendanceCSV(selectedEventId, attendanceFile, confirmReplace)
       setAttendanceResult(res)
       if (res.requiere_confirmacion_reemplazo) {
-        setAttendanceError(
-          'El evento ya posee asistencia previa. Marcá la casilla de confirmación para reemplazarla.',
-        )
+        setAttendanceError('El evento ya posee asistencia previa. Marcá la casilla de confirmación para reemplazarla.')
       } else {
         // Limpiar archivo seleccionado tras éxito
         setAttendanceFile(null)
@@ -201,8 +195,8 @@ function AttendanceManagement() {
         </Link>
         <h1 className={pageStyles.title}>Carga de asistencias y actividades</h1>
         <p className={pageStyles.lead}>
-          Cargá la asistencia de eventos ya ocurridos o actividades recurrentes mediante archivos CSV.
-          Aplica tolerancia máxima de error del 5% y confirmación de reemplazos.
+          Cargá la asistencia de eventos ya ocurridos o actividades recurrentes mediante archivos CSV. Aplica tolerancia
+          máxima de error del 5% y confirmación de reemplazos.
         </p>
       </header>
 
@@ -283,7 +277,15 @@ function AttendanceManagement() {
             {hasPreviousAttendance && (
               <div className={styles.warningBox} role="alert">
                 <div className={styles.warningHeader}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
                     <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
                     <line x1="12" y1="9" x2="12" y2="13" />
                     <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -291,7 +293,8 @@ function AttendanceManagement() {
                   <span>El evento ya posee asistencia cargada</span>
                 </div>
                 <p className={styles.warningText}>
-                  Si subís un nuevo archivo, la asistencia actual será reemplazada de forma atómica y archivada en el historial.
+                  Si subís un nuevo archivo, la asistencia actual será reemplazada de forma atómica y archivada en el
+                  historial.
                 </p>
                 <label htmlFor={replaceConfirmId} className={styles.checkboxLabel}>
                   <input
@@ -311,8 +314,8 @@ function AttendanceManagement() {
                 Archivo CSV de asistencias:
               </label>
               <p className={styles.hint}>
-                Columnas requeridas: <code>dni</code> y opcionalmente <code>numero_socio</code>, <code>fecha_evento</code>.
-                Codificación UTF-8, máximo 10 MB y hasta 100.000 filas.
+                Columnas requeridas: <code>dni</code> y opcionalmente <code>numero_socio</code>,{' '}
+                <code>fecha_evento</code>. Codificación UTF-8, máximo 10 MB y hasta 100.000 filas.
               </p>
               <label htmlFor={attendanceFileId} className={styles.fileUploadBox}>
                 <input
@@ -323,7 +326,15 @@ function AttendanceManagement() {
                   onChange={(e) => setAttendanceFile(e.target.files?.[0] || null)}
                   required
                 />
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -364,9 +375,7 @@ function AttendanceManagement() {
             <div className={`${styles.resultBox} ${styles.resultSuccess}`} role="status">
               <div className={styles.resultHeader}>
                 <h2 className={styles.resultTitle}>Resultado de la carga de asistencia</h2>
-                <span className={styles.badgeSuccess}>
-                  {attendanceResult.estado}
-                </span>
+                <span className={styles.badgeSuccess}>{attendanceResult.estado}</span>
               </div>
               <p className={styles.resultText}>{attendanceResult.mensaje}</p>
 
@@ -382,7 +391,9 @@ function AttendanceManagement() {
                   <span className={styles.statLabel}>Incorporados</span>
                 </div>
                 <div className={styles.statCard}>
-                  <span className={`${styles.statNumber} ${attendanceResult.registros_rechazados > 0 ? styles.red : ''}`}>
+                  <span
+                    className={`${styles.statNumber} ${attendanceResult.registros_rechazados > 0 ? styles.red : ''}`}
+                  >
                     {attendanceResult.registros_rechazados}
                   </span>
                   <span className={styles.statLabel}>Rechazados</span>
@@ -418,7 +429,9 @@ function AttendanceManagement() {
                         <tr key={i}>
                           <td>{r.fila ?? '-'}</td>
                           <td>{r.dni ?? '-'}</td>
-                          <td><code>{r.field || r.campo || '-'}</code></td>
+                          <td>
+                            <code>{r.field || r.campo || '-'}</code>
+                          </td>
                           <td>{r.motivo}</td>
                         </tr>
                       ))}
@@ -443,8 +456,9 @@ function AttendanceManagement() {
             <div className={styles.fieldGroup}>
               <h2 className={styles.resultTitle}>Carga de actividades recurrentes</h2>
               <p className={styles.hint}>
-                Registra la participación continua de socios en <strong>deportes federados</strong> o <strong>subcomisiones</strong>.
-                Las actividades repetidas con la misma fecha de inicio se actualizan automáticamente (upsert).
+                Registra la participación continua de socios en <strong>deportes federados</strong> o{' '}
+                <strong>subcomisiones</strong>. Las actividades repetidas con la misma fecha de inicio se actualizan
+                automáticamente (upsert).
               </p>
             </div>
 
@@ -453,8 +467,8 @@ function AttendanceManagement() {
                 Archivo CSV de actividades:
               </label>
               <p className={styles.hint}>
-                Columnas requeridas: <code>dni,tipo,fecha_desde,fecha_hasta</code>.
-                Los valores válidos para <code>tipo</code> son <code>deporte_federado</code> o <code>subcomision</code>.
+                Columnas requeridas: <code>dni,tipo,fecha_desde,fecha_hasta</code>. Los valores válidos para{' '}
+                <code>tipo</code> son <code>deporte_federado</code> o <code>subcomision</code>.
               </p>
 
               <label htmlFor={activitiesFileId} className={styles.fileUploadBox}>
@@ -466,7 +480,15 @@ function AttendanceManagement() {
                   onChange={(e) => setActivitiesFile(e.target.files?.[0] || null)}
                   required
                 />
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -487,11 +509,7 @@ function AttendanceManagement() {
               </div>
             )}
 
-            <button
-              type="submit"
-              className={styles.primaryButton}
-              disabled={activitiesSubmitting || !activitiesFile}
-            >
+            <button type="submit" className={styles.primaryButton} disabled={activitiesSubmitting || !activitiesFile}>
               {activitiesSubmitting ? 'Procesando archivo…' : 'Subir y aplicar actividades'}
             </button>
           </form>
@@ -501,9 +519,7 @@ function AttendanceManagement() {
             <div className={`${styles.resultBox} ${styles.resultSuccess}`} role="status">
               <div className={styles.resultHeader}>
                 <h2 className={styles.resultTitle}>Resultado de la carga de actividades</h2>
-                <span className={styles.badgeSuccess}>
-                  {activitiesResult.estado}
-                </span>
+                <span className={styles.badgeSuccess}>{activitiesResult.estado}</span>
               </div>
               <p className={styles.resultText}>{activitiesResult.mensaje}</p>
 
@@ -525,7 +541,9 @@ function AttendanceManagement() {
                   <span className={styles.statLabel}>Actualizados</span>
                 </div>
                 <div className={styles.statCard}>
-                  <span className={`${styles.statNumber} ${activitiesResult.registros_rechazados > 0 ? styles.red : ''}`}>
+                  <span
+                    className={`${styles.statNumber} ${activitiesResult.registros_rechazados > 0 ? styles.red : ''}`}
+                  >
                     {activitiesResult.registros_rechazados}
                   </span>
                   <span className={styles.statLabel}>Rechazados</span>
@@ -578,9 +596,7 @@ function AttendanceManagement() {
                 <li key={p.carga_id} className={styles.pendingCard}>
                   <div className={styles.pendingTop}>
                     <div>
-                      <h2 className={styles.pendingTitle}>
-                        {p.evento_titulo || `Evento: ${p.evento_id_externo}`}
-                      </h2>
+                      <h2 className={styles.pendingTitle}>{p.evento_titulo || `Evento: ${p.evento_id_externo}`}</h2>
                       <span className={styles.hint}>
                         ID de carga externa: <code>{p.carga_id}</code>
                       </span>
@@ -597,7 +613,8 @@ function AttendanceManagement() {
                     </div>
                     {p.carga_previa && (
                       <div>
-                        <strong>Carga a reemplazar:</strong> {p.carga_previa.total_registros} socios ({p.carga_previa.carga_id})
+                        <strong>Carga a reemplazar:</strong> {p.carga_previa.total_registros} socios (
+                        {p.carga_previa.carga_id})
                       </div>
                     )}
                   </div>

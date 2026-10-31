@@ -51,8 +51,12 @@ function PublishEvent() {
         if (found) setEvento(found)
         else setLoadError(ERRORS.NOT_PENDING)
       })
-      .catch(() => { if (!ignore) setLoadError(ERRORS.GENERIC) })
-    return () => { ignore = true }
+      .catch(() => {
+        if (!ignore) setLoadError(ERRORS.GENERIC)
+      })
+    return () => {
+      ignore = true
+    }
   }, [evento, id])
 
   const match = evento ? isMatch(evento.tipo) : false
@@ -61,9 +65,15 @@ function PublishEvent() {
     if (!match) return
     let ignore = false
     getEventClasses()
-      .then((data) => { if (!ignore) setClasses(data) })
-      .catch(() => { if (!ignore) setLoadError(ERRORS.GENERIC) })
-    return () => { ignore = true }
+      .then((data) => {
+        if (!ignore) setClasses(data)
+      })
+      .catch(() => {
+        if (!ignore) setLoadError(ERRORS.GENERIC)
+      })
+    return () => {
+      ignore = true
+    }
   }, [match])
 
   const chosenClass = classes?.find((item) => item.clase === clase)
@@ -114,7 +124,11 @@ function PublishEvent() {
         <h1 className={pageStyles.title}>Publicar evento</h1>
       </header>
 
-      {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
+      {loadError && (
+        <p className={authStyles.error} role="alert">
+          {loadError}
+        </p>
+      )}
 
       {!loadError && !evento && <p className={styles.help}>Cargando evento…</p>}
 
@@ -126,8 +140,8 @@ function PublishEvent() {
                 <fieldset className={styles.classes} aria-describedby={fieldError ? fieldErrorId : undefined}>
                   <legend className={authStyles.label}>Clase del partido</legend>
                   <p className={styles.help}>
-                    La clase define cuánto pesa la asistencia a este partido en el puntaje. Un factor mayor
-                    premia la asistencia a los partidos de menor convocatoria.
+                    La clase define cuánto pesa la asistencia a este partido en el puntaje. Un factor mayor premia la
+                    asistencia a los partidos de menor convocatoria.
                   </p>
                   {!classes && <p className={styles.help}>Cargando clases…</p>}
                   {classes?.map((item) => (
@@ -137,7 +151,10 @@ function PublishEvent() {
                         name="clase"
                         value={item.clase}
                         checked={clase === item.clase}
-                        onChange={() => { setClase(item.clase); setFieldError('') }}
+                        onChange={() => {
+                          setClase(item.clase)
+                          setFieldError('')
+                        }}
                       />
                       <span className={styles.classText}>
                         <span className={styles.className}>
@@ -153,7 +170,9 @@ function PublishEvent() {
                 </fieldset>
               ) : (
                 <div className={authStyles.field}>
-                  <label htmlFor="puntos" className={authStyles.label}>Puntos</label>
+                  <label htmlFor="puntos" className={authStyles.label}>
+                    Puntos
+                  </label>
                   <p className={styles.help} id={`${fieldErrorId}-help`}>
                     Los suma cada socio que asiste. Un número entero del {MIN_POINTS} al {MAX_POINTS}.
                   </p>
@@ -167,7 +186,10 @@ function PublishEvent() {
                     step={1}
                     placeholder="20"
                     value={puntos}
-                    onChange={(event) => { setPuntos(event.target.value); setFieldError('') }}
+                    onChange={(event) => {
+                      setPuntos(event.target.value)
+                      setFieldError('')
+                    }}
                     aria-invalid={fieldError ? 'true' : undefined}
                     aria-describedby={fieldError ? fieldErrorId : `${fieldErrorId}-help`}
                     className={authStyles.input}
@@ -175,8 +197,16 @@ function PublishEvent() {
                 </div>
               )}
 
-              {fieldError && <p id={fieldErrorId} role="alert" className={authStyles.error}>{fieldError}</p>}
-              {submitError && <p role="alert" className={authStyles.error}>{submitError}</p>}
+              {fieldError && (
+                <p id={fieldErrorId} role="alert" className={authStyles.error}>
+                  {fieldError}
+                </p>
+              )}
+              {submitError && (
+                <p role="alert" className={authStyles.error}>
+                  {submitError}
+                </p>
+              )}
 
               <button type="submit" className={authStyles.button} disabled={submitting || (match && !classes)}>
                 {submitting ? 'Publicando…' : 'Revisar y publicar'}
@@ -218,15 +248,12 @@ function PublishEvent() {
         </div>
       )}
 
-      <dialog
-        ref={dialogRef}
-        className={styles.dialog}
-        aria-labelledby={dialogTitleId}
-        onClick={handleDialogClick}
-      >
+      <dialog ref={dialogRef} className={styles.dialog} aria-labelledby={dialogTitleId} onClick={handleDialogClick}>
         {evento && (
           <div className={styles.dialogBody}>
-            <h2 id={dialogTitleId} className={styles.dialogTitle}>¿Publicar el evento?</h2>
+            <h2 id={dialogTitleId} className={styles.dialogTitle}>
+              ¿Publicar el evento?
+            </h2>
             <p className={styles.dialogText}>
               <strong>{evento.titulo}</strong> se va a publicar{' '}
               {match ? (
@@ -235,7 +262,9 @@ function PublishEvent() {
                   {chosenClass && ` (demanda ${chosenClass.demanda}, factor ${formatFactor(chosenClass.factor)})`}.
                 </>
               ) : (
-                <>con <strong>{Number(puntos)} puntos</strong>.</>
+                <>
+                  con <strong>{Number(puntos)} puntos</strong>.
+                </>
               )}
             </p>
             <p className={styles.dialogWarning}>

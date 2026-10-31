@@ -32,9 +32,15 @@ function FormulaSettings() {
   useEffect(() => {
     let ignore = false
     getFormulas()
-      .then((result) => { if (!ignore) setData(result) })
-      .catch((err) => { if (!ignore) setLoadError(formulaErrorMessage(err)) })
-    return () => { ignore = true }
+      .then((result) => {
+        if (!ignore) setData(result)
+      })
+      .catch((err) => {
+        if (!ignore) setLoadError(formulaErrorMessage(err))
+      })
+    return () => {
+      ignore = true
+    }
   }, [])
 
   const locked = data?.lock.state === 'locked'
@@ -73,51 +79,71 @@ function FormulaSettings() {
         <h1 className={pageStyles.title}>Fórmula del puntaje</h1>
       </header>
 
-      {notice && <p className={styles.notice} role="status">{notice}</p>}
-      {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
+      {notice && (
+        <p className={styles.notice} role="status">
+          {notice}
+        </p>
+      )}
+      {loadError && (
+        <p className={authStyles.error} role="alert">
+          {loadError}
+        </p>
+      )}
       {!loadError && !data && <p className={styles.muted}>Cargando…</p>}
 
       {data && (
         <>
           <div className={`${pageStyles.split} ${pageStyles.splitEven}`}>
             <section className={styles.section} aria-labelledby="force-title">
-              <h2 id="force-title" className={styles.sectionTitle}>Reglas vigentes</h2>
+              <h2 id="force-title" className={styles.sectionTitle}>
+                Reglas vigentes
+              </h2>
               {data.in_force ? (
                 <dl className={styles.summary}>
                   <dt>Versión de reglas</dt>
                   <dd>{data.in_force.number}</dd>
                   <dt>Fórmula</dt>
-                  <dd>{data.in_force.formula_name} (versión {data.in_force.formula_version})</dd>
+                  <dd>
+                    {data.in_force.formula_name} (versión {data.in_force.formula_version})
+                  </dd>
                   <dt>Publicadas</dt>
-                  <dd>el {formatDateTime(data.in_force.published_at)} por {data.in_force.published_by}</dd>
+                  <dd>
+                    el {formatDateTime(data.in_force.published_at)} por {data.in_force.published_by}
+                  </dd>
                 </dl>
               ) : (
                 <p className={styles.muted}>
-                  Todavía no hay reglas vigentes: el club no publicó ninguna fórmula. Hasta entonces no se puede calcular el ranking ni ajustar parámetros.
+                  Todavía no hay reglas vigentes: el club no publicó ninguna fórmula. Hasta entonces no se puede
+                  calcular el ranking ni ajustar parámetros.
                 </p>
               )}
             </section>
 
             <section className={styles.section} aria-labelledby="lock-title">
-              <h2 id="lock-title" className={styles.sectionTitle}>Bloqueo</h2>
+              <h2 id="lock-title" className={styles.sectionTitle}>
+                Bloqueo
+              </h2>
               <span className={`${styles.pill} ${locked ? styles.pillLocked : ''}`}>
                 {locked ? 'Bloqueada' : 'Desbloqueada'}
               </span>
               {locked ? (
                 <p className={styles.banner}>
-                  Bloqueada desde el {formatDateTime(data.lock.changed_at)} por {data.lock.changed_by}.
-                  Motivo: {data.lock.reason}
+                  Bloqueada desde el {formatDateTime(data.lock.changed_at)} por {data.lock.changed_by}. Motivo:{' '}
+                  {data.lock.reason}
                 </p>
               ) : (
                 <p className={styles.muted}>
-                  Con la fórmula bloqueada no se puede publicar otra ni ajustar parámetros. No afecta el ranking ni lo que ven los socios.
+                  Con la fórmula bloqueada no se puede publicar otra ni ajustar parámetros. No afecta el ranking ni lo
+                  que ven los socios.
                 </p>
               )}
-  
+
               {reasonOpen ? (
                 <form className={authStyles.form} onSubmit={handleLockChange} noValidate>
                   <div className={authStyles.field}>
-                    <label htmlFor={reasonId} className={authStyles.label}>Motivo</label>
+                    <label htmlFor={reasonId} className={authStyles.label}>
+                      Motivo
+                    </label>
                     <textarea
                       id={reasonId}
                       value={reason}
@@ -127,7 +153,11 @@ function FormulaSettings() {
                       className={`${authStyles.input} ${styles.textarea}`}
                     />
                   </div>
-                  {error && <p role="alert" className={authStyles.error}>{error}</p>}
+                  {error && (
+                    <p role="alert" className={authStyles.error}>
+                      {error}
+                    </p>
+                  )}
                   <div className={styles.actions}>
                     <button type="submit" className={authStyles.button} disabled={submitting}>
                       {submitting ? 'Guardando…' : locked ? 'Confirmar desbloqueo' : 'Confirmar bloqueo'}
@@ -135,7 +165,10 @@ function FormulaSettings() {
                     <button
                       type="button"
                       className={authStyles.doorSecondary}
-                      onClick={() => { setReasonOpen(false); setError('') }}
+                      onClick={() => {
+                        setReasonOpen(false)
+                        setError('')
+                      }}
                     >
                       Cancelar
                     </button>
@@ -145,7 +178,10 @@ function FormulaSettings() {
                 <button
                   type="button"
                   className={authStyles.doorSecondary}
-                  onClick={() => { setReasonOpen(true); setNotice('') }}
+                  onClick={() => {
+                    setReasonOpen(true)
+                    setNotice('')
+                  }}
                 >
                   {locked ? 'Desbloquear fórmula' : 'Bloquear fórmula'}
                 </button>
@@ -155,12 +191,17 @@ function FormulaSettings() {
 
           {data.in_force && (
             <section className={styles.section} aria-labelledby="values-title">
-              <h2 id="values-title" className={styles.sectionTitle}>Valores vigentes</h2>
+              <h2 id="values-title" className={styles.sectionTitle}>
+                Valores vigentes
+              </h2>
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
                   <caption className={styles.srOnly}>Valores de los parámetros vigentes</caption>
                   <thead>
-                    <tr><th scope="col">Parámetro</th><th scope="col">Valor</th></tr>
+                    <tr>
+                      <th scope="col">Parámetro</th>
+                      <th scope="col">Valor</th>
+                    </tr>
                   </thead>
                   <tbody>
                     {data.in_force.parameters.map((p) => (
@@ -180,10 +221,13 @@ function FormulaSettings() {
           )}
 
           <section className={styles.section} aria-labelledby="catalog-title">
-            <h2 id="catalog-title" className={styles.sectionTitle}>Catálogo de fórmulas</h2>
+            <h2 id="catalog-title" className={styles.sectionTitle}>
+              Catálogo de fórmulas
+            </h2>
             <ul className={styles.catalog}>
               {data.catalog.map((formula) => {
-                const inForce = data.in_force?.formula_id === formula.id && data.in_force?.formula_version === formula.version
+                const inForce =
+                  data.in_force?.formula_id === formula.id && data.in_force?.formula_version === formula.version
                 return (
                   <li key={`${formula.id}-${formula.version}`} className={styles.catalogItem}>
                     <div className={styles.catalogText}>

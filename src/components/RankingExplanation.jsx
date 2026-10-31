@@ -14,7 +14,9 @@ function RankingExplanation({ explanation, asPage = false }) {
           <section key={`${block.id}-${sectionIndex}`} className={styles.section}>
             <Heading className={styles.heading}>{section.heading}</Heading>
             {section.paragraphs.map((paragraph, index) => (
-              <p key={index} className={styles.paragraph}>{paragraph}</p>
+              <p key={index} className={styles.paragraph}>
+                {paragraph}
+              </p>
             ))}
           </section>
         )),

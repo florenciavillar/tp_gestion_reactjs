@@ -19,7 +19,9 @@ function AppLayout() {
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
-        <Link to="/" className={styles.brand}>Pasión de 10</Link>
+        <Link to="/" className={styles.brand}>
+          Pasión de 10
+        </Link>
         <nav className={styles.nav} aria-label="Principal">
           <NavLink to="/events" className={navLinkClass}>
             <svg viewBox="0 0 24 24" aria-hidden="true">

@@ -10,10 +10,7 @@ export function uploadAttendanceCSV(eventoIdExterno, file, confirmReplace = fals
   const formData = new FormData()
   formData.append('file', file)
   formData.append('confirm_replace', confirmReplace ? 'true' : 'false')
-  return apiUpload(
-    `/admin/events/${encodeURIComponent(eventoIdExterno)}/attendance/upload-csv`,
-    formData,
-  )
+  return apiUpload(`/admin/events/${encodeURIComponent(eventoIdExterno)}/attendance/upload-csv`, formData)
 }
 
 // HU-24: Subir archivo CSV de actividades recurrentes (deporte federado y subcomisiones)

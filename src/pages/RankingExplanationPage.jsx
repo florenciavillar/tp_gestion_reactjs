@@ -18,11 +18,15 @@ function RankingExplanationPage() {
   useEffect(() => {
     let ignore = false
     getRankingExplanation()
-      .then((data) => { if (!ignore) setState({ status: 'ready', data }) })
+      .then((data) => {
+        if (!ignore) setState({ status: 'ready', data })
+      })
       .catch((err) => {
         if (!ignore) setState({ status: 'error', message: err.code === 'MEMBER_WITHOUT_CLUB' ? NO_CLUB : LOAD_ERROR })
       })
-    return () => { ignore = true }
+    return () => {
+      ignore = true
+    }
   }, [])
 
   const data = state.status === 'ready' ? state.data : null
@@ -38,15 +42,27 @@ function RankingExplanationPage() {
         <h1 className={pageStyles.title}>{TITLE}</h1>
       </header>
 
-      {state.status === 'loading' && <p className={styles.muted} role="status">Cargando la explicación…</p>}
+      {state.status === 'loading' && (
+        <p className={styles.muted} role="status">
+          Cargando la explicación…
+        </p>
+      )}
 
-      {state.status === 'error' && <p className={authStyles.error} role="alert">{state.message}</p>}
+      {state.status === 'error' && (
+        <p className={authStyles.error} role="alert">
+          {state.message}
+        </p>
+      )}
 
       {data?.status === 'none' && <p className={`${pageStyles.card} ${styles.muted}`}>{data.message}</p>}
 
       {data?.status === 'published' && (
         <>
-          {data.notice && <p className={styles.banner} role="status">{data.notice.message}</p>}
+          {data.notice && (
+            <p className={styles.banner} role="status">
+              {data.notice.message}
+            </p>
+          )}
           <RankingExplanation explanation={data.explanation} asPage />
         </>
       )}

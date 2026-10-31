@@ -39,24 +39,34 @@ function RankingRun() {
   useEffect(() => {
     let ignore = false
     getLatestRun()
-      .then((result) => { if (!ignore) setRun(result) })
+      .then((result) => {
+        if (!ignore) setRun(result)
+      })
       .catch((err) => {
         if (ignore) return
         // Sin corridas todavía: se muestra el estado vacío, no un error.
         if (!isNoRunError(err)) setLoadError(rankingErrorMessage(err))
       })
-      .finally(() => { if (!ignore) setLoaded(true) })
-    return () => { ignore = true }
+      .finally(() => {
+        if (!ignore) setLoaded(true)
+      })
+    return () => {
+      ignore = true
+    }
   }, [])
-  
+
   useEffect(() => {
-	  let ignore = false
-	  getFormulas()
-	    .then((data) => { if (!ignore) setNoFormula(!data.in_force) })
-	    // Si no se pudo consultar no se bloquea nada: el backend lo valida igual al calcular.
-	    .catch(() => {})
-	  return () => { ignore = true }
-	}, [])
+    let ignore = false
+    getFormulas()
+      .then((data) => {
+        if (!ignore) setNoFormula(!data.in_force)
+      })
+      // Si no se pudo consultar no se bloquea nada: el backend lo valida igual al calcular.
+      .catch(() => {})
+    return () => {
+      ignore = true
+    }
+  }, [])
 
   // Mientras la última corrida esté en curso (la inició este u otro Admin, o se recargó la página),
   // se consulta su estado hasta que termine. Cuando pasa a completed o failed, el efecto se limpia solo.
@@ -181,23 +191,41 @@ function RankingRun() {
         </Link>
         <h1 className={authStyles.title}>Ranking de socios</h1>
 
-        {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
+        {loadError && (
+          <p className={authStyles.error} role="alert">
+            {loadError}
+          </p>
+        )}
         {!loaded && <p className={authStyles.message}>Cargando…</p>}
 
         {loaded && !loadError && (
           <>
             <section className={styles.section} aria-labelledby="status-title">
-              <h2 id="status-title" className={styles.sectionTitle}>Estado</h2>
+              <h2 id="status-title" className={styles.sectionTitle}>
+                Estado
+              </h2>
               <div aria-live="polite">
                 <RunStatus run={run} calculating={calculating} pollError={pollError} />
               </div>
             </section>
 
             <section className={styles.section} aria-labelledby="run-title">
-              <h2 id="run-title" className={styles.sectionTitle}>Calcular</h2>
+              <h2 id="run-title" className={styles.sectionTitle}>
+                Calcular
+              </h2>
               <p className={styles.muted}>
-                El cálculo usa las reglas vigentes y los datos cargados hasta ahora. Al terminar, el nuevo ranking reemplaza al anterior.
+                El cálculo usa las reglas vigentes y los datos cargados hasta ahora. Al terminar, el nuevo ranking
+                reemplaza al anterior.
               </p>
+
+              {noFormula && (
+                <div className={styles.banner} role="status">
+                  <p>El club todavía no publicó la fórmula del puntaje, así que no se puede calcular el ranking.</p>
+                  <Link to="/admin/formula" className={authStyles.switchLink}>
+                    Ir a Fórmula
+                  </Link>
+                </div>
+              )}
 
               {confirmation && (
                 <PreflightConfirmation
@@ -223,12 +251,7 @@ function RankingRun() {
                 </div>
               )}
 
-              <button
-                type="button"
-                className={authStyles.button}
-                onClick={handleCalculate}
-                disabled={busy}
-              >
+              <button type="button" className={authStyles.button} onClick={handleCalculate} disabled={busy}>
                 {buttonLabel}
               </button>
             </section>
@@ -244,9 +267,7 @@ function PreflightConfirmation({ confirmation, onConfirm, onCancel }) {
   return (
     <div className={styles.confirmation} role="alert">
       <p className={styles.confirmationTitle}>
-        {checked
-          ? 'Antes de calcular, revisá estas advertencias:'
-          : 'No pudimos verificar si los datos están al día.'}
+        {checked ? 'Antes de calcular, revisá estas advertencias:' : 'No pudimos verificar si los datos están al día.'}
       </p>
       {checked && (
         <ul className={styles.warningList}>
@@ -254,9 +275,7 @@ function PreflightConfirmation({ confirmation, onConfirm, onCancel }) {
             <li key={warning.code} className={styles.warning}>
               <span>{warning.message}</span>
               {warning.data_as_of && (
-                <span className={styles.warningDate}>
-                  Fecha del dato: {formatDateTime(warning.data_as_of)}
-                </span>
+                <span className={styles.warningDate}>Fecha del dato: {formatDateTime(warning.data_as_of)}</span>
               )}
             </li>
           ))}
@@ -283,12 +302,8 @@ function RunStatus({ run, calculating, pollError }) {
         <p className={styles.muted}>
           El ranking se está calculando. No se puede iniciar otro cálculo hasta que termine.
         </p>
-        {run?.status === 'running' && (
-          <p className={styles.muted}>Iniciado el {formatDateTime(run.calculated_at)}.</p>
-        )}
-        {pollError && (
-          <p className={styles.muted}>No pudimos actualizar el estado. Reintentando…</p>
-        )}
+        {run?.status === 'running' && <p className={styles.muted}>Iniciado el {formatDateTime(run.calculated_at)}.</p>}
+        {pollError && <p className={styles.muted}>No pudimos actualizar el estado. Reintentando…</p>}
       </>
     )
   }

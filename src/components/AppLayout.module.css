@@ -51,7 +51,9 @@
   color: rgb(255 255 255 / 0.72);
   text-decoration: none;
   border-radius: var(--radius-sm);
-  transition: color 0.15s, background-color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
 }
 
 .navLink svg {

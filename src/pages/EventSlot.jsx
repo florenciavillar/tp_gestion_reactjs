@@ -17,8 +17,8 @@ function EventSlot() {
 
       <section className={styles.card}>
         <p className={styles.lead}>
-          Tu turno para este evento todavía no está disponible. Lo vas a ver acá cuando se publique el
-          cronograma de ingreso.
+          Tu turno para este evento todavía no está disponible. Lo vas a ver acá cuando se publique el cronograma de
+          ingreso.
         </p>
       </section>
     </main>
