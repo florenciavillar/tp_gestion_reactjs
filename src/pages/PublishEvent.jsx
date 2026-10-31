@@ -1,9 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
-import Logo from '../components/Logo.jsx'
 import { getEventClasses, getPendingEvents, publishEvent } from '../services/events.js'
 import { eventTypeLabel, formatEventDate, formatEventTime, formatFactor, isMatch } from '../services/eventFormat.js'
 import authStyles from './Auth.module.css'
+import pageStyles from './Page.module.css'
 import styles from './PublishEvent.module.css'
 
 const MIN_POINTS = 1
@@ -104,54 +104,23 @@ function PublishEvent() {
   }
 
   return (
-    <main className={authStyles.page}>
-      <Logo />
-
-      <section className={`${authStyles.card} ${styles.card}`}>
-        <Link to="/events" className={authStyles.back} aria-label="Volver a los eventos pendientes">
+    <main className={pageStyles.page}>
+      <header className={pageStyles.header}>
+        <Link to="/events" className={pageStyles.back} aria-label="Volver a los eventos pendientes">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
+        <h1 className={pageStyles.title}>Publicar evento</h1>
+      </header>
 
-        <h1 className={authStyles.title}>Publicar evento</h1>
+      {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
 
-        {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
+      {!loadError && !evento && <p className={styles.help}>Cargando evento…</p>}
 
-        {!loadError && !evento && <p className={authStyles.message}>Cargando evento…</p>}
-
-        {evento && (
-          <>
-            <dl className={styles.summary}>
-              <div className={styles.row}>
-                <dt>Evento</dt>
-                <dd>{evento.titulo}</dd>
-              </div>
-              <div className={styles.row}>
-                <dt>Tipo</dt>
-                <dd>{eventTypeLabel(evento.tipo)}</dd>
-              </div>
-              <div className={styles.row}>
-                <dt>Fecha</dt>
-                <dd>{formatEventDate(evento.fecha_hora)}</dd>
-              </div>
-              <div className={styles.row}>
-                <dt>Hora</dt>
-                <dd>{formatEventTime(evento.fecha_hora)}</dd>
-              </div>
-              <div className={styles.row}>
-                <dt>Lugar</dt>
-                <dd>{evento.lugar}</dd>
-              </div>
-              {evento.descripcion && (
-                <div className={styles.row}>
-                  <dt>Detalle</dt>
-                  <dd>{evento.descripcion}</dd>
-                </div>
-              )}
-            </dl>
-            <p className={styles.note}>Estos datos los envió el club y no se pueden modificar.</p>
-
+      {evento && (
+        <div className={`${pageStyles.split} ${pageStyles.splitEven}`}>
+          <section className={pageStyles.card}>
             <form className={authStyles.form} onSubmit={handleReview} noValidate>
               {match ? (
                 <fieldset className={styles.classes} aria-describedby={fieldError ? fieldErrorId : undefined}>
@@ -160,7 +129,7 @@ function PublishEvent() {
                     La clase define cuánto pesa la asistencia a este partido en el puntaje. Un factor mayor
                     premia la asistencia a los partidos de menor convocatoria.
                   </p>
-                  {!classes && <p className={authStyles.message}>Cargando clases…</p>}
+                  {!classes && <p className={styles.help}>Cargando clases…</p>}
                   {classes?.map((item) => (
                     <label key={item.clase} className={styles.classOption}>
                       <input
@@ -213,9 +182,41 @@ function PublishEvent() {
                 {submitting ? 'Publicando…' : 'Revisar y publicar'}
               </button>
             </form>
-          </>
-        )}
-      </section>
+          </section>
+
+          <section className={`${pageStyles.card} ${styles.eventData}`}>
+            <dl className={styles.summary}>
+              <div className={styles.row}>
+                <dt>Evento</dt>
+                <dd>{evento.titulo}</dd>
+              </div>
+              <div className={styles.row}>
+                <dt>Tipo</dt>
+                <dd>{eventTypeLabel(evento.tipo)}</dd>
+              </div>
+              <div className={styles.row}>
+                <dt>Fecha</dt>
+                <dd>{formatEventDate(evento.fecha_hora)}</dd>
+              </div>
+              <div className={styles.row}>
+                <dt>Hora</dt>
+                <dd>{formatEventTime(evento.fecha_hora)}</dd>
+              </div>
+              <div className={styles.row}>
+                <dt>Lugar</dt>
+                <dd>{evento.lugar}</dd>
+              </div>
+              {evento.descripcion && (
+                <div className={styles.row}>
+                  <dt>Detalle</dt>
+                  <dd>{evento.descripcion}</dd>
+                </div>
+              )}
+            </dl>
+            <p className={styles.note}>Estos datos los envió el club y no se pueden modificar.</p>
+          </section>
+        </div>
+      )}
 
       <dialog
         ref={dialogRef}
