@@ -1,0 +1,64 @@
+/* Pantalla del cálculo del ranking (HU-25). */
+.card {
+  max-width: 760px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.muted {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.banner {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  background: color-mix(in srgb, var(--color-red) 10%, white);
+  border-left: 4px solid var(--color-red);
+  border-radius: 4px;
+}
+
+.pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-pitch);
+  background: var(--color-tint);
+  border-radius: 999px;
+}
+
+.pillFailed {
+  color: var(--color-red-dark);
+  background: color-mix(in srgb, var(--color-red) 10%, white);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.375rem 1rem;
+  margin: 0;
+}
+
+.summary dt {
+  color: var(--color-text-muted);
+}
+
+.summary dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}

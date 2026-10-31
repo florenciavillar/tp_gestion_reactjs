@@ -16,6 +16,7 @@ import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SignUp from './pages/SignUp.jsx'
+import RankingRun from './pages/RankingRun.jsx'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/admin/attendance" element={<RequireAuth role="admin"><AttendanceManagement /></RequireAuth>} />
         <Route path="/admin/formula" element={<RequireAuth role="admin"><FormulaSettings /></RequireAuth>} />
         <Route path="/admin/formula/:id/:version" element={<RequireAuth role="admin"><FormulaPublish /></RequireAuth>} />
+        <Route path="/admin/ranking" element={<RequireAuth role="admin"><RankingRun /></RequireAuth>} />
         <Route path="/admin/events/:id/publish" element={<RequireAuth role="admin"><PublishEvent /></RequireAuth>} />
         <Route path="/ranking/explanation" element={<RequireAuth role="member"><RankingExplanationPage /></RequireAuth>} />
         <Route path="/member/events/:id/slot" element={<RequireAuth role="member"><EventSlot /></RequireAuth>} />
