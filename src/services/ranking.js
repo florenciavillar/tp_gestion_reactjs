@@ -28,6 +28,12 @@ export function isNoRunError(err) {
   return err.status === 404 && err.code === 'NO_RANKING_RUN'
 }
 
+// Cuando el pedido de cálculo se corta (sin respuesta, o 502/503/504 de un proxy), el backend pudo
+// haberlo recibido igual: no se puede dar por fallido, hay que mirar la última corrida.
+export function isUncertainOutcome(err) {
+  return err.status === undefined || [502, 503, 504].includes(err.status)
+}
+
 const ERRORS = {
   FORBIDDEN: 'Solo los admins pueden calcular el ranking.',
   ADMIN_WITHOUT_CLUB: 'Tu cuenta no tiene un club asignado.',
