@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import Logo from '../components/Logo.jsx'
 import { formatDateTime } from '../services/eventFormat.js'
-import { getLatestRun, isNoRunError, rankingErrorMessage, startRun } from '../services/ranking.js'
+import {
+  getLatestRun,
+  getPreflight,
+  isNoRunError,
+  rankingErrorMessage,
+  startRun,
+} from '../services/ranking.js'
 import authStyles from './Auth.module.css'
 import styles from './RankingRun.module.css'
 
@@ -11,6 +17,10 @@ function RankingRun() {
   const [run, setRun] = useState(null)
   const [loaded, setLoaded] = useState(false)
   const [loadError, setLoadError] = useState('')
+  const [checking, setChecking] = useState(false)
+  // Advertencias previas al cálculo. null = no se está pidiendo confirmación.
+  // { warnings, checked }: `checked` es false si no se pudo consultar el preflight.
+  const [confirmation, setConfirmation] = useState(null)
   const [calculating, setCalculating] = useState(false)
   const [error, setError] = useState(null)
 
@@ -35,25 +45,52 @@ function RankingRun() {
     }
   }
 
-	async function handleStart() {
-	  setCalculating(true)
-	  setError(null)
-	  try {
-	    setRun(await startRun())
-	  } catch (err) {
-	    if (err.code === 'RANKING_RUN_IN_PROGRESS' || err.code === 'RANKING_RUN_FAILED') {
-	      // Ya había una corrida en curso, o el cálculo falló y quedó registrado:
-	      // el estado real está en la última corrida.
-	      await refreshLatest()
-	    } else {
-	      setError({ code: err.code, message: rankingErrorMessage(err) })
-	    }
-	  } finally {
-	    setCalculating(false)
-	  }
-	}
+  async function handleStart() {
+    setConfirmation(null)
+    setCalculating(true)
+    setError(null)
+    try {
+      setRun(await startRun())
+    } catch (err) {
+      if (err.code === 'RANKING_RUN_IN_PROGRESS' || err.code === 'RANKING_RUN_FAILED') {
+        // Ya había una corrida en curso, o el cálculo falló y quedó registrado:
+        // el estado real está en la última corrida.
+        await refreshLatest()
+      } else {
+        setError({ code: err.code, message: rankingErrorMessage(err) })
+      }
+    } finally {
+      setCalculating(false)
+    }
+  }
+
+  // Consulta las advertencias antes de calcular. Sin advertencias, calcula directo.
+  async function handleCalculate() {
+    setError(null)
+    setChecking(true)
+    let warnings = []
+    let checked = true
+    try {
+      warnings = (await getPreflight()).warnings
+    } catch {
+      // Las advertencias no bloquean: si no se pudieron consultar, se avisa y se deja continuar.
+      checked = false
+    } finally {
+      setChecking(false)
+    }
+    if (checked && warnings.length === 0) {
+      await handleStart()
+      return
+    }
+    setConfirmation({ warnings, checked })
+  }
 
   const running = calculating || run?.status === 'running'
+  const busy = running || checking || confirmation !== null
+
+  let buttonLabel = 'Calcular ranking'
+  if (checking) buttonLabel = 'Verificando datos…'
+  else if (running) buttonLabel = 'Calculando…'
 
   return (
     <main className={authStyles.page}>
@@ -83,29 +120,75 @@ function RankingRun() {
               <p className={styles.muted}>
                 El cálculo usa las reglas vigentes y los datos cargados hasta ahora. Al terminar, el nuevo ranking reemplaza al anterior.
               </p>
+
+              {confirmation && (
+                <PreflightConfirmation
+                  confirmation={confirmation}
+                  onConfirm={handleStart}
+                  onCancel={() => setConfirmation(null)}
+                />
+              )}
+
               {error && (
-		  <div role="alert">
-		    <p className={authStyles.error}>{error.message}</p>
-		    {error.code === 'FORMULA_NOT_PUBLISHED' && (
-		      <Link to="/admin/formula" className={authStyles.switchLink}>
-			Ir a Fórmula
-		      </Link>
-		    )}
-		  </div>
-		)}
+                <div role="alert">
+                  <p className={authStyles.error}>{error.message}</p>
+                  {error.code === 'FORMULA_NOT_PUBLISHED' && (
+                    <Link to="/admin/formula" className={authStyles.switchLink}>
+                      Ir a Fórmula
+                    </Link>
+                  )}
+                </div>
+              )}
+
               <button
                 type="button"
                 className={authStyles.button}
-                onClick={handleStart}
-                disabled={running}
+                onClick={handleCalculate}
+                disabled={busy}
               >
-                {running ? 'Calculando…' : 'Calcular ranking'}
+                {buttonLabel}
               </button>
             </section>
           </>
         )}
       </section>
     </main>
+  )
+}
+
+function PreflightConfirmation({ confirmation, onConfirm, onCancel }) {
+  const { warnings, checked } = confirmation
+  return (
+    <div className={styles.confirmation} role="alert">
+      <p className={styles.confirmationTitle}>
+        {checked
+          ? 'Antes de calcular, revisá estas advertencias:'
+          : 'No pudimos verificar si los datos están al día.'}
+      </p>
+      {checked && (
+        <ul className={styles.warningList}>
+          {warnings.map((warning) => (
+            <li key={warning.code} className={styles.warning}>
+              <span>{warning.message}</span>
+              {warning.data_as_of && (
+                <span className={styles.warningDate}>
+                  Fecha del dato: {formatDateTime(warning.data_as_of)}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className={styles.muted}>Podés calcular igual si querés.</p>
+      <div className={styles.actions}>
+        <button type="button" className={authStyles.button} onClick={onConfirm}>
+          Calcular igual
+        </button>
+        <button type="button" className={authStyles.doorSecondary} onClick={onCancel}>
+          Cancelar
+        </button>
+      </div>
+    </div>
   )
 }
 

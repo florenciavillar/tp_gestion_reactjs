@@ -10,6 +10,13 @@ export function getLatestRun() {
   return apiGet('/admin/ranking/runs/latest')
 }
 
+// Advertencias antes de calcular: { warnings: [{ code, message, data_as_of }], can_continue }.
+// `code`: ROSTER_STALE, ATTENDANCE_STALE o LOADS_AFTER_LAST_RANKING. `data_as_of` es null si el club
+// nunca cargó ese dato. No bloquean: el cálculo no las exige.
+export function getPreflight() {
+  return apiGet('/admin/ranking/preflight')
+}
+
 // Calcula el ranking. El pedido queda abierto hasta que el cálculo termina (o falla)
 // y devuelve la corrida con su estado final.
 export function startRun() {
