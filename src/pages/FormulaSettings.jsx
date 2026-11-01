@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useId, useState } from 'react'
 import { Link, useLocation } from 'react-router'
-import Logo from '../components/Logo.jsx'
 import RankingExplanation from '../components/RankingExplanation.jsx'
 import { formatDateTime } from '../services/eventFormat.js'
 import { formulaErrorMessage, getFormulas, lockFormula, unlockFormula, withUnit } from '../services/formula.js'
 import authStyles from './Auth.module.css'
 import styles from './Formula.module.css'
+import pageStyles from './Page.module.css'
 
 // HU-27 / HU-28: catálogo de fórmulas, reglas vigentes del club y bloqueo. Solo admins.
 function FormulaSettings() {
@@ -63,22 +63,41 @@ function FormulaSettings() {
   }
 
   return (
-    <main className={authStyles.page}>
-      <Logo />
-      <section className={`${authStyles.card} ${styles.card}`}>
-        <Link to="/" className={authStyles.back} aria-label="Volver al inicio">
+    <main className={pageStyles.page}>
+      <header className={pageStyles.header}>
+        <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className={authStyles.title}>Fórmula del puntaje</h1>
+        <h1 className={pageStyles.title}>Fórmula del puntaje</h1>
+      </header>
 
-        {notice && <p className={styles.notice} role="status">{notice}</p>}
-        {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
-        {!loadError && !data && <p className={authStyles.message}>Cargando…</p>}
+      {notice && <p className={styles.notice} role="status">{notice}</p>}
+      {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
+      {!loadError && !data && <p className={styles.muted}>Cargando…</p>}
 
-        {data && (
-          <>
+      {data && (
+        <>
+          <div className={`${pageStyles.split} ${pageStyles.splitEven}`}>
+            <section className={styles.section} aria-labelledby="force-title">
+              <h2 id="force-title" className={styles.sectionTitle}>Reglas vigentes</h2>
+              {data.in_force ? (
+                <dl className={styles.summary}>
+                  <dt>Versión de reglas</dt>
+                  <dd>{data.in_force.number}</dd>
+                  <dt>Fórmula</dt>
+                  <dd>{data.in_force.formula_name} (versión {data.in_force.formula_version})</dd>
+                  <dt>Publicadas</dt>
+                  <dd>el {formatDateTime(data.in_force.published_at)} por {data.in_force.published_by}</dd>
+                </dl>
+              ) : (
+                <p className={styles.muted}>
+                  Todavía no hay reglas vigentes: el club no publicó ninguna fórmula. Hasta entonces no se puede calcular el ranking ni ajustar parámetros.
+                </p>
+              )}
+            </section>
+
             <section className={styles.section} aria-labelledby="lock-title">
               <h2 id="lock-title" className={styles.sectionTitle}>Bloqueo</h2>
               <span className={`${styles.pill} ${locked ? styles.pillLocked : ''}`}>
@@ -94,7 +113,7 @@ function FormulaSettings() {
                   Con la fórmula bloqueada no se puede publicar otra ni ajustar parámetros. No afecta el ranking ni lo que ven los socios.
                 </p>
               )}
-
+  
               {reasonOpen ? (
                 <form className={authStyles.form} onSubmit={handleLockChange} noValidate>
                   <div className={authStyles.field}>
@@ -132,74 +151,62 @@ function FormulaSettings() {
                 </button>
               )}
             </section>
+          </div>
 
-            <section className={styles.section} aria-labelledby="force-title">
-              <h2 id="force-title" className={styles.sectionTitle}>Reglas vigentes</h2>
-              {data.in_force ? (
-                <>
-                  <dl className={styles.summary}>
-                    <dt>Versión de reglas</dt>
-                    <dd>{data.in_force.number}</dd>
-                    <dt>Fórmula</dt>
-                    <dd>{data.in_force.formula_name} (versión {data.in_force.formula_version})</dd>
-                    <dt>Publicadas</dt>
-                    <dd>el {formatDateTime(data.in_force.published_at)} por {data.in_force.published_by}</dd>
-                  </dl>
-                  <div className={styles.tableWrap}>
-                    <table className={styles.table}>
-                      <caption className={styles.srOnly}>Valores de los parámetros vigentes</caption>
-                      <thead>
-                        <tr><th scope="col">Parámetro</th><th scope="col">Valor</th></tr>
-                      </thead>
-                      <tbody>
-                        {data.in_force.parameters.map((p) => (
-                          <tr key={p.key}>
-                            <td>{p.name} ({p.symbol})</td>
-                            <td>{withUnit(p.value, p.unit)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <details className={styles.details}>
-                    <summary>Ver la explicación que leen los socios</summary>
-                    <RankingExplanation explanation={data.in_force.explanation} />
-                  </details>
-                </>
-              ) : (
-                <p className={styles.muted}>
-                  Todavía no hay reglas vigentes: el club no publicó ninguna fórmula. Hasta entonces no se puede calcular el ranking ni ajustar parámetros.
-                </p>
-              )}
+          {data.in_force && (
+            <section className={styles.section} aria-labelledby="values-title">
+              <h2 id="values-title" className={styles.sectionTitle}>Valores vigentes</h2>
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <caption className={styles.srOnly}>Valores de los parámetros vigentes</caption>
+                  <thead>
+                    <tr><th scope="col">Parámetro</th><th scope="col">Valor</th></tr>
+                  </thead>
+                  <tbody>
+                    {data.in_force.parameters.map((p) => (
+                      <tr key={p.key}>
+                        <td>{p.name}</td>
+                        <td>{withUnit(p.value, p.unit)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <details className={styles.details}>
+                <summary>Ver la explicación que leen los socios</summary>
+                <RankingExplanation explanation={data.in_force.explanation} />
+              </details>
             </section>
+          )}
 
-            <section className={styles.section} aria-labelledby="catalog-title">
-              <h2 id="catalog-title" className={styles.sectionTitle}>Catálogo de fórmulas</h2>
-              <ul className={styles.catalog}>
-                {data.catalog.map((formula) => {
-                  const inForce = data.in_force?.formula_id === formula.id && data.in_force?.formula_version === formula.version
-                  return (
-                    <li key={`${formula.id}-${formula.version}`} className={styles.catalogItem}>
+          <section className={styles.section} aria-labelledby="catalog-title">
+            <h2 id="catalog-title" className={styles.sectionTitle}>Catálogo de fórmulas</h2>
+            <ul className={styles.catalog}>
+              {data.catalog.map((formula) => {
+                const inForce = data.in_force?.formula_id === formula.id && data.in_force?.formula_version === formula.version
+                return (
+                  <li key={`${formula.id}-${formula.version}`} className={styles.catalogItem}>
+                    <div className={styles.catalogText}>
                       <div className={styles.catalogHead}>
                         <h3 className={styles.catalogName}>{formula.name}</h3>
                         <span className={styles.muted}>Versión {formula.version}</span>
                         {inForce && <span className={styles.pill}>Vigente</span>}
                       </div>
                       <p className={styles.muted}>{formula.description}</p>
-                      <Link
-                        to={`/admin/formula/${encodeURIComponent(formula.id)}/${formula.version}`}
-                        className={inForce ? authStyles.doorSecondary : authStyles.door}
-                      >
-                        {inForce ? 'Ajustar parámetros' : 'Configurar y publicar'}
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            </section>
-          </>
-        )}
-      </section>
+                    </div>
+                    <Link
+                      to={`/admin/formula/${encodeURIComponent(formula.id)}/${formula.version}`}
+                      className={inForce ? authStyles.doorSecondary : authStyles.door}
+                    >
+                      {inForce ? 'Ajustar parámetros' : 'Configurar y publicar'}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        </>
+      )}
     </main>
   )
 }

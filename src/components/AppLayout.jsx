@@ -4,7 +4,9 @@ import { useAuth } from './authContext.js'
 import UserMenu from './UserMenu.jsx'
 import styles from './AppLayout.module.css'
 
-// Marco de las pantallas con sesión: la barra superior lleva la marca y las opciones a la izquierda y el menú de usuario a la derecha.
+const navLinkClass = ({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+
+// Marco de las pantallas con sesión: barra lateral fija con la marca, las opciones y el menú de usuario al pie.
 function AppLayout() {
   const { pathname } = useLocation()
   const { user, refreshUser } = useAuth()
@@ -16,28 +18,33 @@ function AppLayout() {
 
   return (
     <div className={styles.shell}>
-      <header className={styles.header}>
+      <aside className={styles.sidebar}>
         <Link to="/" className={styles.brand}>Pasión de 10</Link>
         <nav className={styles.nav} aria-label="Principal">
-          <NavLink
-            to="/events"
-            className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
-          >
+          <NavLink to="/events" className={navLinkClass}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M3 10h18M8 3v4M16 3v4" />
+            </svg>
             Eventos
           </NavLink>
           {user?.role === 'member' && (
-            <NavLink
-              to="/ranking/explanation"
-              className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
-            >
+            <NavLink to="/ranking/explanation" className={navLinkClass}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01" />
+              </svg>
               Cómo se calcula
             </NavLink>
           )}
           {user?.role === 'admin' && (
-            <NavLink
-              to="/admin/formula"
-              className={({ isActive }) => `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
-            >
+            <NavLink to="/admin/formula" className={navLinkClass}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" />
+                <circle cx="16" cy="6" r="2" />
+                <circle cx="10" cy="12" r="2" />
+                <circle cx="18" cy="18" r="2" />
+              </svg>
               Fórmula
             </NavLink>
           )}
@@ -45,8 +52,10 @@ function AppLayout() {
         <div className={styles.menu}>
           <UserMenu />
         </div>
-      </header>
-      <Outlet />
+      </aside>
+      <div className={styles.content}>
+        <Outlet />
+      </div>
     </div>
   )
 }

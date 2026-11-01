@@ -70,7 +70,7 @@ function AdminSignIn() {
               </svg>
             </Link>
 
-            <h1 className={styles.title}>Ingreso Admins</h1>
+            <h1 className={styles.title}>Ingreso de admins</h1>
 
             {notice && <p className={styles.message} role="status">{notice}</p>}
 

@@ -49,7 +49,7 @@ function PendingEvents() {
           </p>
         </div>
         <Link to="/admin/attendance" className={styles.secondary}>
-          Cargar Asistencias
+          Cargar asistencias
         </Link>
       </div>
 
