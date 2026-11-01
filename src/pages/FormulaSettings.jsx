@@ -7,8 +7,7 @@ import { formulaErrorMessage, getFormulas, lockFormula, unlockFormula, withUnit 
 import authStyles from './Auth.module.css'
 import styles from './Formula.module.css'
 
-// HU-27: catálogo de fórmulas, reglas vigentes del club y bloqueo. Solo admins.
-// Las reglas vigentes se muestran de solo lectura: ajustar parámetros es HU-28.
+// HU-27 / HU-28: catálogo de fórmulas, reglas vigentes del club y bloqueo. Solo admins.
 function FormulaSettings() {
   const location = useLocation()
   const [data, setData] = useState(null)
@@ -191,7 +190,7 @@ function FormulaSettings() {
                         to={`/admin/formula/${encodeURIComponent(formula.id)}/${formula.version}`}
                         className={inForce ? authStyles.doorSecondary : authStyles.door}
                       >
-                        {inForce ? 'Ver estructura' : 'Configurar y publicar'}
+                        {inForce ? 'Ajustar parámetros' : 'Configurar y publicar'}
                       </Link>
                     </li>
                   )

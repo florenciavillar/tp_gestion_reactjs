@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router'
 import Logo from '../components/Logo.jsx'
 import RankingExplanation from '../components/RankingExplanation.jsx'
 import { formatDateTime } from '../services/eventFormat.js'
-import { formatNumber, formulaErrorMessage, getFormula, previewFormula, publishFormula, withUnit } from '../services/formula.js'
+import { adjustFormula, formatNumber, formulaErrorMessage, getFormula, previewFormula, publishFormula, withUnit } from '../services/formula.js'
 import authStyles from './Auth.module.css'
 import styles from './Formula.module.css'
 
@@ -13,14 +13,14 @@ function toInput(value) {
 }
 
 // Errores que significan que la pantalla quedó desactualizada: hay que recargar.
-const RELOAD_CODES = ['STALE_RULES', 'FORMULA_LOCKED', 'SAME_FORMULA_IN_FORCE']
+const RELOAD_CODES = ['STALE_RULES', 'FORMULA_LOCKED', 'SAME_FORMULA_IN_FORCE', 'SEASON_CUTOFF_REACHED']
 
 function loadErrorText(err) {
   return err.code === 'FORMULA_NOT_FOUND' ? 'Esa fórmula no está en el catálogo.' : formulaErrorMessage(err)
 }
 
-// HU-27: el Admin configura una fórmula del catálogo, ve la vista previa de lo que van a leer los
-// socios y la publica. Solo cambian los valores: la estructura (variables, constantes) es de solo lectura.
+// HU-27 / HU-28: el Admin configura una fórmula del catálogo o ajusta los parámetros de la vigente,
+// ve la vista previa de lo que van a leer los socios y confirma.
 function FormulaPublish() {
   const { id, version } = useParams()
   const navigate = useNavigate()
@@ -61,7 +61,16 @@ function FormulaPublish() {
   }, [id, version, applyDetail])
 
   const locked = detail?.lock.state === 'locked'
-  const blocked = locked || detail?.is_in_force
+  const cutoffReached = Boolean(detail?.season_cutoff?.reached)
+  const isAdjusting = Boolean(detail?.is_in_force)
+  const blocked = locked || (isAdjusting && cutoffReached)
+  // Vacío cuenta como cambio aunque el original sea 0: Number('') === 0.
+  const hasChanges = isAdjusting
+    ? Object.entries(detail.values).some(([key, original]) => {
+        const current = String(values[key] ?? '').trim().replaceAll(',', '.')
+        return current === '' || Number(current) !== Number(original)
+      })
+    : true
   const violations = preview && !preview.valid ? preview.violations : []
   const byParameter = Object.fromEntries(violations.filter((v) => v.parameter).map((v) => [v.parameter, v.message]))
   const general = violations.filter((v) => !v.parameter)
@@ -99,11 +108,16 @@ function FormulaPublish() {
     setBusy(true)
     setError('')
     try {
-      const published = await publishFormula(id, version, {
-        values,
-        expectedRulesVersion: detail.rules_version_in_force,
-      })
-      navigate('/admin/formula', { state: { notice: published.message } })
+      const result = await (isAdjusting
+        ? adjustFormula({
+            values,
+            expectedRulesVersion: detail.rules_version_in_force,
+          })
+        : publishFormula(id, version, {
+            values,
+            expectedRulesVersion: detail.rules_version_in_force,
+          }))
+      navigate('/admin/formula', { state: { notice: result.message } })
     } catch (err) {
       setConfirming(false)
       if (err.code === 'INVALID_VALUES' && err.violations) {
@@ -126,7 +140,7 @@ function FormulaPublish() {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className={authStyles.title}>Publicar fórmula</h1>
+        <h1 className={authStyles.title}>{isAdjusting ? 'Ajustar parámetros' : 'Publicar fórmula'}</h1>
 
         {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
         {!loadError && !detail && <p className={authStyles.message}>Cargando fórmula…</p>}
@@ -143,9 +157,9 @@ function FormulaPublish() {
                 Motivo: {detail.lock.reason}
               </p>
             )}
-            {detail.is_in_force && (
+            {isAdjusting && cutoffReached && (
               <p className={styles.banner} role="status">
-                Esta fórmula y esta versión ya están vigentes. Para cambiar sus valores hace falta el ajuste de parámetros.
+                {detail.season_cutoff.message}
               </p>
             )}
 
@@ -225,13 +239,17 @@ function FormulaPublish() {
                 </button>
               )}
 
+              {isAdjusting && !hasChanges && !blocked && (
+                <p className={styles.hint}>Modificá al menos un parámetro para poder ajustar la fórmula.</p>
+              )}
+
               {!confirming && (
                 <div className={styles.actions}>
                   <button type="button" className={authStyles.doorSecondary} onClick={runPreview} disabled={busy || blocked}>
                     Ver vista previa
                   </button>
-                  <button type="submit" className={authStyles.button} disabled={busy || blocked}>
-                    {busy ? 'Revisando…' : 'Publicar'}
+                  <button type="submit" className={authStyles.button} disabled={busy || blocked || (isAdjusting && !hasChanges)}>
+                    {busy ? 'Revisando…' : isAdjusting ? 'Ajustar parámetros' : 'Publicar'}
                   </button>
                 </div>
               )}
@@ -239,11 +257,13 @@ function FormulaPublish() {
 
             {confirming && preview?.valid && (
               <section className={styles.confirm} aria-labelledby="confirm-title">
-                <h2 id="confirm-title" className={styles.sectionTitle}>Confirmá la publicación</h2>
+                <h2 id="confirm-title" className={styles.sectionTitle}>
+                  {isAdjusting ? 'Confirmá el ajuste de parámetros' : 'Confirmá la publicación'}
+                </h2>
                 <p className={styles.confirmText}>{detail.confirmation_statement}</p>
                 <div className={styles.actions}>
                   <button type="button" className={authStyles.button} onClick={handleConfirm} disabled={busy}>
-                    {busy ? 'Publicando…' : 'Confirmar y publicar'}
+                    {busy ? (isAdjusting ? 'Guardando…' : 'Publicando…') : isAdjusting ? 'Confirmar y guardar' : 'Confirmar y publicar'}
                   </button>
                   <button type="button" className={authStyles.doorSecondary} onClick={() => setConfirming(false)} disabled={busy}>
                     Volver a editar
