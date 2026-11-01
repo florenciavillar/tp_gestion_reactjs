@@ -82,6 +82,12 @@ function UserMenu() {
           </div>
           <ul className={styles.list}>
             <li><Link to="/profile" className={styles.item} onClick={close}>Perfil</Link></li>
+            {user.role === 'member' && (
+              <>
+                <li><Link to="/ranking/breakdown" className={styles.item} onClick={close}>Desglose de mi puntaje</Link></li>
+                <li><Link to="/ranking/explanation" className={styles.item} onClick={close}>¿Cómo se calcula?</Link></li>
+              </>
+            )}
             {user.role === 'admin' && (
               <>
                 <li><Link to="/admin/attendance" className={styles.item} onClick={close}>Cargar Asistencias</Link></li>

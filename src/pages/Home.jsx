@@ -21,9 +21,14 @@ function Home() {
         Ver eventos
       </Link>
       {user.role === 'member' && (
-        <Link to="/ranking/explanation" className={styles.secondary}>
-          ¿Cómo se calcula mi puntaje?
-        </Link>
+        <>
+          <Link to="/ranking/breakdown" className={styles.secondary}>
+            Desglose de mi puntaje
+          </Link>
+          <Link to="/ranking/explanation" className={styles.secondary}>
+            ¿Cómo se calcula mi puntaje?
+          </Link>
+        </>
       )}
     </main>
   )
