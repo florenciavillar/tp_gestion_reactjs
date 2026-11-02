@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router'
 import { formatEventDate, formatEventTime } from '../services/eventFormat.js'
 import { formatPosition, formatScore } from '../services/memberScore.js'
 import {
-  formatCalculationDate,
   formatDifference,
   formatLevel,
   simulateEvent,
@@ -72,7 +71,7 @@ function SimulationResult() {
 }
 
 function Result({ data }) {
-  const { event, ranking, rules_notice: rulesNotice, distance, current, attend, position_estimate: estimate } = data
+  const { event, rules_notice: rulesNotice, distance, current, attend, position_estimate: estimate } = data
   const notAttend = data.not_attend
   const estimated = estimate.status === 'estimated'
 
@@ -102,10 +101,6 @@ function Result({ data }) {
         <dd>{formatScore(current.score)}</dd>
         <dt>Tu posición hoy</dt>
         <dd>{formatPosition(current.position, current.ranked_total)}</dd>
-        <dt>Reglas</dt>
-        <dd>
-          Versión {ranking.rules_version} · Ranking del {formatCalculationDate(ranking.calculation_date)}
-        </dd>
       </dl>
 
       <div className={styles.tableWrap}>

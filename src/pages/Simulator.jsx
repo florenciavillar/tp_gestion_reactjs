@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import eventStyles from '../components/Events.module.css'
 import { formatEventDate, formatEventTime } from '../services/eventFormat.js'
 import { getUpcomingEvents } from '../services/events.js'
-import { formatCalculationDate, getSimulatorStatus, simulatorErrorMessage } from '../services/simulator.js'
+import { getSimulatorStatus, simulatorErrorMessage } from '../services/simulator.js'
 import authStyles from './Auth.module.css'
 import styles from './Formula.module.css'
 import pageStyles from './Page.module.css'
@@ -97,13 +97,6 @@ function Simulator() {
                 </li>
               ))}
             </ul>
-          )}
-
-          {state.simulator.ranking && (
-            <p className={styles.muted}>
-              Simulación con el ranking del {formatCalculationDate(state.simulator.ranking.calculation_date)} (reglas
-              versión {state.simulator.ranking.rules_version}).
-            </p>
           )}
         </>
       )}
