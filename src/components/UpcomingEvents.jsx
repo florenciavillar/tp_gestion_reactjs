@@ -5,7 +5,8 @@ import { formatEventDate, formatEventTime } from '../services/eventFormat.js'
 import styles from './Events.module.css'
 
 // HU-17: próximos eventos publicados del club del socio, de solo lectura. Cada evento lleva al
-// turno propio del socio (HU-39). El back ya filtra por club y saca los que empezaron.
+// turno propio del socio (HU-39) y a su simulación de puntaje (HU-18). El back ya filtra por club y
+// saca los que empezaron.
 function UpcomingEvents() {
   const [state, setState] = useState({ status: 'loading' })
   const headingId = useId()
@@ -73,6 +74,12 @@ function UpcomingEvents() {
               <div className={styles.cardBottom}>
                 <Link to={evento.slot_url} className={styles.secondary}>
                   Ver mi turno
+                </Link>
+                <Link
+                  to={`/ranking/simulator/${encodeURIComponent(evento.id_interno)}`}
+                  className={styles.secondary}
+                >
+                  Simular
                 </Link>
               </div>
             </li>

@@ -16,6 +16,9 @@ import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
 import SignIn from './pages/SignIn.jsx'
+import SimulationResult from './pages/SimulationResult.jsx'
+import Simulator from './pages/Simulator.jsx'
+import SimulatorSettings from './pages/SimulatorSettings.jsx'
 import SignUp from './pages/SignUp.jsx'
 import RankingRun from './pages/RankingRun.jsx'
 
@@ -73,6 +76,14 @@ function App() {
           }
         />
         <Route
+          path="/admin/simulator"
+          element={
+            <RequireAuth role="admin">
+              <SimulatorSettings />
+            </RequireAuth>
+          }
+        />
+        <Route
           path="/admin/events/:id/publish"
           element={
             <RequireAuth role="admin">
@@ -93,6 +104,22 @@ function App() {
           element={
             <RequireAuth role="member">
               <RankingExplanationPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/simulator"
+          element={
+            <RequireAuth role="member">
+              <Simulator />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/simulator/:id"
+          element={
+            <RequireAuth role="member">
+              <SimulationResult />
             </RequireAuth>
           }
         />
