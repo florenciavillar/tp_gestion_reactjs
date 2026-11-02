@@ -5,7 +5,8 @@ import pageStyles from './Page.module.css'
 import styles from './Home.module.css'
 
 // Inicio común a socios y administradores. Las acciones de la cuenta están en el menú de usuario
-// y los eventos tienen su propia pantalla (/events), accesible desde la barra superior.
+// y cada sección tiene su propia pantalla, accesible desde la barra lateral. Los accesos del inicio
+// repiten las secciones de la barra lateral de cada rol.
 function Home() {
   const { user } = useAuth()
 
@@ -24,9 +25,24 @@ function Home() {
               Ver eventos
             </Link>
             {user.role === 'member' && (
-              <Link to="/ranking/explanation" className={styles.secondary}>
-                ¿Cómo se calcula mi puntaje?
-              </Link>
+              <>
+                <Link to="/ranking" className={styles.secondary}>
+                  Ver mi puntaje
+                </Link>
+                <Link to="/ranking/explanation" className={styles.secondary}>
+                  ¿Cómo se calcula mi puntaje?
+                </Link>
+              </>
+            )}
+            {user.role === 'admin' && (
+              <>
+                <Link to="/admin/formula" className={styles.secondary}>
+                  Fórmula del puntaje
+                </Link>
+                <Link to="/admin/ranking" className={styles.secondary}>
+                  Ranking de socios
+                </Link>
+              </>
             )}
           </div>
         </div>

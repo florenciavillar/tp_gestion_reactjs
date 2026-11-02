@@ -1,0 +1,90 @@
+/* Pantalla del puntaje del socio (HU-14): una tarjeta con el puntaje grande y la posición al lado. */
+.muted {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.figures {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+}
+
+.figureLabel {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 0;
+}
+
+.score {
+  margin: 0;
+  font-size: clamp(2.75rem, 2rem + 3vw, 4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-pitch-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+/* El 0,00 provisional no es un puntaje real: se muestra apagado. */
+.scoreProvisional {
+  color: var(--color-text-muted);
+}
+
+.scale {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--color-text-muted);
+}
+
+.position {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.pill {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 0.125rem 0.625rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: #4a3800;
+  background: color-mix(in srgb, var(--color-yellow) 30%, white);
+  border-radius: 999px;
+}
+
+.banner {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: var(--text-md);
+  color: #4a3800;
+  background: color-mix(in srgb, var(--color-yellow) 22%, white);
+  border: 1px solid color-mix(in srgb, var(--color-yellow) 55%, white);
+  border-left: 4px solid var(--color-yellow);
+  border-radius: var(--radius-sm);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.summary dt {
+  color: var(--color-text-muted);
+}
+
+.summary dd {
+  margin: 0;
+  font-weight: 500;
+}

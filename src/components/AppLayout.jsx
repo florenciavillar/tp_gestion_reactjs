@@ -31,6 +31,14 @@ function AppLayout() {
             Eventos
           </NavLink>
           {user?.role === 'member' && (
+            <NavLink to="/ranking" end className={navLinkClass}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H5a3 3 0 0 0 3 3M16 6h3a3 3 0 0 1-3 3M12 13v4M8 20h8" />
+              </svg>
+              Mi puntaje
+            </NavLink>
+          )}
+          {user?.role === 'member' && (
             <NavLink to="/ranking/explanation" className={navLinkClass}>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />

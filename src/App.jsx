@@ -11,6 +11,7 @@ import FormulaSettings from './pages/FormulaSettings.jsx'
 import Home from './pages/Home.jsx'
 import InviteAdmin from './pages/InviteAdmin.jsx'
 import MemberSignIn from './pages/MemberSignIn.jsx'
+import MyScore from './pages/MyScore.jsx'
 import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
@@ -76,6 +77,14 @@ function App() {
           element={
             <RequireAuth role="admin">
               <PublishEvent />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking"
+          element={
+            <RequireAuth role="member">
+              <MyScore />
             </RequireAuth>
           }
         />
