@@ -87,15 +87,29 @@ function UserMenu() {
             </span>
           </div>
           <ul className={styles.list}>
-            <li><Link to="/profile" className={styles.item} onClick={close}>Perfil</Link></li>
+            <li>
+              <Link to="/profile" className={styles.item} onClick={close}>
+                Perfil
+              </Link>
+            </li>
             {user.role === 'admin' && (
               <>
-                <li><Link to="/admin/attendance" className={styles.item} onClick={close}>Cargar asistencias</Link></li>
-                <li><Link to="/admin/invite" className={styles.item} onClick={close}>Invitar admin</Link></li>
+                <li>
+                  <Link to="/admin/attendance" className={styles.item} onClick={close}>
+                    Cargar asistencias
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/admin/invite" className={styles.item} onClick={close}>
+                    Invitar admin
+                  </Link>
+                </li>
               </>
             )}
             <li>
-              <button type="button" className={`${styles.item} ${styles.danger}`} onClick={askLogout}>Cerrar sesión</button>
+              <button type="button" className={`${styles.item} ${styles.danger}`} onClick={askLogout}>
+                Cerrar sesión
+              </button>
             </li>
           </ul>
         </div>
@@ -109,8 +123,12 @@ function UserMenu() {
         onClose={() => buttonRef.current?.focus()}
       >
         <div className={styles.dialogBody}>
-          <h2 id={dialogTitleId} className={styles.dialogTitle}>¿Cerrar sesión?</h2>
-          <p className={styles.dialogText}>Para volver a ingresar vas a necesitar un código nuevo, que te llega por email.</p>
+          <h2 id={dialogTitleId} className={styles.dialogTitle}>
+            ¿Cerrar sesión?
+          </h2>
+          <p className={styles.dialogText}>
+            Para volver a ingresar vas a necesitar un código nuevo, que te llega por email.
+          </p>
           <div className={styles.dialogActions}>
             <button type="button" className={styles.cancel} onClick={() => dialogRef.current.close()} autoFocus>
               Cancelar

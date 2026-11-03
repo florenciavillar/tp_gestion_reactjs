@@ -66,7 +66,9 @@ function InviteAdmin() {
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
-            <label htmlFor="name" className={styles.label}>Nombre</label>
+            <label htmlFor="name" className={styles.label}>
+              Nombre
+            </label>
             <input
               id="name"
               name="name"
@@ -79,7 +81,9 @@ function InviteAdmin() {
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="email" className={styles.label}>Email</label>
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
             <input
               id="email"
               name="email"
@@ -92,7 +96,9 @@ function InviteAdmin() {
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="emailConfirmation" className={styles.label}>Confirmá el email</label>
+            <label htmlFor="emailConfirmation" className={styles.label}>
+              Confirmá el email
+            </label>
             <input
               id="emailConfirmation"
               name="emailConfirmation"
@@ -104,7 +110,11 @@ function InviteAdmin() {
               aria-describedby={error ? 'invite-error' : undefined}
               className={styles.input}
             />
-            {error && <p id="invite-error" role="alert" className={styles.error}>{error}</p>}
+            {error && (
+              <p id="invite-error" role="alert" className={styles.error}>
+                {error}
+              </p>
+            )}
           </div>
 
           <button type="submit" className={styles.button} disabled={submitting}>

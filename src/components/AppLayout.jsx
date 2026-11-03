@@ -19,7 +19,9 @@ function AppLayout() {
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
-        <Link to="/" className={styles.brand}>Pasión de 10</Link>
+        <Link to="/" className={styles.brand}>
+          Pasión de 10
+        </Link>
         <nav className={styles.nav} aria-label="Principal">
           <NavLink to="/events" className={navLinkClass}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -38,15 +40,23 @@ function AppLayout() {
             </NavLink>
           )}
           {user?.role === 'admin' && (
-            <NavLink to="/admin/formula" className={navLinkClass}>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" />
-                <circle cx="16" cy="6" r="2" />
-                <circle cx="10" cy="12" r="2" />
-                <circle cx="18" cy="18" r="2" />
-              </svg>
-              Fórmula
-            </NavLink>
+            <>
+              <NavLink to="/admin/formula" className={navLinkClass}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" />
+                  <circle cx="16" cy="6" r="2" />
+                  <circle cx="10" cy="12" r="2" />
+                  <circle cx="18" cy="18" r="2" />
+                </svg>
+                Fórmula
+              </NavLink>
+              <NavLink to="/admin/ranking" className={navLinkClass}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 20h16M7 20v-6M12 20V6M17 20v-10" />
+                </svg>
+                Ranking
+              </NavLink>
+            </>
           )}
         </nav>
         <div className={styles.menu}>

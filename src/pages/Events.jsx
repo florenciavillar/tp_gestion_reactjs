@@ -13,7 +13,11 @@ function Events() {
 
   return (
     <main className={pageStyles.page}>
-      {notice && <p className={styles.notice} role="status">{notice}</p>}
+      {notice && (
+        <p className={styles.notice} role="status">
+          {notice}
+        </p>
+      )}
       {user.role === 'member' && <UpcomingEvents />}
       {user.role === 'admin' && <PendingEvents />}
     </main>

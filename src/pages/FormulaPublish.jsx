@@ -2,7 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import RankingExplanation from '../components/RankingExplanation.jsx'
 import { formatDateTime } from '../services/eventFormat.js'
-import { adjustFormula, formatNumber, formulaErrorMessage, getFormula, previewFormula, publishFormula, withUnit } from '../services/formula.js'
+import {
+  adjustFormula,
+  formatNumber,
+  formulaErrorMessage,
+  getFormula,
+  previewFormula,
+  publishFormula,
+  withUnit,
+} from '../services/formula.js'
 import authStyles from './Auth.module.css'
 import styles from './Formula.module.css'
 import pageStyles from './Page.module.css'
@@ -64,9 +72,15 @@ function FormulaPublish() {
   useEffect(() => {
     let ignore = false
     getFormula(id, version)
-      .then((loaded) => { if (!ignore) applyDetail(loaded) })
-      .catch((err) => { if (!ignore) setLoadError(loadErrorText(err)) })
-    return () => { ignore = true }
+      .then((loaded) => {
+        if (!ignore) applyDetail(loaded)
+      })
+      .catch((err) => {
+        if (!ignore) setLoadError(loadErrorText(err))
+      })
+    return () => {
+      ignore = true
+    }
   }, [id, version, applyDetail])
 
   const locked = detail?.lock.state === 'locked'
@@ -76,7 +90,9 @@ function FormulaPublish() {
   // Vacío cuenta como cambio aunque el original sea 0: Number('') === 0.
   const hasChanges = isAdjusting
     ? Object.entries(detail.values).some(([key, original]) => {
-        const current = String(values[key] ?? '').trim().replaceAll(',', '.')
+        const current = String(values[key] ?? '')
+          .trim()
+          .replaceAll(',', '.')
         return current === '' || Number(current) !== Number(original)
       })
     : true
@@ -180,7 +196,11 @@ function FormulaPublish() {
         )}
       </header>
 
-      {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
+      {loadError && (
+        <p className={authStyles.error} role="alert">
+          {loadError}
+        </p>
+      )}
       {!loadError && !detail && <p className={styles.muted}>Cargando fórmula…</p>}
 
       {detail && (
@@ -199,21 +219,32 @@ function FormulaPublish() {
 
           <div className={pageStyles.split}>
             <div className={pageStyles.stack}>
-              <form className={`${styles.section} ${styles.paramsForm}`} onSubmit={handlePublish} noValidate aria-labelledby="params-title">
-                <h2 id="params-title" className={styles.sectionTitle}>Parámetros</h2>
+              <form
+                className={`${styles.section} ${styles.paramsForm}`}
+                onSubmit={handlePublish}
+                noValidate
+                aria-labelledby="params-title"
+              >
+                <h2 id="params-title" className={styles.sectionTitle}>
+                  Parámetros
+                </h2>
                 <ul className={styles.list}>
                   {detail.constraints.map((c) => (
-                    <li key={c.parameters.join('-')}>{c.label} tienen que sumar {formatNumber(c.total)}.</li>
+                    <li key={c.parameters.join('-')}>
+                      {c.label} tienen que sumar {formatNumber(c.total)}.
+                    </li>
                   ))}
                 </ul>
 
                 {detail.parameters.map((p) => (
                   <div key={p.key} className={`${authStyles.field} ${styles.param}`}>
                     <label htmlFor={`param-${p.key}`} className={authStyles.label}>
-                      {p.name}{p.unit ? ` (${p.unit})` : ''}
+                      {p.name}
+                      {p.unit ? ` (${p.unit})` : ''}
                     </label>
                     <p className={styles.hint} id={`hint-${p.key}`}>
-                      {p.description} Entre {withUnit(p.minimum, p.unit)} y {withUnit(p.maximum, p.unit)}. Por defecto {withUnit(p.default, p.unit)}.
+                      {p.description} Entre {withUnit(p.minimum, p.unit)} y {withUnit(p.maximum, p.unit)}. Por defecto{' '}
+                      {withUnit(p.default, p.unit)}.
                     </p>
                     <input
                       id={`param-${p.key}`}
@@ -228,7 +259,9 @@ function FormulaPublish() {
                       className={authStyles.input}
                     />
                     {byParameter[p.key] && (
-                      <p id={`error-${p.key}`} role="alert" className={authStyles.error}>{byParameter[p.key]}</p>
+                      <p id={`error-${p.key}`} role="alert" className={authStyles.error}>
+                        {byParameter[p.key]}
+                      </p>
                     )}
                   </div>
                 ))}
@@ -236,11 +269,17 @@ function FormulaPublish() {
                 {general.length > 0 && (
                   <div role="alert" className={authStyles.error}>
                     <ul className={styles.violations}>
-                      {general.map((v) => <li key={v.message}>{v.message}</li>)}
+                      {general.map((v) => (
+                        <li key={v.message}>{v.message}</li>
+                      ))}
                     </ul>
                   </div>
                 )}
-                {error && <p role="alert" className={authStyles.error}>{error}</p>}
+                {error && (
+                  <p role="alert" className={authStyles.error}>
+                    {error}
+                  </p>
+                )}
                 {needsReload && (
                   <button type="button" className={authStyles.doorSecondary} onClick={reload}>
                     Recargar la pantalla
@@ -253,10 +292,19 @@ function FormulaPublish() {
 
                 {!confirming && (
                   <div className={styles.actions}>
-                    <button type="button" className={authStyles.doorSecondary} onClick={handleShowPreview} disabled={busy || blocked}>
+                    <button
+                      type="button"
+                      className={authStyles.doorSecondary}
+                      onClick={handleShowPreview}
+                      disabled={busy || blocked}
+                    >
                       Ver vista previa
                     </button>
-                    <button type="submit" className={authStyles.button} disabled={busy || blocked || (isAdjusting && !hasChanges)}>
+                    <button
+                      type="submit"
+                      className={authStyles.button}
+                      disabled={busy || blocked || (isAdjusting && !hasChanges)}
+                    >
                       {busy ? 'Revisando…' : isAdjusting ? 'Ajustar parámetros' : 'Publicar'}
                     </button>
                   </div>
@@ -266,16 +314,22 @@ function FormulaPublish() {
 
             <div className={pageStyles.stack}>
               <section className={styles.section} aria-labelledby="variables-title">
-                <h2 id="variables-title" className={styles.sectionTitle}>Variables</h2>
+                <h2 id="variables-title" className={styles.sectionTitle}>
+                  Variables
+                </h2>
                 <ul className={styles.list}>
                   {detail.variables.map((v) => (
-                    <li key={v.key}><strong>{v.name}.</strong> {v.description}</li>
+                    <li key={v.key}>
+                      <strong>{v.name}.</strong> {v.description}
+                    </li>
                   ))}
                 </ul>
               </section>
 
               <section className={styles.section} aria-labelledby="fixed-title">
-                <h2 id="fixed-title" className={styles.sectionTitle}>Constantes y valores derivados</h2>
+                <h2 id="fixed-title" className={styles.sectionTitle}>
+                  Constantes y valores derivados
+                </h2>
                 <p className={styles.hint}>Vienen con la fórmula y no se pueden cambiar.</p>
                 <dl className={styles.constants}>
                   {detail.constants.map((c) => (
@@ -300,7 +354,9 @@ function FormulaPublish() {
             className={styles.dialog}
             aria-labelledby="dialog-title"
             onClick={handleDialogClick}
-            onCancel={(event) => { if (busy) event.preventDefault() }}
+            onCancel={(event) => {
+              if (busy) event.preventDefault()
+            }}
             onClose={closeDialog}
           >
             {preview?.valid && (
@@ -309,7 +365,9 @@ function FormulaPublish() {
                   <h2 id="dialog-title" className={styles.sectionTitle}>
                     {!confirming
                       ? 'Así lo van a leer los socios'
-                      : isAdjusting ? 'Confirmá el ajuste de parámetros' : 'Confirmá la publicación'}
+                      : isAdjusting
+                        ? 'Confirmá el ajuste de parámetros'
+                        : 'Confirmá la publicación'}
                   </h2>
                   {confirming ? (
                     <p className={styles.confirmText}>{detail.confirmation_statement}</p>
@@ -327,7 +385,13 @@ function FormulaPublish() {
                         Volver a editar
                       </button>
                       <button type="button" className={authStyles.button} onClick={handleConfirm} disabled={busy}>
-                        {busy ? (isAdjusting ? 'Guardando…' : 'Publicando…') : isAdjusting ? 'Confirmar y guardar' : 'Confirmar y publicar'}
+                        {busy
+                          ? isAdjusting
+                            ? 'Guardando…'
+                            : 'Publicando…'
+                          : isAdjusting
+                            ? 'Confirmar y guardar'
+                            : 'Confirmar y publicar'}
                       </button>
                     </>
                   ) : (

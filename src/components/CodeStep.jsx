@@ -64,12 +64,18 @@ function CodeStep({ emailHint, onVerify, onResend, onBack, submitLabel }) {
       <h1 className={styles.title}>Ingresá tu código</h1>
 
       <p className={styles.message} role="status">
-        {notice || <>Te mandamos un código de 6 dígitos a <strong>{hint}</strong>. Vence en 10 minutos.</>}
+        {notice || (
+          <>
+            Te mandamos un código de 6 dígitos a <strong>{hint}</strong>. Vence en 10 minutos.
+          </>
+        )}
       </p>
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.field}>
-          <label htmlFor="code" className={styles.label}>Código</label>
+          <label htmlFor="code" className={styles.label}>
+            Código
+          </label>
           <input
             id="code"
             name="code"
@@ -87,7 +93,11 @@ function CodeStep({ emailHint, onVerify, onResend, onBack, submitLabel }) {
             aria-describedby={error ? 'code-error' : undefined}
             className={`${styles.input} ${styles.codeInput}`}
           />
-          {error && <p id="code-error" role="alert" className={styles.error}>{error}</p>}
+          {error && (
+            <p id="code-error" role="alert" className={styles.error}>
+              {error}
+            </p>
+          )}
         </div>
 
         <button type="submit" className={styles.button} disabled={submitting || code.length !== 6}>
@@ -95,12 +105,7 @@ function CodeStep({ emailHint, onVerify, onResend, onBack, submitLabel }) {
         </button>
       </form>
 
-      <button
-        type="button"
-        className={styles.linkButton}
-        onClick={handleResend}
-        disabled={resendIn > 0}
-      >
+      <button type="button" className={styles.linkButton} onClick={handleResend} disabled={resendIn > 0}>
         {resendIn > 0 ? `Reenviar código en ${resendIn}s` : 'Reenviar código'}
       </button>
     </>

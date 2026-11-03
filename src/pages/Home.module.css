@@ -60,7 +60,10 @@
   font-weight: 600;
   text-decoration: none;
   border-radius: var(--radius-sm);
-  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
 }
 
 .cta {
