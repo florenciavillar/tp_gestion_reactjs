@@ -47,6 +47,14 @@ function AppLayout() {
               Cómo se calcula
             </NavLink>
           )}
+          {user?.role === 'member' && (
+            <NavLink to="/ranking/simulator" className={navLinkClass}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
+              </svg>
+              Simulador
+            </NavLink>
+          )}
           {user?.role === 'admin' && (
             <>
               <NavLink to="/admin/formula" className={navLinkClass}>
@@ -63,6 +71,12 @@ function AppLayout() {
                   <path d="M4 20h16M7 20v-6M12 20V6M17 20v-10" />
                 </svg>
                 Ranking
+              </NavLink>
+              <NavLink to="/admin/simulator" className={navLinkClass}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
+                </svg>
+                Simulador
               </NavLink>
             </>
           )}

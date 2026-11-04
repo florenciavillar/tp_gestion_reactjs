@@ -32,6 +32,9 @@ function Home() {
                 <Link to="/ranking/explanation" className={styles.secondary}>
                   ¿Cómo se calcula mi puntaje?
                 </Link>
+                <Link to="/ranking/simulator" className={styles.secondary}>
+                  Simular mi puntaje
+                </Link>
               </>
             )}
             {user.role === 'admin' && (
@@ -41,6 +44,9 @@ function Home() {
                 </Link>
                 <Link to="/admin/ranking" className={styles.secondary}>
                   Ranking de socios
+                </Link>
+                <Link to="/admin/simulator" className={styles.secondary}>
+                  Simulador
                 </Link>
               </>
             )}
