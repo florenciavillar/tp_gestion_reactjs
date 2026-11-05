@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import Logo from '../components/Logo.jsx'
 import { getScoreBreakdown } from '../services/formula.js'
 import authStyles from './Auth.module.css'
+import pageStyles from './Page.module.css'
 import styles from './ScoreBreakdown.module.css'
 
 const TITLE = 'Desglose de mi puntaje'
@@ -26,49 +26,62 @@ function ScoreBreakdownPage() {
   }, [])
 
   return (
-    <main className={styles.page}>
-      <Logo />
-
+    <main className={pageStyles.page}>
       {state.status === 'loading' && (
-        <div className={styles.centerCard}>
-          <Link to="/" className={styles.backButton} aria-label="Volver al inicio">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </Link>
-          <div className={styles.loadingContainer}>
-            <p className={styles.loadingText} role="status">
-              Cargando desglose de puntaje…
-            </p>
-          </div>
-        </div>
+        <section className={pageStyles.card}>
+          <header className={pageStyles.header}>
+            <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </Link>
+            <h1 className={pageStyles.title}>{TITLE}</h1>
+          </header>
+          <p className={styles.muted} role="status">
+            Cargando desglose de puntaje…
+          </p>
+        </section>
       )}
 
       {state.status === 'error' && (
-        <div className={styles.centerCard}>
-          <Link to="/" className={styles.backButton} aria-label="Volver al inicio">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </Link>
-          <div className={styles.errorContainer}>
-            <p className={authStyles.error} role="alert">
-              {state.message}
-            </p>
-          </div>
-        </div>
+        <section className={pageStyles.card}>
+          <header className={pageStyles.header}>
+            <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </Link>
+            <h1 className={pageStyles.title}>{TITLE}</h1>
+          </header>
+          <p className={authStyles.error} role="alert">
+            {state.message}
+          </p>
+        </section>
       )}
 
       {state.status === 'ready' && !state.data.has_ranking && (
-        <div className={styles.centerCard}>
-          <Link to="/" className={styles.backButton} aria-label="Volver al inicio">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M19 12H5M12 19l-7-7 7-7" />
-            </svg>
-          </Link>
-          <div className={styles.emptyStateCard}>
+        <section className={pageStyles.card}>
+          <header className={pageStyles.header}>
+            <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </Link>
+            <h1 className={pageStyles.title}>{TITLE}</h1>
+          </header>
+          <div className={styles.emptyBody}>
             <div className={styles.emptyIcon}>
-              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                width="28"
+                height="28"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />
                 <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -76,50 +89,56 @@ function ScoreBreakdownPage() {
             </div>
             <h2 className={styles.emptyTitle}>Sin ranking completado</h2>
             <p className={styles.emptyMessage}>{state.data.message}</p>
-            <Link to="/ranking/explanation" className={authStyles.submit}>
+            <Link to="/ranking/explanation" className={authStyles.button}>
               Ver cómo funciona la fórmula
             </Link>
           </div>
-        </div>
+        </section>
       )}
 
       {state.status === 'ready' && state.data.has_ranking && (
         <div className={styles.dashboardLayout}>
-          {/* Tarjeta de Resumen (Izquierda) */}
-          <aside className={styles.summaryCard}>
-            <Link to="/" className={styles.backButton} aria-label="Volver al inicio">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </Link>
-
-            <h1 className={styles.summaryTitle}>{TITLE}</h1>
-            <p className={styles.summarySubtitle}>
-              Evaluado con la versión de reglas del ranking #{state.data.rules_version}
-            </p>
-
-            <div className={styles.badges}>
-              {state.data.rules_version && (
-                <span className={styles.badge}>REGLAS V{state.data.rules_version}</span>
-              )}
-              {state.data.calculation_date && (
-                <span className={`${styles.badge} ${styles.badgeMuted}`}>
-                  FECHA: {state.data.calculation_date}
-                </span>
-              )}
-            </div>
-
-            <div className={styles.scoreRow}>
-              <div className={styles.scoreItem}>
-                <span className={styles.scoreLabel}>PUNTAJE TOTAL</span>
-                <span className={styles.scoreValue}>{state.data.total} pts</span>
-              </div>
-              {state.data.position && (
-                <div className={styles.scoreItem}>
-                  <span className={styles.scoreLabel}>POSICIÓN EN EL CLUB</span>
-                  <span className={styles.positionValue}>#{state.data.position}</span>
+          {/* Tarjeta de Resumen superior */}
+          <section className={styles.summaryCard} aria-labelledby="breakdown-title">
+            <div className={styles.summaryHeader}>
+              <div className={styles.summaryInfo}>
+                <div className={styles.titleRow}>
+                  <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                  </Link>
+                  <h1 id="breakdown-title" className={pageStyles.title}>
+                    {TITLE}
+                  </h1>
                 </div>
-              )}
+                <p className={styles.summarySubtitle}>
+                  Evaluado con la versión de reglas del ranking #{state.data.rules_version}
+                </p>
+                <div className={styles.badges}>
+                  {state.data.rules_version && (
+                    <span className={styles.badge}>Reglas v{state.data.rules_version}</span>
+                  )}
+                  {state.data.calculation_date && (
+                    <span className={`${styles.badge} ${styles.badgeMuted}`}>
+                      Fecha: {state.data.calculation_date}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className={styles.scoreRow}>
+                <div className={styles.scoreItem}>
+                  <span className={styles.scoreLabel}>Puntaje total</span>
+                  <span className={styles.scoreValue}>{state.data.total} pts</span>
+                </div>
+                {state.data.position && (
+                  <div className={styles.scoreItem}>
+                    <span className={styles.scoreLabel}>Posición en el club</span>
+                    <span className={styles.positionValue}>#{state.data.position}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             <footer className={styles.summaryFooter}>
@@ -130,11 +149,13 @@ function ScoreBreakdownPage() {
                 ¿Cómo se calcula cada componente?
               </Link>
             </footer>
-          </aside>
+          </section>
 
-          {/* Sección de Componentes (Derecha) */}
-          <section className={styles.componentsSection}>
-            <h2 className={styles.componentsTitle}>Componentes del puntaje</h2>
+          {/* Sección de Componentes en grilla */}
+          <section className={styles.componentsSection} aria-labelledby="components-title">
+            <h2 id="components-title" className={styles.componentsTitle}>
+              Componentes del puntaje
+            </h2>
             <div className={styles.componentsGrid}>
               {state.data.components.map((comp) => (
                 <ComponentItem key={comp.key} component={comp} />
@@ -173,7 +194,17 @@ function ComponentItem({ component }) {
       <div className={styles.componentBody}>
         {component.explanation && (
           <div className={styles.capNotice} role="note">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -195,28 +226,34 @@ function SupportingFigures({ keyName, figures }) {
     return (
       <div className={styles.figuresGrid}>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Partidos Asistidos / Evaluados</span>
+          <span className={styles.figureLabel}>Partidos asistidos / evaluados</span>
           <span className={styles.figureValue}>
             {figures.total_attended || 0} de {figures.total_matches || 0}
           </span>
           <div className={styles.classBreakdown}>
             <div className={styles.classRow}>
               <span>Clase A (factor 1.0)</span>
-              <strong>{attended.A || 0} / {matches.A || 0}</strong>
+              <strong>
+                {attended.A || 0} / {matches.A || 0}
+              </strong>
             </div>
             <div className={styles.classRow}>
               <span>Clase B (factor 1.3)</span>
-              <strong>{attended.B || 0} / {matches.B || 0}</strong>
+              <strong>
+                {attended.B || 0} / {matches.B || 0}
+              </strong>
             </div>
             <div className={styles.classRow}>
               <span>Clase C (factor 1.8)</span>
-              <strong>{attended.C || 0} / {matches.C || 0}</strong>
+              <strong>
+                {attended.C || 0} / {matches.C || 0}
+              </strong>
             </div>
           </div>
         </div>
         {figures.effective_start && (
           <div className={styles.figureBox}>
-            <span className={styles.figureLabel}>Ventana de Evaluación</span>
+            <span className={styles.figureLabel}>Ventana de evaluación</span>
             <span className={styles.figureValue}>Desde {figures.effective_start}</span>
           </div>
         )}
@@ -228,11 +265,11 @@ function SupportingFigures({ keyName, figures }) {
     return (
       <div className={styles.figuresGrid}>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Distancia Declarada al Estadio</span>
+          <span className={styles.figureLabel}>Distancia declarada al estadio</span>
           <span className={styles.figureValue}>{figures.distance_km || '0.00'} km</span>
         </div>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Partidos Asistidos Computados</span>
+          <span className={styles.figureLabel}>Partidos asistidos computados</span>
           <span className={styles.figureValue}>{figures.attended_matches || 0}</span>
         </div>
       </div>
@@ -244,13 +281,13 @@ function SupportingFigures({ keyName, figures }) {
     return (
       <div className={styles.figuresGrid}>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Eventos Institucionales</span>
+          <span className={styles.figureLabel}>Eventos institucionales</span>
           <span className={styles.figureValue}>
             {figures.events_count || 0} eventos ({figures.event_points || 0} pts)
           </span>
         </div>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Actividades Recurrentes</span>
+          <span className={styles.figureLabel}>Actividades recurrentes</span>
           <span className={styles.figureValue}>{figures.activity_points || 0} pts acumulados</span>
           {Object.keys(activities).length > 0 && (
             <div className={styles.classBreakdown}>
@@ -264,7 +301,7 @@ function SupportingFigures({ keyName, figures }) {
           )}
         </div>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Total Puntos Brutos Institucionales</span>
+          <span className={styles.figureLabel}>Total puntos brutos institucionales</span>
           <span className={styles.figureValue}>{figures.total_points_before_cap || 0} pts</span>
         </div>
       </div>
@@ -275,7 +312,7 @@ function SupportingFigures({ keyName, figures }) {
     return (
       <div className={styles.figuresGrid}>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Antigüedad Ininterrumpida</span>
+          <span className={styles.figureLabel}>Antigüedad ininterrumpida</span>
           <span className={styles.figureValue}>{figures.seniority_years || 0} años</span>
           {figures.seniority_start && (
             <span className={styles.figureLabel} style={{ marginTop: '0.2rem' }}>
@@ -284,7 +321,7 @@ function SupportingFigures({ keyName, figures }) {
           )}
         </div>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Edad del Socio</span>
+          <span className={styles.figureLabel}>Edad del socio</span>
           <span className={styles.figureValue}>{figures.age_years || 0} años</span>
         </div>
       </div>
@@ -295,11 +332,11 @@ function SupportingFigures({ keyName, figures }) {
     return (
       <div className={styles.figuresGrid}>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Días desde la Fecha de Alta</span>
+          <span className={styles.figureLabel}>Días desde la fecha de alta</span>
           <span className={styles.figureValue}>{figures.days_since_alta || 0} días</span>
         </div>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Estado del Bono</span>
+          <span className={styles.figureLabel}>Estado del bono</span>
           <span className={styles.figureValue}>
             {figures.bonus_applied ? 'Bono otorgado' : 'No aplicable'}
           </span>
@@ -312,15 +349,15 @@ function SupportingFigures({ keyName, figures }) {
     return (
       <div className={styles.figuresGrid}>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Suma Antes del Tope</span>
+          <span className={styles.figureLabel}>Suma antes del tope</span>
           <span className={styles.figureValue}>{figures.unadjusted_sum || '0.00'} pts</span>
         </div>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Tope Máximo Reglamentario</span>
+          <span className={styles.figureLabel}>Tope máximo reglamentario</span>
           <span className={styles.figureValue}>{figures.max_cap || '100.00'} pts</span>
         </div>
         <div className={styles.figureBox}>
-          <span className={styles.figureLabel}>Ajuste Aplicado</span>
+          <span className={styles.figureLabel}>Ajuste aplicado</span>
           <span className={styles.figureValue}>{figures.difference || '0.00'} pts</span>
         </div>
       </div>
