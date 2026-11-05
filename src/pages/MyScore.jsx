@@ -73,9 +73,14 @@ function ScoreCard({ data }) {
             <span className={styles.scale}> / 100</span>
           </p>
         </div>
-        <p className={styles.position}>
-          {data.position === null ? 'Sin posición en el ranking' : formatPosition(data.position, data.ranked_total)}
-        </p>
+        <div className={styles.positionBlock}>
+          <Link to="/ranking/breakdown" className={styles.breakdownLink}>
+            Ver desglose
+          </Link>
+          <p className={styles.position}>
+            {data.position === null ? 'Sin posición en el ranking' : formatPosition(data.position, data.ranked_total)}
+          </p>
+        </div>
       </div>
 
       {data.message && (
