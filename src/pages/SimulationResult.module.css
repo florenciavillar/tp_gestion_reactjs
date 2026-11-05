@@ -1,0 +1,27 @@
+.eventMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  color: var(--color-text-muted);
+}
+
+.difference {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* La etiqueta de la estimación va siempre visible junto a la tabla (escenario 13). */
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--color-pitch);
+  background: var(--color-tint);
+  border-radius: var(--radius-sm);
+}
+
+.label p {
+  margin: 0;
+}

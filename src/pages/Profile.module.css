@@ -1,3 +1,29 @@
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 112px;
+  height: 112px;
+  margin-bottom: 0.5rem;
+  color: var(--color-pitch-dark);
+  background: var(--color-tint);
+  border: 3px solid var(--color-surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--color-pitch);
+}
+
+.avatar svg {
+  width: 56px;
+  height: 56px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Un dato debajo del otro, separados por una línea. */
 .details {
   display: flex;
   flex-direction: column;
@@ -5,18 +31,21 @@
 }
 
 .row {
-  display: grid;
-  grid-template-columns: 6.5rem 1fr;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
   padding: 0.875rem 0;
   border-top: 1px solid var(--color-border);
 }
 
 .row dt {
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
 
 .row dd {
   margin: 0;
+  font-size: var(--text-base);
+  font-weight: 600;
   overflow-wrap: anywhere;
 }

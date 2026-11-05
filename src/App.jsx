@@ -11,33 +11,168 @@ import FormulaSettings from './pages/FormulaSettings.jsx'
 import Home from './pages/Home.jsx'
 import InviteAdmin from './pages/InviteAdmin.jsx'
 import MemberSignIn from './pages/MemberSignIn.jsx'
+import MyScore from './pages/MyScore.jsx'
 import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
 import ScoreBreakdownPage from './pages/ScoreBreakdownPage.jsx'
 import SignIn from './pages/SignIn.jsx'
+import SimulationResult from './pages/SimulationResult.jsx'
+import Simulator from './pages/Simulator.jsx'
+import SimulatorSettings from './pages/SimulatorSettings.jsx'
 import SignUp from './pages/SignUp.jsx'
+import RankingRun from './pages/RankingRun.jsx'
 
 function App() {
   return (
     <Routes>
-      <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
+      <Route
+        element={
+          <RequireAuth>
+            <AppLayout />
+          </RequireAuth>
+        }
+      >
         <Route path="/" element={<Home />} />
         <Route path="/events" element={<Events />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/admin/invite" element={<RequireAuth role="admin"><InviteAdmin /></RequireAuth>} />
-        <Route path="/admin/attendance" element={<RequireAuth role="admin"><AttendanceManagement /></RequireAuth>} />
-        <Route path="/admin/formula" element={<RequireAuth role="admin"><FormulaSettings /></RequireAuth>} />
-        <Route path="/admin/formula/:id/:version" element={<RequireAuth role="admin"><FormulaPublish /></RequireAuth>} />
-        <Route path="/admin/events/:id/publish" element={<RequireAuth role="admin"><PublishEvent /></RequireAuth>} />
-        <Route path="/ranking/breakdown" element={<RequireAuth role="member"><ScoreBreakdownPage /></RequireAuth>} />
-        <Route path="/ranking/explanation" element={<RequireAuth role="member"><RankingExplanationPage /></RequireAuth>} />
-        <Route path="/member/events/:id/slot" element={<RequireAuth role="member"><EventSlot /></RequireAuth>} />
+        <Route
+          path="/admin/invite"
+          element={
+            <RequireAuth role="admin">
+              <InviteAdmin />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/attendance"
+          element={
+            <RequireAuth role="admin">
+              <AttendanceManagement />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/formula"
+          element={
+            <RequireAuth role="admin">
+              <FormulaSettings />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/formula/:id/:version"
+          element={
+            <RequireAuth role="admin">
+              <FormulaPublish />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/ranking"
+          element={
+            <RequireAuth role="admin">
+              <RankingRun />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/simulator"
+          element={
+            <RequireAuth role="admin">
+              <SimulatorSettings />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/events/:id/publish"
+          element={
+            <RequireAuth role="admin">
+              <PublishEvent />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking"
+          element={
+            <RequireAuth role="member">
+              <MyScore />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/breakdown"
+          element={
+            <RequireAuth role="member">
+              <ScoreBreakdownPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/explanation"
+          element={
+            <RequireAuth role="member">
+              <RankingExplanationPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/simulator"
+          element={
+            <RequireAuth role="member">
+              <Simulator />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/simulator/:id"
+          element={
+            <RequireAuth role="member">
+              <SimulationResult />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/member/events/:id/slot"
+          element={
+            <RequireAuth role="member">
+              <EventSlot />
+            </RequireAuth>
+          }
+        />
       </Route>
-      <Route path="/sign-in" element={<GuestOnly><SignIn /></GuestOnly>} />
-      <Route path="/sign-in/member" element={<GuestOnly><MemberSignIn /></GuestOnly>} />
-      <Route path="/sign-in/admin" element={<GuestOnly><AdminSignIn /></GuestOnly>} />
-      <Route path="/sign-up" element={<GuestOnly><SignUp /></GuestOnly>} />
+      <Route
+        path="/sign-in"
+        element={
+          <GuestOnly>
+            <SignIn />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/sign-in/member"
+        element={
+          <GuestOnly>
+            <MemberSignIn />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/sign-in/admin"
+        element={
+          <GuestOnly>
+            <AdminSignIn />
+          </GuestOnly>
+        }
+      />
+      <Route
+        path="/sign-up"
+        element={
+          <GuestOnly>
+            <SignUp />
+          </GuestOnly>
+        }
+      />
       <Route path="/admin-invitation" element={<AdminInvitation />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

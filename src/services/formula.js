@@ -26,6 +26,15 @@ export function publishFormula(id, version, { values, expectedRulesVersion }) {
   })
 }
 
+// HU-28: ajusta los parámetros de la fórmula en vigor del club.
+export function adjustFormula({ values, expectedRulesVersion }) {
+  return apiPost('/admin/formulas/adjust', {
+    values,
+    expected_rules_version: expectedRulesVersion,
+    confirmed: true,
+  })
+}
+
 export function lockFormula(reason) {
   return apiPost('/admin/formulas/lock', { reason })
 }

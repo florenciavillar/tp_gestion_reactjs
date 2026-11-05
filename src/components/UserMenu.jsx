@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import { useAuth } from './authContext.js'
 import styles from './UserMenu.module.css'
 
-// Botón con el ícono de usuario que abre las opciones de la cuenta. Las opciones dependen del rol.
+// Botón con el usuario que abre las opciones de la cuenta, hacia arriba. Las opciones dependen del rol.
 function UserMenu() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
@@ -65,10 +65,16 @@ function UserMenu() {
         aria-controls={menuId}
         aria-label="Menú de la cuenta"
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="8" r="4" />
-          <path d="M4 21a8 8 0 0 1 16 0" />
-        </svg>
+        <span className={styles.avatar} aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 21a8 8 0 0 1 16 0" />
+          </svg>
+        </span>
+        <span className={styles.who} aria-hidden="true">
+          <span className={styles.whoName}>{user.name}</span>
+          <span className={styles.whoRole}>{user.role === 'admin' ? 'Admin' : 'Socio'}</span>
+        </span>
       </button>
 
       {open && (
@@ -81,21 +87,43 @@ function UserMenu() {
             </span>
           </div>
           <ul className={styles.list}>
-            <li><Link to="/profile" className={styles.item} onClick={close}>Perfil</Link></li>
+            <li>
+              <Link to="/profile" className={styles.item} onClick={close}>
+                Perfil
+              </Link>
+            </li>
             {user.role === 'member' && (
               <>
-                <li><Link to="/ranking/breakdown" className={styles.item} onClick={close}>Desglose de mi puntaje</Link></li>
-                <li><Link to="/ranking/explanation" className={styles.item} onClick={close}>¿Cómo se calcula?</Link></li>
+                <li>
+                  <Link to="/ranking/breakdown" className={styles.item} onClick={close}>
+                    Desglose de mi puntaje
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/ranking/explanation" className={styles.item} onClick={close}>
+                    ¿Cómo se calcula?
+                  </Link>
+                </li>
               </>
             )}
             {user.role === 'admin' && (
               <>
-                <li><Link to="/admin/attendance" className={styles.item} onClick={close}>Cargar Asistencias</Link></li>
-                <li><Link to="/admin/invite" className={styles.item} onClick={close}>Invitar Admin</Link></li>
+                <li>
+                  <Link to="/admin/attendance" className={styles.item} onClick={close}>
+                    Cargar asistencias
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/admin/invite" className={styles.item} onClick={close}>
+                    Invitar admin
+                  </Link>
+                </li>
               </>
             )}
             <li>
-              <button type="button" className={`${styles.item} ${styles.danger}`} onClick={askLogout}>Cerrar Sesión</button>
+              <button type="button" className={`${styles.item} ${styles.danger}`} onClick={askLogout}>
+                Cerrar sesión
+              </button>
             </li>
           </ul>
         </div>
@@ -109,8 +137,12 @@ function UserMenu() {
         onClose={() => buttonRef.current?.focus()}
       >
         <div className={styles.dialogBody}>
-          <h2 id={dialogTitleId} className={styles.dialogTitle}>¿Cerrar sesión?</h2>
-          <p className={styles.dialogText}>Para volver a ingresar vas a necesitar un código nuevo, que te llega por email.</p>
+          <h2 id={dialogTitleId} className={styles.dialogTitle}>
+            ¿Cerrar sesión?
+          </h2>
+          <p className={styles.dialogText}>
+            Para volver a ingresar vas a necesitar un código nuevo, que te llega por email.
+          </p>
           <div className={styles.dialogActions}>
             <button type="button" className={styles.cancel} onClick={() => dialogRef.current.close()} autoFocus>
               Cancelar

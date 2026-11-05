@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import Logo from '../components/Logo.jsx'
 import { createAdmin } from '../services/auth.js'
 import styles from './Auth.module.css'
+import pageStyles from './Page.module.css'
 
 const ERRORS = {
   EMAILS_DO_NOT_MATCH: 'Los emails no coinciden',
@@ -47,27 +47,28 @@ function InviteAdmin() {
   }
 
   return (
-    <main className={styles.page}>
-      <Logo />
-
-      <section className={styles.card}>
-        <Link to="/" className={styles.back} aria-label="Volver al inicio">
+    <main className={`${pageStyles.page} ${pageStyles.single}`}>
+      <header className={pageStyles.header}>
+        <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
+        <h1 className={pageStyles.title}>Invitar admin</h1>
+      </header>
 
-        <h1 className={styles.title}>Invitar Admin</h1>
-
+      <section className={pageStyles.card}>
         {sentTo && (
-          <p className={styles.message} role="status">
+          <p className={styles.notice} role="status">
             Enviamos la invitación a <strong>{sentTo}</strong>. El link vence en 48 horas.
           </p>
         )}
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.field}>
-            <label htmlFor="name" className={styles.label}>Nombre</label>
+            <label htmlFor="name" className={styles.label}>
+              Nombre
+            </label>
             <input
               id="name"
               name="name"
@@ -80,7 +81,9 @@ function InviteAdmin() {
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="email" className={styles.label}>Email</label>
+            <label htmlFor="email" className={styles.label}>
+              Email
+            </label>
             <input
               id="email"
               name="email"
@@ -93,7 +96,9 @@ function InviteAdmin() {
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="emailConfirmation" className={styles.label}>Confirmá el email</label>
+            <label htmlFor="emailConfirmation" className={styles.label}>
+              Confirmá el email
+            </label>
             <input
               id="emailConfirmation"
               name="emailConfirmation"
@@ -105,7 +110,11 @@ function InviteAdmin() {
               aria-describedby={error ? 'invite-error' : undefined}
               className={styles.input}
             />
-            {error && <p id="invite-error" role="alert" className={styles.error}>{error}</p>}
+            {error && (
+              <p id="invite-error" role="alert" className={styles.error}>
+                {error}
+              </p>
+            )}
           </div>
 
           <button type="submit" className={styles.button} disabled={submitting}>

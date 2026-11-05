@@ -1,40 +1,64 @@
 :root {
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-heading: 'Barlow Condensed', var(--font-body);
+  /* Una sola familia para toda la plataforma: los títulos se distinguen por peso y tamaño. */
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: var(--font-body);
+
+  /* Escala tipográfica */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 0.9375rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
 
   /* Paleta de fútbol */
   --color-pitch: #3b7a57; /* verde césped */
   --color-pitch-dark: #2e6244; /* hover del verde césped (derivado) */
+  --color-pitch-deep: #1f4a33; /* fondos de marca con texto blanco */
   --color-lime: #4cbb17; /* verde campo brillante: solo acentos y fondos con texto negro */
   --color-white: #ffffff;
   --color-ink: #111111; /* negro balón */
   --color-yellow: #ffcc00; /* tarjeta amarilla: advertencias */
   --color-red: #d60019; /* tarjeta roja: errores y acciones destructivas */
   --color-red-dark: #a80014; /* hover del rojo (derivado) */
-  --color-tint: color-mix(in srgb, var(--color-pitch) 12%, white);
+  --color-tint: color-mix(in srgb, var(--color-pitch) 10%, white);
 
   /* Roles (los nombres se mantienen para no tocar el resto del código) */
   --color-primary: var(--color-pitch);
   --color-on-primary: var(--color-white);
   --color-error: var(--color-red);
-  --color-text: var(--color-ink);
-  --color-text-muted: #4a4f4c;
+  --color-text: #151a17;
+  --color-text-muted: #56605a;
   --color-placeholder: #8a918c;
-  --color-border: #cfd9d2;
+  --color-border: #dfe6e1;
+  --color-border-strong: #c5d0c8;
   --color-surface: var(--color-white);
-  --color-background: #f3f7f4;
+  --color-surface-muted: #f6f8f7;
+  --color-background: #f1f4f2;
   --color-button: var(--color-pitch);
   --color-button-hover: var(--color-pitch-dark);
 
-  --radius: 10px;
-  --radius-sm: 8px;
-  --shadow-card: 0 2px 10px rgb(17 17 17 / 0.08);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --shadow-card: 0 1px 2px rgb(17 17 17 / 0.04), 0 4px 16px rgb(17 17 17 / 0.05);
+  --shadow-raised: 0 12px 40px rgb(17 17 17 / 0.18);
   --control-height: 44px;
 
+  /* Layout de las pantallas con sesión */
+  --container: 1200px;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+
   font-family: var(--font-body);
-  line-height: 1.5;
+  font-size: 100%;
+  line-height: 1.55;
   color: var(--color-text);
   background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -43,6 +67,27 @@
 
 body {
   margin: 0;
+  background-color: var(--color-background);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+code {
+  padding: 0.05em 0.35em;
+  font-size: 0.875em;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
 }
 
 :focus-visible {

@@ -1,0 +1,127 @@
+/* Marco de las pantallas con sesión, a la derecha de la barra lateral. */
+.page {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 2rem var(--gutter) 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Encabezado: volver, título y bajada. */
+.header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.25rem 0.875rem;
+}
+
+.header > :not(.back) {
+  grid-column: 1 / -1;
+}
+
+.header:has(.back) > :not(.back) {
+  grid-column: 2;
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.back:hover {
+  background: var(--color-tint);
+  border-color: var(--color-pitch);
+}
+
+.back svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.lead {
+  margin: 0;
+  max-width: 70ch;
+  color: var(--color-text-muted);
+}
+
+.card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Contenido principal y columna lateral. En pantallas angostas, una debajo de la otra. */
+.split {
+  display: grid;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.stack {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Variante de dos tarjetas del mismo ancho y el mismo alto. */
+.splitEven {
+  align-items: stretch;
+}
+
+@container (min-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  }
+
+  .splitEven {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Pantallas de una sola tarjeta (perfil, formularios cortos): encabezado y tarjeta centrados, del mismo ancho. */
+.single {
+  max-width: calc(480px + 2 * var(--gutter));
+}
+
+/* Pantallas de lectura (explicación del puntaje): centradas, con un largo de línea cómodo. */
+.reading {
+  max-width: calc(800px + 2 * var(--gutter));
+}

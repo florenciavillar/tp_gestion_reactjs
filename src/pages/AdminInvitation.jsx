@@ -43,11 +43,17 @@ function AdminInvitation() {
 
         {error ? (
           <>
-            <p className={styles.error} role="alert">{error}</p>
-            <Link to="/sign-in/admin" className={styles.forgot}>Ir al ingreso de admins</Link>
+            <p className={styles.error} role="alert">
+              {error}
+            </p>
+            <Link to="/sign-in/admin" className={styles.forgot}>
+              Ir al ingreso de admins
+            </Link>
           </>
         ) : (
-          <p className={styles.message} role="status">Activando tu cuenta…</p>
+          <p className={styles.message} role="status">
+            Activando tu cuenta…
+          </p>
         )}
       </section>
     </main>

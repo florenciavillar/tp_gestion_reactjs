@@ -54,7 +54,9 @@ function IdentifierStep({ label, placeholder, submitLabel, request, onSent, erro
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.field}>
-        <label htmlFor="identifier" className={styles.label}>{label}</label>
+        <label htmlFor="identifier" className={styles.label}>
+          {label}
+        </label>
         <input
           id="identifier"
           name="identifier"
@@ -67,7 +69,11 @@ function IdentifierStep({ label, placeholder, submitLabel, request, onSent, erro
           aria-describedby={error ? 'identifier-error' : undefined}
           className={styles.input}
         />
-        {error && <p id="identifier-error" role="alert" className={styles.error}>{error}</p>}
+        {error && (
+          <p id="identifier-error" role="alert" className={styles.error}>
+            {error}
+          </p>
+        )}
       </div>
 
       {askType && (

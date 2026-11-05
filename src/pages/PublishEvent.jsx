@@ -1,9 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
-import Logo from '../components/Logo.jsx'
 import { getEventClasses, getPendingEvents, publishEvent } from '../services/events.js'
 import { eventTypeLabel, formatEventDate, formatEventTime, formatFactor, isMatch } from '../services/eventFormat.js'
 import authStyles from './Auth.module.css'
+import pageStyles from './Page.module.css'
 import styles from './PublishEvent.module.css'
 
 const MIN_POINTS = 1
@@ -51,8 +51,12 @@ function PublishEvent() {
         if (found) setEvento(found)
         else setLoadError(ERRORS.NOT_PENDING)
       })
-      .catch(() => { if (!ignore) setLoadError(ERRORS.GENERIC) })
-    return () => { ignore = true }
+      .catch(() => {
+        if (!ignore) setLoadError(ERRORS.GENERIC)
+      })
+    return () => {
+      ignore = true
+    }
   }, [evento, id])
 
   const match = evento ? isMatch(evento.tipo) : false
@@ -61,9 +65,15 @@ function PublishEvent() {
     if (!match) return
     let ignore = false
     getEventClasses()
-      .then((data) => { if (!ignore) setClasses(data) })
-      .catch(() => { if (!ignore) setLoadError(ERRORS.GENERIC) })
-    return () => { ignore = true }
+      .then((data) => {
+        if (!ignore) setClasses(data)
+      })
+      .catch(() => {
+        if (!ignore) setLoadError(ERRORS.GENERIC)
+      })
+    return () => {
+      ignore = true
+    }
   }, [match])
 
   const chosenClass = classes?.find((item) => item.clase === clase)
@@ -104,24 +114,107 @@ function PublishEvent() {
   }
 
   return (
-    <main className={authStyles.page}>
-      <Logo />
-
-      <section className={`${authStyles.card} ${styles.card}`}>
-        <Link to="/events" className={authStyles.back} aria-label="Volver a los eventos pendientes">
+    <main className={pageStyles.page}>
+      <header className={pageStyles.header}>
+        <Link to="/events" className={pageStyles.back} aria-label="Volver a los eventos pendientes">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
+        <h1 className={pageStyles.title}>Publicar evento</h1>
+      </header>
 
-        <h1 className={authStyles.title}>Publicar evento</h1>
+      {loadError && (
+        <p className={authStyles.error} role="alert">
+          {loadError}
+        </p>
+      )}
 
-        {loadError && <p className={authStyles.error} role="alert">{loadError}</p>}
+      {!loadError && !evento && <p className={styles.help}>Cargando evento…</p>}
 
-        {!loadError && !evento && <p className={authStyles.message}>Cargando evento…</p>}
+      {evento && (
+        <div className={`${pageStyles.split} ${pageStyles.splitEven}`}>
+          <section className={pageStyles.card}>
+            <form className={authStyles.form} onSubmit={handleReview} noValidate>
+              {match ? (
+                <fieldset className={styles.classes} aria-describedby={fieldError ? fieldErrorId : undefined}>
+                  <legend className={authStyles.label}>Clase del partido</legend>
+                  <p className={styles.help}>
+                    La clase define cuánto pesa la asistencia a este partido en el puntaje. Un factor mayor premia la
+                    asistencia a los partidos de menor convocatoria.
+                  </p>
+                  {!classes && <p className={styles.help}>Cargando clases…</p>}
+                  {classes?.map((item) => (
+                    <label key={item.clase} className={styles.classOption}>
+                      <input
+                        type="radio"
+                        name="clase"
+                        value={item.clase}
+                        checked={clase === item.clase}
+                        onChange={() => {
+                          setClase(item.clase)
+                          setFieldError('')
+                        }}
+                      />
+                      <span className={styles.classText}>
+                        <span className={styles.className}>
+                          Clase {item.clase}
+                          {item.es_default && <span className={styles.defaultTag}>Por defecto</span>}
+                        </span>
+                        <span className={styles.classDetail}>
+                          Demanda {item.demanda} · Factor {formatFactor(item.factor)}
+                        </span>
+                      </span>
+                    </label>
+                  ))}
+                </fieldset>
+              ) : (
+                <div className={authStyles.field}>
+                  <label htmlFor="puntos" className={authStyles.label}>
+                    Puntos
+                  </label>
+                  <p className={styles.help} id={`${fieldErrorId}-help`}>
+                    Los suma cada socio que asiste. Un número entero del {MIN_POINTS} al {MAX_POINTS}.
+                  </p>
+                  <input
+                    id="puntos"
+                    name="puntos"
+                    type="number"
+                    inputMode="numeric"
+                    min={MIN_POINTS}
+                    max={MAX_POINTS}
+                    step={1}
+                    placeholder="20"
+                    value={puntos}
+                    onChange={(event) => {
+                      setPuntos(event.target.value)
+                      setFieldError('')
+                    }}
+                    aria-invalid={fieldError ? 'true' : undefined}
+                    aria-describedby={fieldError ? fieldErrorId : `${fieldErrorId}-help`}
+                    className={authStyles.input}
+                  />
+                </div>
+              )}
 
-        {evento && (
-          <>
+              {fieldError && (
+                <p id={fieldErrorId} role="alert" className={authStyles.error}>
+                  {fieldError}
+                </p>
+              )}
+              {submitError && (
+                <p role="alert" className={authStyles.error}>
+                  {submitError}
+                </p>
+              )}
+
+              <button type="submit" className={authStyles.button} disabled={submitting || (match && !classes)}>
+                {submitting ? 'Publicando…' : 'Revisar y publicar'}
+              </button>
+            </form>
+          </section>
+
+          <section className={`${pageStyles.card} ${styles.eventData}`}>
             <dl className={styles.summary}>
               <div className={styles.row}>
                 <dt>Evento</dt>
@@ -151,81 +244,16 @@ function PublishEvent() {
               )}
             </dl>
             <p className={styles.note}>Estos datos los envió el club y no se pueden modificar.</p>
+          </section>
+        </div>
+      )}
 
-            <form className={authStyles.form} onSubmit={handleReview} noValidate>
-              {match ? (
-                <fieldset className={styles.classes} aria-describedby={fieldError ? fieldErrorId : undefined}>
-                  <legend className={authStyles.label}>Clase del partido</legend>
-                  <p className={styles.help}>
-                    La clase define cuánto pesa la asistencia a este partido en el puntaje. Un factor mayor
-                    premia la asistencia a los partidos de menor convocatoria.
-                  </p>
-                  {!classes && <p className={authStyles.message}>Cargando clases…</p>}
-                  {classes?.map((item) => (
-                    <label key={item.clase} className={styles.classOption}>
-                      <input
-                        type="radio"
-                        name="clase"
-                        value={item.clase}
-                        checked={clase === item.clase}
-                        onChange={() => { setClase(item.clase); setFieldError('') }}
-                      />
-                      <span className={styles.classText}>
-                        <span className={styles.className}>
-                          Clase {item.clase}
-                          {item.es_default && <span className={styles.defaultTag}>Por defecto</span>}
-                        </span>
-                        <span className={styles.classDetail}>
-                          Demanda {item.demanda} · Factor {formatFactor(item.factor)}
-                        </span>
-                      </span>
-                    </label>
-                  ))}
-                </fieldset>
-              ) : (
-                <div className={authStyles.field}>
-                  <label htmlFor="puntos" className={authStyles.label}>Puntos</label>
-                  <p className={styles.help} id={`${fieldErrorId}-help`}>
-                    Los suma cada socio que asiste. Un número entero del {MIN_POINTS} al {MAX_POINTS}.
-                  </p>
-                  <input
-                    id="puntos"
-                    name="puntos"
-                    type="number"
-                    inputMode="numeric"
-                    min={MIN_POINTS}
-                    max={MAX_POINTS}
-                    step={1}
-                    placeholder="20"
-                    value={puntos}
-                    onChange={(event) => { setPuntos(event.target.value); setFieldError('') }}
-                    aria-invalid={fieldError ? 'true' : undefined}
-                    aria-describedby={fieldError ? fieldErrorId : `${fieldErrorId}-help`}
-                    className={authStyles.input}
-                  />
-                </div>
-              )}
-
-              {fieldError && <p id={fieldErrorId} role="alert" className={authStyles.error}>{fieldError}</p>}
-              {submitError && <p role="alert" className={authStyles.error}>{submitError}</p>}
-
-              <button type="submit" className={authStyles.button} disabled={submitting || (match && !classes)}>
-                {submitting ? 'Publicando…' : 'Revisar y publicar'}
-              </button>
-            </form>
-          </>
-        )}
-      </section>
-
-      <dialog
-        ref={dialogRef}
-        className={styles.dialog}
-        aria-labelledby={dialogTitleId}
-        onClick={handleDialogClick}
-      >
+      <dialog ref={dialogRef} className={styles.dialog} aria-labelledby={dialogTitleId} onClick={handleDialogClick}>
         {evento && (
           <div className={styles.dialogBody}>
-            <h2 id={dialogTitleId} className={styles.dialogTitle}>¿Publicar el evento?</h2>
+            <h2 id={dialogTitleId} className={styles.dialogTitle}>
+              ¿Publicar el evento?
+            </h2>
             <p className={styles.dialogText}>
               <strong>{evento.titulo}</strong> se va a publicar{' '}
               {match ? (
@@ -234,7 +262,9 @@ function PublishEvent() {
                   {chosenClass && ` (demanda ${chosenClass.demanda}, factor ${formatFactor(chosenClass.factor)})`}.
                 </>
               ) : (
-                <>con <strong>{Number(puntos)} puntos</strong>.</>
+                <>
+                  con <strong>{Number(puntos)} puntos</strong>.
+                </>
               )}
             </p>
             <p className={styles.dialogWarning}>

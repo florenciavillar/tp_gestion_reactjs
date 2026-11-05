@@ -32,7 +32,8 @@ export class ApiError extends Error {
     this.status = status
     const errorObj = detail?.error || detail
     this.code = typeof errorObj === 'string' ? errorObj : errorObj?.code
-    this.reason = typeof errorObj?.message === 'string' ? errorObj.message : (typeof detail === 'string' ? detail : undefined)
+    this.reason =
+      typeof errorObj?.message === 'string' ? errorObj.message : typeof detail === 'string' ? detail : undefined
     this.retryAfter = retryAfter
     // Violaciones por campo (HU-27): [{ code, parameter, message }].
     this.violations = Array.isArray(errorObj?.violations) ? errorObj.violations : undefined
@@ -85,6 +86,10 @@ export async function apiGetPage(path) {
 
 export function apiPost(path, body) {
   return request('POST', path, body)
+}
+
+export function apiPatch(path, body) {
+  return request('PATCH', path, body)
 }
 
 export async function apiUpload(path, formData) {

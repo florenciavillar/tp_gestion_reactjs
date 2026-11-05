@@ -11,6 +11,7 @@ import {
 } from '../services/attendance.js'
 import { formatEventDate, formatEventTime } from '../services/eventFormat.js'
 import styles from './AttendanceManagement.module.css'
+import pageStyles from './Page.module.css'
 
 function AttendanceManagement() {
   const [tab, setTab] = useState('asistencia') // 'asistencia' | 'actividades' | 'aprobaciones'
@@ -109,16 +110,10 @@ function AttendanceManagement() {
     setAttendanceError(null)
 
     try {
-      const res = await uploadAttendanceCSV(
-        selectedEventId,
-        attendanceFile,
-        confirmReplace,
-      )
+      const res = await uploadAttendanceCSV(selectedEventId, attendanceFile, confirmReplace)
       setAttendanceResult(res)
       if (res.requiere_confirmacion_reemplazo) {
-        setAttendanceError(
-          'El evento ya posee asistencia previa. Marcá la casilla de confirmación para reemplazarla.',
-        )
+        setAttendanceError('El evento ya posee asistencia previa. Marcá la casilla de confirmación para reemplazarla.')
       } else {
         // Limpiar archivo seleccionado tras éxito
         setAttendanceFile(null)
@@ -191,17 +186,17 @@ function AttendanceManagement() {
   }
 
   return (
-    <main className={styles.page}>
-      <header className={styles.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Link to="/" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.875rem' }}>
-            ← Volver al inicio
-          </Link>
-        </div>
-        <h1 className={styles.title}>Carga de Asistencias y Actividades</h1>
-        <p className={styles.description}>
-          Cargá la asistencia de eventos ya ocurridos o actividades recurrentes mediante archivos CSV.
-          Aplica tolerancia máxima de error del 5% y confirmación de reemplazos.
+    <main className={pageStyles.page}>
+      <header className={pageStyles.header}>
+        <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </Link>
+        <h1 className={pageStyles.title}>Carga de asistencias y actividades</h1>
+        <p className={pageStyles.lead}>
+          Cargá la asistencia de eventos ya ocurridos o actividades recurrentes mediante archivos CSV. Aplica tolerancia
+          máxima de error del 5% y confirmación de reemplazos.
         </p>
       </header>
 
@@ -214,7 +209,7 @@ function AttendanceManagement() {
           className={styles.tabButton}
           onClick={() => setTab('asistencia')}
         >
-          Asistencia a un Evento
+          Asistencia a un evento
         </button>
         <button
           role="tab"
@@ -223,7 +218,7 @@ function AttendanceManagement() {
           className={styles.tabButton}
           onClick={() => setTab('actividades')}
         >
-          Actividades Recurrentes
+          Actividades recurrentes
         </button>
         <button
           role="tab"
@@ -235,7 +230,7 @@ function AttendanceManagement() {
             loadApprovals()
           }}
         >
-          Aprobaciones Pendientes
+          Aprobaciones pendientes
           {pendingApprovals.length > 0 && (
             <span className={styles.badgePending} title={`${pendingApprovals.length} cargas pendientes`}>
               {pendingApprovals.length}
@@ -282,7 +277,15 @@ function AttendanceManagement() {
             {hasPreviousAttendance && (
               <div className={styles.warningBox} role="alert">
                 <div className={styles.warningHeader}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    aria-hidden="true"
+                  >
                     <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
                     <line x1="12" y1="9" x2="12" y2="13" />
                     <line x1="12" y1="17" x2="12.01" y2="17" />
@@ -290,7 +293,8 @@ function AttendanceManagement() {
                   <span>El evento ya posee asistencia cargada</span>
                 </div>
                 <p className={styles.warningText}>
-                  Si subís un nuevo archivo, la asistencia actual será reemplazada de forma atómica y archivada en el historial.
+                  Si subís un nuevo archivo, la asistencia actual será reemplazada de forma atómica y archivada en el
+                  historial.
                 </p>
                 <label htmlFor={replaceConfirmId} className={styles.checkboxLabel}>
                   <input
@@ -310,8 +314,8 @@ function AttendanceManagement() {
                 Archivo CSV de asistencias:
               </label>
               <p className={styles.hint}>
-                Columnas requeridas: <code>dni</code> y opcionalmente <code>numero_socio</code>, <code>fecha_evento</code>.
-                Codificación UTF-8, máximo 10 MB y hasta 100.000 filas.
+                Columnas requeridas: <code>dni</code> y opcionalmente <code>numero_socio</code>,{' '}
+                <code>fecha_evento</code>. Codificación UTF-8, máximo 10 MB y hasta 100.000 filas.
               </p>
               <label htmlFor={attendanceFileId} className={styles.fileUploadBox}>
                 <input
@@ -322,7 +326,15 @@ function AttendanceManagement() {
                   onChange={(e) => setAttendanceFile(e.target.files?.[0] || null)}
                   required
                 />
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -354,7 +366,7 @@ function AttendanceManagement() {
                 (hasPreviousAttendance && !confirmReplace)
               }
             >
-              {attendanceSubmitting ? 'Procesando archivo…' : 'Subir y Aplicar Asistencia'}
+              {attendanceSubmitting ? 'Procesando archivo…' : 'Subir y aplicar asistencia'}
             </button>
           </form>
 
@@ -362,12 +374,10 @@ function AttendanceManagement() {
           {attendanceResult && !attendanceResult.requiere_confirmacion_reemplazo && (
             <div className={`${styles.resultBox} ${styles.resultSuccess}`} role="status">
               <div className={styles.resultHeader}>
-                <h2 className={styles.resultTitle}>Resultado de la Carga de Asistencia</h2>
-                <span className={styles.badgePending} style={{ background: 'var(--color-primary)' }}>
-                  {attendanceResult.estado}
-                </span>
+                <h2 className={styles.resultTitle}>Resultado de la carga de asistencia</h2>
+                <span className={styles.badgeSuccess}>{attendanceResult.estado}</span>
               </div>
-              <p style={{ margin: 0, fontSize: '0.875rem' }}>{attendanceResult.mensaje}</p>
+              <p className={styles.resultText}>{attendanceResult.mensaje}</p>
 
               <div className={styles.statsRow}>
                 <div className={styles.statCard}>
@@ -381,7 +391,9 @@ function AttendanceManagement() {
                   <span className={styles.statLabel}>Incorporados</span>
                 </div>
                 <div className={styles.statCard}>
-                  <span className={`${styles.statNumber} ${attendanceResult.registros_rechazados > 0 ? styles.red : ''}`}>
+                  <span
+                    className={`${styles.statNumber} ${attendanceResult.registros_rechazados > 0 ? styles.red : ''}`}
+                  >
                     {attendanceResult.registros_rechazados}
                   </span>
                   <span className={styles.statLabel}>Rechazados</span>
@@ -390,8 +402,8 @@ function AttendanceManagement() {
 
               {attendanceResult.registros_rechazados > 0 && (
                 <div className={styles.rejectionsSection}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                  <div className={styles.rejectionsHeader}>
+                    <span className={styles.rejectionsCount}>
                       Se rechazaron {attendanceResult.registros_rechazados} registros (dentro de la tolerancia del 5%)
                     </span>
                     <button
@@ -399,7 +411,7 @@ function AttendanceManagement() {
                       className={styles.secondaryButton}
                       onClick={() => downloadRejectionsCSV(attendanceResult.carga_id)}
                     >
-                      📥 Descargar CSV de Rechazos
+                      Descargar CSV de rechazos
                     </button>
                   </div>
 
@@ -417,7 +429,9 @@ function AttendanceManagement() {
                         <tr key={i}>
                           <td>{r.fila ?? '-'}</td>
                           <td>{r.dni ?? '-'}</td>
-                          <td><code>{r.field || r.campo || '-'}</code></td>
+                          <td>
+                            <code>{r.field || r.campo || '-'}</code>
+                          </td>
                           <td>{r.motivo}</td>
                         </tr>
                       ))}
@@ -440,10 +454,11 @@ function AttendanceManagement() {
         <div className={styles.panel}>
           <form className={styles.formCard} onSubmit={handleActivitiesSubmit}>
             <div className={styles.fieldGroup}>
-              <h2 style={{ margin: 0, fontSize: '1.125rem' }}>Carga de Actividades Recurrentes</h2>
+              <h2 className={styles.resultTitle}>Carga de actividades recurrentes</h2>
               <p className={styles.hint}>
-                Registra la participación continua de socios en <strong>deportes federados</strong> o <strong>subcomisiones</strong>.
-                Las actividades repetidas con la misma fecha de inicio se actualizan automáticamente (upsert).
+                Registra la participación continua de socios en <strong>deportes federados</strong> o{' '}
+                <strong>subcomisiones</strong>. Las actividades repetidas con la misma fecha de inicio se actualizan
+                automáticamente (upsert).
               </p>
             </div>
 
@@ -452,8 +467,8 @@ function AttendanceManagement() {
                 Archivo CSV de actividades:
               </label>
               <p className={styles.hint}>
-                Columnas requeridas: <code>dni,tipo,fecha_desde,fecha_hasta</code>.
-                Los valores válidos para <code>tipo</code> son <code>deporte_federado</code> o <code>subcomision</code>.
+                Columnas requeridas: <code>dni,tipo,fecha_desde,fecha_hasta</code>. Los valores válidos para{' '}
+                <code>tipo</code> son <code>deporte_federado</code> o <code>subcomision</code>.
               </p>
 
               <label htmlFor={activitiesFileId} className={styles.fileUploadBox}>
@@ -465,7 +480,15 @@ function AttendanceManagement() {
                   onChange={(e) => setActivitiesFile(e.target.files?.[0] || null)}
                   required
                 />
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                   <polyline points="17 8 12 3 7 8" />
                   <line x1="12" y1="3" x2="12" y2="15" />
@@ -486,12 +509,8 @@ function AttendanceManagement() {
               </div>
             )}
 
-            <button
-              type="submit"
-              className={styles.primaryButton}
-              disabled={activitiesSubmitting || !activitiesFile}
-            >
-              {activitiesSubmitting ? 'Procesando archivo…' : 'Subir y Aplicar Actividades'}
+            <button type="submit" className={styles.primaryButton} disabled={activitiesSubmitting || !activitiesFile}>
+              {activitiesSubmitting ? 'Procesando archivo…' : 'Subir y aplicar actividades'}
             </button>
           </form>
 
@@ -499,12 +518,10 @@ function AttendanceManagement() {
           {activitiesResult && (
             <div className={`${styles.resultBox} ${styles.resultSuccess}`} role="status">
               <div className={styles.resultHeader}>
-                <h2 className={styles.resultTitle}>Resultado de la Carga de Actividades</h2>
-                <span className={styles.badgePending} style={{ background: 'var(--color-primary)' }}>
-                  {activitiesResult.estado}
-                </span>
+                <h2 className={styles.resultTitle}>Resultado de la carga de actividades</h2>
+                <span className={styles.badgeSuccess}>{activitiesResult.estado}</span>
               </div>
-              <p style={{ margin: 0, fontSize: '0.875rem' }}>{activitiesResult.mensaje}</p>
+              <p className={styles.resultText}>{activitiesResult.mensaje}</p>
 
               <div className={styles.statsRow}>
                 <div className={styles.statCard}>
@@ -518,13 +535,15 @@ function AttendanceManagement() {
                   <span className={styles.statLabel}>Incorporados</span>
                 </div>
                 <div className={styles.statCard}>
-                  <span className={styles.statNumber} style={{ color: '#2980b9' }}>
+                  <span className={`${styles.statNumber} ${styles.blue}`}>
                     {activitiesResult.registros_actualizados}
                   </span>
                   <span className={styles.statLabel}>Actualizados</span>
                 </div>
                 <div className={styles.statCard}>
-                  <span className={`${styles.statNumber} ${activitiesResult.registros_rechazados > 0 ? styles.red : ''}`}>
+                  <span
+                    className={`${styles.statNumber} ${activitiesResult.registros_rechazados > 0 ? styles.red : ''}`}
+                  >
                     {activitiesResult.registros_rechazados}
                   </span>
                   <span className={styles.statLabel}>Rechazados</span>
@@ -533,8 +552,8 @@ function AttendanceManagement() {
 
               {activitiesResult.registros_rechazados > 0 && (
                 <div className={styles.rejectionsSection}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem' }}>
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>
+                  <div className={styles.rejectionsHeader}>
+                    <span className={styles.rejectionsCount}>
                       Se rechazaron {activitiesResult.registros_rechazados} registros
                     </span>
                     <button
@@ -542,7 +561,7 @@ function AttendanceManagement() {
                       className={styles.secondaryButton}
                       onClick={() => downloadRejectionsCSV(activitiesResult.carga_id)}
                     >
-                      📥 Descargar CSV de Rechazos
+                      Descargar CSV de rechazos
                     </button>
                   </div>
                 </div>
@@ -556,10 +575,8 @@ function AttendanceManagement() {
       {tab === 'aprobaciones' && (
         <div className={styles.panel}>
           {approvalActionSuccess && (
-            <div className={styles.resultBox} style={{ borderLeft: '4px solid var(--color-primary)', background: '#f6fbf6' }} role="status">
-              <span style={{ fontSize: '0.875rem', color: 'var(--color-primary)', fontWeight: 600 }}>
-                ✓ {approvalActionSuccess}
-              </span>
+            <div className={styles.alertSuccess} role="status">
+              ✓ {approvalActionSuccess}
             </div>
           )}
 
@@ -579,14 +596,12 @@ function AttendanceManagement() {
                 <li key={p.carga_id} className={styles.pendingCard}>
                   <div className={styles.pendingTop}>
                     <div>
-                      <h2 className={styles.pendingTitle}>
-                        {p.evento_titulo || `Evento: ${p.evento_id_externo}`}
-                      </h2>
+                      <h2 className={styles.pendingTitle}>{p.evento_titulo || `Evento: ${p.evento_id_externo}`}</h2>
                       <span className={styles.hint}>
                         ID de carga externa: <code>{p.carga_id}</code>
                       </span>
                     </div>
-                    <span className={styles.badgePending}>Requiere Aprobación</span>
+                    <span className={styles.badgePending}>Requiere aprobación</span>
                   </div>
 
                   <div className={styles.pendingMeta}>
@@ -594,11 +609,12 @@ function AttendanceManagement() {
                       <strong>Nuevos registros:</strong> {p.registros_a_incorporar} socios
                     </div>
                     <div>
-                      <strong>Origen:</strong> {p.origen === 'club' ? 'Push del Club' : 'Archivo CSV'}
+                      <strong>Origen:</strong> {p.origen === 'club' ? 'Push del club' : 'Archivo CSV'}
                     </div>
                     {p.carga_previa && (
                       <div>
-                        <strong>Carga a reemplazar:</strong> {p.carga_previa.total_registros} socios ({p.carga_previa.carga_id})
+                        <strong>Carga a reemplazar:</strong> {p.carga_previa.total_registros} socios (
+                        {p.carga_previa.carga_id})
                       </div>
                     )}
                   </div>
@@ -610,7 +626,7 @@ function AttendanceManagement() {
                       disabled={processingApprovalId === p.carga_id}
                       onClick={() => handleReject(p.carga_id)}
                     >
-                      Rechazar Reemplazo
+                      Rechazar reemplazo
                     </button>
                     <button
                       type="button"
@@ -618,7 +634,7 @@ function AttendanceManagement() {
                       disabled={processingApprovalId === p.carga_id}
                       onClick={() => handleApprove(p.carga_id)}
                     >
-                      {processingApprovalId === p.carga_id ? 'Procesando…' : 'Aprobar y Aplicar'}
+                      {processingApprovalId === p.carga_id ? 'Procesando…' : 'Aprobar y aplicar'}
                     </button>
                   </div>
                 </li>

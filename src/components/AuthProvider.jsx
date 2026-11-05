@@ -23,15 +23,23 @@ export function AuthProvider({ children }) {
     if (!getToken()) return
     let ignore = false
     getMe()
-      .then((me) => { if (!ignore) setUser(me) })
+      .then((me) => {
+        if (!ignore) setUser(me)
+      })
       .catch(() => {})
-      .finally(() => { if (!ignore) setLoading(false) })
-    return () => { ignore = true }
+      .finally(() => {
+        if (!ignore) setLoading(false)
+      })
+    return () => {
+      ignore = true
+    }
   }, [])
 
   // Cada navegación dentro de la app cuenta como actividad y verifica que la sesión siga vigente.
   const refreshUser = useCallback(() => {
-    getMe().then(setUser).catch(() => {})
+    getMe()
+      .then(setUser)
+      .catch(() => {})
   }, [])
 
   // Recibe lo que devuelve la verificación del código de login: { token, user }.

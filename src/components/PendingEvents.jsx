@@ -29,8 +29,12 @@ function PendingEvents() {
         // desde la respuesta con un reloj monótono, nunca con la hora del dispositivo.
         setState({ status: 'ready', items, total, receivedAt: performance.now() })
       })
-      .catch(() => { if (!ignore) setState({ status: 'error' }) })
-    return () => { ignore = true }
+      .catch(() => {
+        if (!ignore) setState({ status: 'error' })
+      })
+    return () => {
+      ignore = true
+    }
   }, [page])
 
   const elapsedSeconds = state.status === 'ready' ? Math.floor((now - state.receivedAt) / 1000) : 0
@@ -42,21 +46,25 @@ function PendingEvents() {
     <section className={styles.section} aria-labelledby={headingId}>
       <div className={styles.headerRow}>
         <div className={styles.headerText}>
-          <h2 id={headingId} className={styles.heading}>Eventos pendientes de publicar</h2>
+          <h2 id={headingId} className={styles.heading}>
+            Eventos pendientes de publicar
+          </h2>
           <p className={styles.muted}>
-            Los envía el club. Elegí la clase de cada Partido o los puntos de cada evento institucional y
-            publicalo. Si se cumple el plazo, se publica solo con los valores por defecto.
+            Los envía el club. Elegí la clase de cada Partido o los puntos de cada evento institucional y publicalo. Si
+            se cumple el plazo, se publica solo con los valores por defecto.
           </p>
         </div>
         <Link to="/admin/attendance" className={styles.secondary}>
-          Cargar Asistencias
+          Cargar asistencias
         </Link>
       </div>
 
       {state.status === 'loading' && <p className={styles.muted}>Cargando eventos…</p>}
 
       {state.status === 'error' && (
-        <p className={styles.error} role="alert">No pudimos cargar los eventos. Probá de nuevo en un rato.</p>
+        <p className={styles.error} role="alert">
+          No pudimos cargar los eventos. Probá de nuevo en un rato.
+        </p>
       )}
 
       {state.status === 'ready' && state.total === 0 && (
@@ -73,7 +81,11 @@ function PendingEvents() {
                 <li key={evento.id_interno} className={styles.card}>
                   <div className={styles.cardTop}>
                     <h3 className={styles.cardTitle}>{evento.titulo}</h3>
-                    <span className={`${styles.type} ${String(evento.tipo).toLowerCase() === 'partido' ? '' : styles.typeInstitutional}`}>{eventTypeLabel(evento.tipo)}</span>
+                    <span
+                      className={`${styles.type} ${String(evento.tipo).toLowerCase() === 'partido' ? '' : styles.typeInstitutional}`}
+                    >
+                      {eventTypeLabel(evento.tipo)}
+                    </span>
                   </div>
 
                   <dl className={styles.meta}>
@@ -111,7 +123,9 @@ function PendingEvents() {
           </ul>
 
           <nav className={styles.pagination} aria-label="Páginas de eventos pendientes">
-            <p className={styles.muted}>{firstShown}–{lastShown} de {state.total}</p>
+            <p className={styles.muted}>
+              {firstShown}–{lastShown} de {state.total}
+            </p>
             <div className={styles.paginationButtons}>
               <button
                 type="button"

@@ -70,13 +70,19 @@ function AdminSignIn() {
               </svg>
             </Link>
 
-            <h1 className={styles.title}>Ingreso Admins</h1>
+            <h1 className={styles.title}>Ingreso de admins</h1>
 
-            {notice && <p className={styles.message} role="status">{notice}</p>}
+            {notice && (
+              <p className={styles.message} role="status">
+                {notice}
+              </p>
+            )}
 
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.field}>
-                <label htmlFor="email" className={styles.label}>Email</label>
+                <label htmlFor="email" className={styles.label}>
+                  Email
+                </label>
                 <input
                   id="email"
                   name="email"
@@ -90,7 +96,11 @@ function AdminSignIn() {
                   aria-describedby={error ? 'admin-login-error' : undefined}
                   className={styles.input}
                 />
-                {error && <p id="admin-login-error" role="alert" className={styles.error}>{error}</p>}
+                {error && (
+                  <p id="admin-login-error" role="alert" className={styles.error}>
+                    {error}
+                  </p>
+                )}
               </div>
 
               <button type="submit" className={styles.button} disabled={submitting}>

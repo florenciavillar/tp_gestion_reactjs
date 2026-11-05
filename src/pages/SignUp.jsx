@@ -67,7 +67,11 @@ function SignUp() {
 
             <h1 className={styles.title}>Activá tu cuenta de socio</h1>
 
-            {notice && <p className={styles.message} role="status">{notice}</p>}
+            {notice && (
+              <p className={styles.message} role="status">
+                {notice}
+              </p>
+            )}
 
             <IdentifierStep
               label="Ingresá tu DNI o número de socio"
@@ -83,7 +87,10 @@ function SignUp() {
         )}
 
         <p className={styles.switch}>
-          ¿Ya la activaste? <Link to="/sign-in/member" className={styles.switchLink}>Ingresá</Link>
+          ¿Ya la activaste?{' '}
+          <Link to="/sign-in/member" className={styles.switchLink}>
+            Ingresá
+          </Link>
         </p>
       </section>
     </main>

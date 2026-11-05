@@ -3,17 +3,16 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1.25rem;
-  background: var(--color-background);
+  background: var(--color-surface-muted);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
 }
 
 .title {
   margin: 0;
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 800;
-  line-height: 1.1;
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .section {
@@ -24,19 +23,29 @@
 
 .heading {
   margin: 0;
-  font-size: 1.0625rem;
+  font-size: var(--text-base);
   font-weight: 700;
-  color: var(--color-pitch);
+  color: var(--color-pitch-dark);
 }
 
 .paragraph {
   margin: 0;
-  line-height: 1.5;
+  max-width: 70ch;
+  line-height: 1.6;
 }
 
-/* Dentro de la pantalla del socio (HU-13): sin caja propia, la tarjeta de la pantalla ya la tiene. */
+/* Pantalla del socio (HU-13): una sola tarjeta con las secciones una debajo de la otra. */
 .page {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.page .heading {
+  font-size: var(--text-lg);
 }
