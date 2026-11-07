@@ -80,6 +80,12 @@ function AppLayout() {
                 </svg>
                 Ranking
               </NavLink>
+              <NavLink to="/admin/segmentation" className={navLinkClass}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 7c3-2 6 2 9 0s6-2 9 0M3 12c3-2 6 2 9 0s6-2 9 0M3 17c3-2 6 2 9 0s6-2 9 0" />
+                </svg>
+                Oleadas
+              </NavLink>
               <NavLink to="/admin/simulator" className={navLinkClass}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
