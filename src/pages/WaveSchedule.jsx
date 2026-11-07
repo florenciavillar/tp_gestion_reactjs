@@ -70,6 +70,15 @@ function WaveSchedule() {
 
   const event = schedule?.event ?? segmentation?.event
 
+  // Vuelve a leer el cronograma vigente (por ejemplo, si otro Admin lo cambió).
+  function reloadSchedule() {
+    getSchedule(id)
+      .then(setSchedule)
+      .catch(() => {
+        // Se mantiene lo que había.
+      })
+  }
+
   return (
     <main className={pageStyles.page}>
       <header className={pageStyles.header}>
@@ -118,12 +127,14 @@ function WaveSchedule() {
         </section>
       )}
 
-      {loaded && !loadError && segmentation && !schedule && (
+      {loaded && !loadError && segmentation && (
         <PeriodForm
           eventId={id}
           eventStart={segmentation.event.fecha_hora}
           wavesCount={segmentation.waves.length}
+          replacing={schedule !== null}
           onGenerated={setSchedule}
+          onStale={reloadSchedule}
         />
       )}
     </main>
@@ -132,40 +143,70 @@ function WaveSchedule() {
 
 // Período de reserva: apertura de la primera oleada y cierre general (escenario 2).
 // Las reglas las valida el backend; acá solo se ayuda con los límites del selector.
-function PeriodForm({ eventId, eventStart, wavesCount, onGenerated }) {
+// Si ya hay un cronograma, reemplazarlo pide confirmación y lo vuelve a borrador (escenario 6).
+function PeriodForm({ eventId, eventStart, wavesCount, replacing, onGenerated, onStale }) {
   const openingId = useId()
   const closingId = useId()
   const [opening, setOpening] = useState('')
   const [closing, setClosing] = useState('')
+  const [asking, setAsking] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [notice, setNotice] = useState('')
 
-  async function handleSubmit(event) {
-    event.preventDefault()
-    if (!opening || !closing) {
-      setError('Completá la apertura y el cierre.')
-      return
-    }
+  async function submit(confirmed) {
+    setAsking(false)
     setSubmitting(true)
     setError('')
+    setNotice('')
     try {
       onGenerated(
         await generateSchedule(eventId, {
           openingAt: toBuenosAiresIso(opening),
           closingAt: toBuenosAiresIso(closing),
+          confirmed,
         }),
       )
+      setNotice(
+        confirmed
+          ? 'El cronograma se regeneró y volvió a borrador: revisalo y confirmalo de nuevo.'
+          : 'El cronograma se generó en borrador.',
+      )
     } catch (err) {
-      setError(scheduleErrorMessage(err))
+      if (err.code === 'CONFIRMATION_REQUIRED') {
+        // Otro Admin lo generó mientras tanto: se muestra el vigente y se pide confirmar el reemplazo.
+        onStale()
+        setAsking(true)
+      } else {
+        setError(scheduleErrorMessage(err))
+      }
     } finally {
       setSubmitting(false)
     }
   }
 
+  let buttonLabel = replacing ? 'Regenerar cronograma' : 'Generar cronograma'
+  if (submitting) buttonLabel = 'Generando…'
+
+  function handleSubmit(event) {
+    event.preventDefault()
+    if (!opening || !closing) {
+      setError('Completá la apertura y el cierre.')
+      return
+    }
+    if (replacing) {
+      setError('')
+      setNotice('')
+      setAsking(true)
+      return
+    }
+    submit(false)
+  }
+
   return (
     <section className={runStyles.section} aria-labelledby="period-title">
       <h2 id="period-title" className={runStyles.sectionTitle}>
-        Período de reserva
+        {replacing ? 'Regenerar cronograma' : 'Período de reserva'}
       </h2>
       <p className={runStyles.muted}>
         Las {wavesCount} oleadas se habilitan repartidas en partes iguales entre la apertura y el cierre, empezando por
@@ -202,13 +243,34 @@ function PeriodForm({ eventId, eventStart, wavesCount, onGenerated }) {
             required
           />
         </div>
+        {asking && (
+          <div className={runStyles.confirmation} role="alert">
+            <p className={runStyles.confirmationTitle}>
+              Este partido ya tiene un cronograma. Si continuás, se reemplaza y vuelve a borrador: los socios dejan de
+              verlo hasta que lo confirmes de nuevo.
+            </p>
+            <div className={runStyles.actions}>
+              <button type="button" className={authStyles.button} onClick={() => submit(true)}>
+                Reemplazar cronograma
+              </button>
+              <button type="button" className={authStyles.doorSecondary} onClick={() => setAsking(false)}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
         {error && (
           <p className={authStyles.error} role="alert">
             {error}
           </p>
         )}
-        <button type="submit" className={authStyles.button} disabled={submitting}>
-          {submitting ? 'Generando…' : 'Generar cronograma'}
+        {notice && (
+          <p className={runStyles.muted} role="status">
+            {notice}
+          </p>
+        )}
+        <button type="submit" className={authStyles.button} disabled={submitting || asking}>
+          {buttonLabel}
         </button>
       </form>
     </section>
