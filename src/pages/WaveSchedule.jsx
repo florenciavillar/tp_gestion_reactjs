@@ -22,6 +22,13 @@ const STATUS_LABELS = {
   invalidated: 'Invalidado',
 }
 
+// Estado de cada ola según la hora del servidor (escenario 5). Solo para cronogramas confirmados.
+const WAVE_STATES = {
+  pending: { label: 'Pendiente', className: runStyles.muted },
+  open: { label: 'Habilitada', className: runStyles.pill },
+  closed: { label: 'Cerrada', className: `${runStyles.pill} ${runStyles.pillFailed}` },
+}
+
 // HU-37: cronograma de habilitación de las olas de un partido. Solo admins.
 function WaveSchedule() {
   const { id } = useParams()
@@ -300,6 +307,7 @@ function ScheduleSummary({ schedule }) {
 
 // Cada ola con su hora de habilitación; todas quedan abiertas hasta el cierre general.
 function ScheduledWaves({ schedule }) {
+  const showStates = schedule.status === 'confirmed'
   return (
     <div className={segStyles.tableWrap}>
       <table className={segStyles.table}>
@@ -314,6 +322,7 @@ function ScheduledWaves({ schedule }) {
             <th scope="col">Socios</th>
             <th scope="col">Habilita desde</th>
             <th scope="col">Hasta</th>
+            {showStates && <th scope="col">Estado</th>}
           </tr>
         </thead>
         <tbody>
@@ -331,6 +340,13 @@ function ScheduledWaves({ schedule }) {
               <td>{wave.socios}</td>
               <td>{formatDateTime(wave.starts_at)}</td>
               <td>{formatDateTime(schedule.closing_at)}</td>
+              {showStates && (
+                <td>
+                  <span className={WAVE_STATES[wave.state]?.className}>
+                    {WAVE_STATES[wave.state]?.label ?? wave.state}
+                  </span>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
