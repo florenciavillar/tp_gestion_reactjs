@@ -153,6 +153,12 @@ function SegmentationDetail() {
                 <p className={runStyles.muted}>Este partido todavía no tiene olas generadas.</p>
               )}
             </div>
+            {segmentation && (
+              <Link to={`/admin/segmentation/${encodeURIComponent(id)}/schedule`} className={styles.link}>
+                Ver cronograma de habilitación
+              </Link>
+            )}
+            s
           </section>
 
           <section className={`${runStyles.section} ${styles.fitContent}`} aria-labelledby="generate-title">
