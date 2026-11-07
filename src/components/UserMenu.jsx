@@ -92,33 +92,12 @@ function UserMenu() {
                 Perfil
               </Link>
             </li>
-            {user.role === 'member' && (
-              <>
-                <li>
-                  <Link to="/ranking/breakdown" className={styles.item} onClick={close}>
-                    Desglose de mi puntaje
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/ranking/explanation" className={styles.item} onClick={close}>
-                    ¿Cómo se calcula?
-                  </Link>
-                </li>
-              </>
-            )}
             {user.role === 'admin' && (
-              <>
-                <li>
-                  <Link to="/admin/attendance" className={styles.item} onClick={close}>
-                    Cargar asistencias
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/admin/invite" className={styles.item} onClick={close}>
-                    Invitar admin
-                  </Link>
-                </li>
-              </>
+              <li>
+                <Link to="/admin/invite" className={styles.item} onClick={close}>
+                  Invitar admin
+                </Link>
+              </li>
             )}
             <li>
               <button type="button" className={`${styles.item} ${styles.danger}`} onClick={askLogout}>

@@ -51,6 +51,9 @@ function Home() {
                 <Link to="/admin/simulator" className={styles.secondary}>
                   Simulador
                 </Link>
+                <Link to="/admin/attendance" className={styles.secondary}>
+                  Cargar asistencias
+                </Link>
               </>
             )}
           </div>
