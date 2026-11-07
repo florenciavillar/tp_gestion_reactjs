@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { formatDateTime, formatEventDate, formatEventTime } from '../services/eventFormat.js'
+import { getSchedule, isNoScheduleError } from '../services/schedule.js'
 import {
   generateSegmentation,
   getSegmentableEvents,
@@ -20,6 +21,8 @@ function SegmentationDetail() {
   // Partido que todavía se puede segmentar (publicado y no empezado); null si no está en la lista.
   const [event, setEvent] = useState(null)
   const [segmentation, setSegmentation] = useState(null)
+  // HU-37: con la primera ola del cronograma confirmado ya abierta, las olas no se regeneran.
+  const [locked, setLocked] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [loadError, setLoadError] = useState('')
   const [checking, setChecking] = useState(false)
@@ -38,11 +41,16 @@ function SegmentationDetail() {
         if (isNoSegmentationError(err)) return null
         throw err
       }),
+      getSchedule(id).catch((err) => {
+        if (isNoScheduleError(err)) return null
+        throw err
+      }),
     ])
-      .then(([items, current]) => {
+      .then(([items, current, schedule]) => {
         if (ignore) return
         setEvent(items.find((item) => item.event.id_interno === id)?.event ?? null)
         setSegmentation(current)
+        setLocked(schedule?.locked ?? false)
       })
       .catch((err) => {
         if (!ignore) setLoadError(segmentationErrorMessage(err))
@@ -171,6 +179,7 @@ function SegmentationDetail() {
             {event === null && segmentation && (
               <p className={runStyles.muted}>El partido ya empezó: no se pueden regenerar las olas.</p>
             )}
+            {locked && <p className={runStyles.muted}>La primera oleada ya abrió: no se pueden regenerar las olas.</p>}
 
             {confirmation && (
               <GenerateConfirmation
@@ -195,7 +204,7 @@ function SegmentationDetail() {
               type="button"
               className={authStyles.button}
               onClick={handleGenerate}
-              disabled={busy || event === null}
+              disabled={busy || event === null || locked}
             >
               {buttonLabel}
             </button>

@@ -127,7 +127,13 @@ function WaveSchedule() {
         </section>
       )}
 
-      {loaded && !loadError && segmentation && (
+      {loaded && !loadError && schedule?.locked && (
+        <p className={runStyles.banner} role="status">
+          La primera oleada ya abrió: el cronograma no se puede regenerar.
+        </p>
+      )}
+
+      {loaded && !loadError && segmentation && !schedule?.locked && (
         <PeriodForm
           eventId={id}
           eventStart={segmentation.event.fecha_hora}
