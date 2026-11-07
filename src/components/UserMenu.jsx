@@ -93,18 +93,11 @@ function UserMenu() {
               </Link>
             </li>
             {user.role === 'admin' && (
-              <>
-                <li>
-                  <Link to="/admin/attendance" className={styles.item} onClick={close}>
-                    Cargar asistencias
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/admin/invite" className={styles.item} onClick={close}>
-                    Invitar admin
-                  </Link>
-                </li>
-              </>
+              <li>
+                <Link to="/admin/invite" className={styles.item} onClick={close}>
+                  Invitar admin
+                </Link>
+              </li>
             )}
             <li>
               <button type="button" className={`${styles.item} ${styles.danger}`} onClick={askLogout}>

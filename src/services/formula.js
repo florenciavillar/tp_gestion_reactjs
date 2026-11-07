@@ -49,6 +49,12 @@ export function getRankingExplanation() {
   return apiGet('/member/scoring/explanation')
 }
 
+// HU-16: desglose de los componentes del puntaje del socio
+// { has_ranking, message, rules_version, calculation_date, total, position, components }
+export function getScoreBreakdown() {
+  return apiGet('/member/scoring/breakdown')
+}
+
 const ERRORS = {
   FORBIDDEN: 'Solo los admins pueden gestionar la fórmula.',
   ADMIN_WITHOUT_CLUB: 'Tu cuenta no tiene un club asignado.',

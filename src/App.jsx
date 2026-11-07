@@ -15,6 +15,7 @@ import MyScore from './pages/MyScore.jsx'
 import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
+import ScoreBreakdownPage from './pages/ScoreBreakdownPage.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SimulationResult from './pages/SimulationResult.jsx'
 import Simulator from './pages/Simulator.jsx'
@@ -96,6 +97,14 @@ function App() {
           element={
             <RequireAuth role="member">
               <MyScore />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/breakdown"
+          element={
+            <RequireAuth role="member">
+              <ScoreBreakdownPage />
             </RequireAuth>
           }
         />

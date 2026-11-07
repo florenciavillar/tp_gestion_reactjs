@@ -29,6 +29,9 @@ function Home() {
                 <Link to="/ranking" className={styles.secondary}>
                   Ver mi puntaje
                 </Link>
+                <Link to="/ranking/breakdown" className={styles.secondary}>
+                  Desglose de mi puntaje
+                </Link>
                 <Link to="/ranking/explanation" className={styles.secondary}>
                   ¿Cómo se calcula mi puntaje?
                 </Link>
@@ -47,6 +50,9 @@ function Home() {
                 </Link>
                 <Link to="/admin/simulator" className={styles.secondary}>
                   Simulador
+                </Link>
+                <Link to="/admin/attendance" className={styles.secondary}>
+                  Cargar asistencias
                 </Link>
               </>
             )}

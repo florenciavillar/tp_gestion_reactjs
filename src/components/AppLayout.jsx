@@ -39,6 +39,14 @@ function AppLayout() {
             </NavLink>
           )}
           {user?.role === 'member' && (
+            <NavLink to="/ranking/breakdown" className={navLinkClass}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />
+              </svg>
+              Desglose
+            </NavLink>
+          )}
+          {user?.role === 'member' && (
             <NavLink to="/ranking/explanation" className={navLinkClass}>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
@@ -77,6 +85,12 @@ function AppLayout() {
                   <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
                 </svg>
                 Simulador
+              </NavLink>
+              <NavLink to="/admin/attendance" className={navLinkClass}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9 4h6v3H9zM9 5H6v16h12V5h-3M9 13l2 2 4-4" />
+                </svg>
+                Cargar asistencias
               </NavLink>
             </>
           )}
