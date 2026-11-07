@@ -127,6 +127,12 @@ function WaveSchedule() {
         </section>
       )}
 
+      {loaded && !loadError && schedule?.status === 'invalidated' && (
+        <p className={`${runStyles.banner} ${runStyles.bannerError}`} role="status">
+          Las olas se regeneraron: este cronograma ya no vale y los socios no lo ven. Generá uno nuevo.
+        </p>
+      )}
+
       {loaded && !loadError && schedule?.locked && (
         <p className={runStyles.banner} role="status">
           La primera oleada ya abrió: el cronograma no se puede regenerar.
@@ -138,7 +144,7 @@ function WaveSchedule() {
           eventId={id}
           eventStart={segmentation.event.fecha_hora}
           wavesCount={segmentation.waves.length}
-          replacing={schedule !== null}
+          replacing={schedule !== null && schedule.status !== 'invalidated'}
           onGenerated={setSchedule}
           onStale={reloadSchedule}
         />
