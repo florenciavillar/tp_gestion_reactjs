@@ -116,13 +116,9 @@ function ScoreBreakdownPage() {
                   Evaluado con la versión de reglas del ranking #{state.data.rules_version}
                 </p>
                 <div className={styles.badges}>
-                  {state.data.rules_version && (
-                    <span className={styles.badge}>Reglas v{state.data.rules_version}</span>
-                  )}
+                  {state.data.rules_version && <span className={styles.badge}>Reglas v{state.data.rules_version}</span>}
                   {state.data.calculation_date && (
-                    <span className={`${styles.badge} ${styles.badgeMuted}`}>
-                      Fecha: {state.data.calculation_date}
-                    </span>
+                    <span className={`${styles.badge} ${styles.badgeMuted}`}>Fecha: {state.data.calculation_date}</span>
                   )}
                 </div>
               </div>
@@ -337,9 +333,7 @@ function SupportingFigures({ keyName, figures }) {
         </div>
         <div className={styles.figureBox}>
           <span className={styles.figureLabel}>Estado del bono</span>
-          <span className={styles.figureValue}>
-            {figures.bonus_applied ? 'Bono otorgado' : 'No aplicable'}
-          </span>
+          <span className={styles.figureValue}>{figures.bonus_applied ? 'Bono otorgado' : 'No aplicable'}</span>
         </div>
       </div>
     )
