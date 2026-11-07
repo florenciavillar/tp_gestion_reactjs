@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { formatDateTime, formatEventDate, formatEventTime } from '../services/eventFormat.js'
+import { formatDateTime, formatEventDate, formatEventTime, formatRemaining } from '../services/eventFormat.js'
 import {
   generateSchedule,
   getSchedule,
@@ -13,6 +13,7 @@ import { getSegmentation, isNoSegmentationError } from '../services/segmentation
 import authStyles from './Auth.module.css'
 import pageStyles from './Page.module.css'
 import runStyles from './RankingRun.module.css'
+import segStyles from './Segmentation.module.css'
 
 const STATUS_LABELS = {
   draft: 'Borrador',
@@ -207,18 +208,66 @@ function PeriodForm({ eventId, eventStart, wavesCount, onGenerated }) {
 
 function ScheduleSummary({ schedule }) {
   return (
-    <dl className={runStyles.summary}>
-      <dt>Estado</dt>
-      <dd>{STATUS_LABELS[schedule.status] ?? schedule.status}</dd>
-      <dt>Apertura de la primera oleada</dt>
-      <dd>{formatDateTime(schedule.opening_at)}</dd>
-      <dt>Cierre general</dt>
-      <dd>{formatDateTime(schedule.closing_at)}</dd>
-      <dt>Generado</dt>
-      <dd>
-        {formatDateTime(schedule.generated_at)} por {schedule.generated_by}
-      </dd>
-    </dl>
+    <>
+      <dl className={runStyles.summary}>
+        <dt>Estado</dt>
+        <dd>{STATUS_LABELS[schedule.status] ?? schedule.status}</dd>
+        <dt>Apertura de la primera oleada</dt>
+        <dd>{formatDateTime(schedule.opening_at)}</dd>
+        <dt>Cierre general</dt>
+        <dd>{formatDateTime(schedule.closing_at)}</dd>
+        <dt>Entre oleadas</dt>
+        <dd>
+          {formatRemaining(schedule.step_seconds)} (mínimo {schedule.min_step_minutes} min)
+        </dd>
+        <dt>Generado</dt>
+        <dd>
+          {formatDateTime(schedule.generated_at)} por {schedule.generated_by}
+        </dd>
+      </dl>
+      <ScheduledWaves schedule={schedule} />
+    </>
+  )
+}
+
+// Cada ola con su hora de habilitación; todas quedan abiertas hasta el cierre general.
+function ScheduledWaves({ schedule }) {
+  return (
+    <div className={segStyles.tableWrap}>
+      <table className={segStyles.table}>
+        <caption className={runStyles.muted}>
+          Cuando una oleada llega a su hora, el acceso queda abierto para ella y las anteriores hasta el cierre general.
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Ola</th>
+            <th scope="col">Percentil</th>
+            <th scope="col">Posiciones</th>
+            <th scope="col">Socios</th>
+            <th scope="col">Habilita desde</th>
+            <th scope="col">Hasta</th>
+          </tr>
+        </thead>
+        <tbody>
+          {schedule.waves.map((wave) => (
+            <tr key={wave.order}>
+              <td>{wave.order}</td>
+              <td>
+                {wave.percentile_from}–{wave.percentile_to} %
+              </td>
+              <td>
+                {wave.position_from === wave.position_to
+                  ? wave.position_from
+                  : `${wave.position_from} a ${wave.position_to}`}
+              </td>
+              <td>{wave.socios}</td>
+              <td>{formatDateTime(wave.starts_at)}</td>
+              <td>{formatDateTime(schedule.closing_at)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
