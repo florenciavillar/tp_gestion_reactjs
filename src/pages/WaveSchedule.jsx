@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { formatDateTime, formatEventDate, formatEventTime, formatRemaining } from '../services/eventFormat.js'
 import {
+  confirmSchedule,
   generateSchedule,
   getSchedule,
   isNoScheduleError,
@@ -106,6 +107,7 @@ function WaveSchedule() {
               <p className={runStyles.muted}>Este partido todavía no tiene cronograma.</p>
             )}
           </div>
+          {schedule?.status === 'draft' && <ConfirmPanel eventId={id} schedule={schedule} onConfirmed={setSchedule} />}
         </section>
       )}
 
@@ -206,6 +208,64 @@ function PeriodForm({ eventId, eventStart, wavesCount, onGenerated }) {
   )
 }
 
+// Escenario 4: el Admin revisa el borrador y lo confirma; recién ahí lo ven los socios.
+function ConfirmPanel({ eventId, schedule, onConfirmed }) {
+  const [asking, setAsking] = useState(false)
+  const [confirming, setConfirming] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleConfirm() {
+    setConfirming(true)
+    setError('')
+    try {
+      onConfirmed(await confirmSchedule(eventId))
+    } catch (err) {
+      setError(scheduleErrorMessage(err))
+      setAsking(false)
+    } finally {
+      setConfirming(false)
+    }
+  }
+
+  return (
+    <>
+      <p className={runStyles.banner} role="status">
+        <strong>Borrador:</strong> los socios todavía no ven este cronograma. Revisalo y confirmalo para publicarlo.
+      </p>
+      {asking ? (
+        <div className={runStyles.confirmation} role="alert">
+          <p className={runStyles.confirmationTitle}>
+            ¿Confirmás el cronograma? Son {schedule.waves.length} oleadas, del {formatDateTime(schedule.opening_at)} al{' '}
+            {formatDateTime(schedule.closing_at)}. Desde ahora los socios lo van a ver.
+          </p>
+          <div className={runStyles.actions}>
+            <button type="button" className={authStyles.button} onClick={handleConfirm} disabled={confirming}>
+              {confirming ? 'Confirmando…' : 'Confirmar'}
+            </button>
+            <button
+              type="button"
+              className={authStyles.doorSecondary}
+              onClick={() => setAsking(false)}
+              disabled={confirming}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button type="button" className={authStyles.button} onClick={() => setAsking(true)}>
+          Confirmar cronograma
+        </button>
+      )}
+      {error && (
+        <p className={authStyles.error} role="alert">
+          {error}
+        </p>
+      )}
+    </>
+  )
+}
+
 function ScheduleSummary({ schedule }) {
   return (
     <>
@@ -224,6 +284,14 @@ function ScheduleSummary({ schedule }) {
         <dd>
           {formatDateTime(schedule.generated_at)} por {schedule.generated_by}
         </dd>
+        {schedule.confirmed_at && (
+          <>
+            <dt>Confirmado</dt>
+            <dd>
+              {formatDateTime(schedule.confirmed_at)} por {schedule.confirmed_by}
+            </dd>
+          </>
+        )}
       </dl>
       <ScheduledWaves schedule={schedule} />
     </>
