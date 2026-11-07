@@ -1,7 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { formatDateTime, formatEventDate, formatEventTime } from '../services/eventFormat.js'
-import { getSchedule, isNoScheduleError, scheduleErrorMessage } from '../services/schedule.js'
+import {
+  generateSchedule,
+  getSchedule,
+  isNoScheduleError,
+  scheduleErrorMessage,
+  toBuenosAiresInput,
+  toBuenosAiresIso,
+} from '../services/schedule.js'
 import { getSegmentation, isNoSegmentationError } from '../services/segmentation.js'
 import authStyles from './Auth.module.css'
 import pageStyles from './Page.module.css'
@@ -91,14 +98,110 @@ function WaveSchedule() {
           <h2 id="schedule-title" className={runStyles.sectionTitle}>
             Cronograma
           </h2>
-          {schedule ? (
-            <ScheduleSummary schedule={schedule} />
-          ) : (
-            <p className={runStyles.muted}>Este partido todavía no tiene cronograma.</p>
-          )}
+          <div aria-live="polite">
+            {schedule ? (
+              <ScheduleSummary schedule={schedule} />
+            ) : (
+              <p className={runStyles.muted}>Este partido todavía no tiene cronograma.</p>
+            )}
+          </div>
         </section>
       )}
+
+      {loaded && !loadError && segmentation && !schedule && (
+        <PeriodForm
+          eventId={id}
+          eventStart={segmentation.event.fecha_hora}
+          wavesCount={segmentation.waves.length}
+          onGenerated={setSchedule}
+        />
+      )}
     </main>
+  )
+}
+
+// Período de reserva: apertura de la primera oleada y cierre general (escenario 2).
+// Las reglas las valida el backend; acá solo se ayuda con los límites del selector.
+function PeriodForm({ eventId, eventStart, wavesCount, onGenerated }) {
+  const openingId = useId()
+  const closingId = useId()
+  const [opening, setOpening] = useState('')
+  const [closing, setClosing] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    if (!opening || !closing) {
+      setError('Completá la apertura y el cierre.')
+      return
+    }
+    setSubmitting(true)
+    setError('')
+    try {
+      onGenerated(
+        await generateSchedule(eventId, {
+          openingAt: toBuenosAiresIso(opening),
+          closingAt: toBuenosAiresIso(closing),
+        }),
+      )
+    } catch (err) {
+      setError(scheduleErrorMessage(err))
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  return (
+    <section className={runStyles.section} aria-labelledby="period-title">
+      <h2 id="period-title" className={runStyles.sectionTitle}>
+        Período de reserva
+      </h2>
+      <p className={runStyles.muted}>
+        Las {wavesCount} oleadas se habilitan repartidas en partes iguales entre la apertura y el cierre, empezando por
+        la ola 1. Entre una oleada y la siguiente tiene que haber un mínimo de minutos (5 por defecto), y el cierre no
+        puede ser posterior al inicio del partido. Las horas son de Buenos Aires.
+      </p>
+      <form className={authStyles.form} onSubmit={handleSubmit} noValidate>
+        <div className={authStyles.field}>
+          <label htmlFor={openingId} className={authStyles.label}>
+            Apertura de la primera oleada
+          </label>
+          <input
+            id={openingId}
+            type="datetime-local"
+            className={authStyles.input}
+            value={opening}
+            max={toBuenosAiresInput(eventStart)}
+            onChange={(e) => setOpening(e.target.value)}
+            required
+          />
+        </div>
+        <div className={authStyles.field}>
+          <label htmlFor={closingId} className={authStyles.label}>
+            Cierre general
+          </label>
+          <input
+            id={closingId}
+            type="datetime-local"
+            className={authStyles.input}
+            value={closing}
+            min={opening || undefined}
+            max={toBuenosAiresInput(eventStart)}
+            onChange={(e) => setClosing(e.target.value)}
+            required
+          />
+        </div>
+        {error && (
+          <p className={authStyles.error} role="alert">
+            {error}
+          </p>
+        )}
+        <button type="submit" className={authStyles.button} disabled={submitting}>
+          {submitting ? 'Generando…' : 'Generar cronograma'}
+        </button>
+      </form>
+    </section>
   )
 }
 

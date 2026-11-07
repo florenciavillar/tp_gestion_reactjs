@@ -25,6 +25,30 @@ export function confirmSchedule(idInterno) {
   return apiPost(`/admin/events/${encodeURIComponent(idInterno)}/schedule/confirm`)
 }
 
+// Buenos Aires no tiene horario de verano: su offset es siempre -03:00.
+const BUENOS_AIRES_OFFSET = '-03:00'
+
+const inputParts = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/Argentina/Buenos_Aires',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+})
+
+// Valor de un <input type="datetime-local"> ("2026-11-20T18:00") a ISO con el offset de Buenos Aires.
+export function toBuenosAiresIso(localValue) {
+  return `${localValue}:00${BUENOS_AIRES_OFFSET}`
+}
+
+// Una fecha (ISO o Date) al formato de un <input type="datetime-local">, en hora de Buenos Aires.
+export function toBuenosAiresInput(value) {
+  const parts = Object.fromEntries(inputParts.formatToParts(new Date(value)).map((part) => [part.type, part.value]))
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`
+}
+
 export function isNoScheduleError(err) {
   return err.status === 404 && err.code === 'SCHEDULE_NOT_FOUND'
 }
