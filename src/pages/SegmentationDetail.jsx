@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { formatDateTime, formatEventDate, formatEventTime } from '../services/eventFormat.js'
+import { getSchedule, isNoScheduleError } from '../services/schedule.js'
 import {
   generateSegmentation,
   getSegmentableEvents,
@@ -20,6 +21,10 @@ function SegmentationDetail() {
   // Partido que todavía se puede segmentar (publicado y no empezado); null si no está en la lista.
   const [event, setEvent] = useState(null)
   const [segmentation, setSegmentation] = useState(null)
+  // HU-37: con la primera ola del cronograma confirmado ya abierta, las olas no se regeneran.
+  const [locked, setLocked] = useState(false)
+  // HU-37: si hay un cronograma vigente (borrador o confirmado), regenerar las olas lo invalida.
+  const [hasSchedule, setHasSchedule] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [loadError, setLoadError] = useState('')
   const [checking, setChecking] = useState(false)
@@ -38,11 +43,17 @@ function SegmentationDetail() {
         if (isNoSegmentationError(err)) return null
         throw err
       }),
+      getSchedule(id).catch((err) => {
+        if (isNoScheduleError(err)) return null
+        throw err
+      }),
     ])
-      .then(([items, current]) => {
+      .then(([items, current, schedule]) => {
         if (ignore) return
         setEvent(items.find((item) => item.event.id_interno === id)?.event ?? null)
         setSegmentation(current)
+        setLocked(schedule?.locked ?? false)
+        setHasSchedule(schedule !== null && schedule.status !== 'invalidated')
       })
       .catch((err) => {
         if (!ignore) setLoadError(segmentationErrorMessage(err))
@@ -63,7 +74,12 @@ function SegmentationDetail() {
     try {
       const result = await generateSegmentation(id, confirmed)
       setSegmentation(result)
-      setNotice(confirmed ? 'Las olas se regeneraron.' : 'Las olas se generaron.')
+      if (confirmed && hasSchedule) {
+        setHasSchedule(false)
+        setNotice('Las olas se regeneraron y el cronograma quedó invalidado: generalo de nuevo.')
+      } else {
+        setNotice(confirmed ? 'Las olas se regeneraron.' : 'Las olas se generaron.')
+      }
     } catch (err) {
       if (err.code === 'CONFIRMATION_REQUIRED') {
         // Otro Admin las generó mientras tanto: se muestran y se pide confirmar el reemplazo.
@@ -153,6 +169,11 @@ function SegmentationDetail() {
                 <p className={runStyles.muted}>Este partido todavía no tiene olas generadas.</p>
               )}
             </div>
+            {segmentation && (
+              <Link to={`/admin/segmentation/${encodeURIComponent(id)}/schedule`} className={styles.link}>
+                Ver cronograma de habilitación
+              </Link>
+            )}
           </section>
 
           <section className={`${runStyles.section} ${styles.fitContent}`} aria-labelledby="generate-title">
@@ -165,10 +186,12 @@ function SegmentationDetail() {
             {event === null && segmentation && (
               <p className={runStyles.muted}>El partido ya empezó: no se pueden regenerar las olas.</p>
             )}
+            {locked && <p className={runStyles.muted}>La primera oleada ya abrió: no se pueden regenerar las olas.</p>}
 
             {confirmation && (
               <GenerateConfirmation
                 confirmation={confirmation}
+                hasSchedule={hasSchedule}
                 onConfirm={() => generate(confirmation.replacing)}
                 onCancel={() => setConfirmation(null)}
               />
@@ -189,7 +212,7 @@ function SegmentationDetail() {
               type="button"
               className={authStyles.button}
               onClick={handleGenerate}
-              disabled={busy || event === null}
+              disabled={busy || event === null || locked}
             >
               {buttonLabel}
             </button>
@@ -200,7 +223,7 @@ function SegmentationDetail() {
   )
 }
 
-function GenerateConfirmation({ confirmation, onConfirm, onCancel }) {
+function GenerateConfirmation({ confirmation, hasSchedule, onConfirm, onCancel }) {
   const { warnings, checked, replacing } = confirmation
   return (
     <div className={runStyles.confirmation} role="alert">
@@ -222,7 +245,8 @@ function GenerateConfirmation({ confirmation, onConfirm, onCancel }) {
       )}
       {replacing && (
         <p className={runStyles.confirmationTitle}>
-          Este partido ya tiene olas. Si continuás, se reemplazan por las nuevas.
+          Este partido ya tiene olas. Si continuás, se reemplazan por las nuevas
+          {hasSchedule && ' y el cronograma se invalida: vas a tener que generarlo de nuevo'}.
         </p>
       )}
       <div className={runStyles.actions}>

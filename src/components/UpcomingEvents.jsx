@@ -75,10 +75,7 @@ function UpcomingEvents() {
                 <Link to={evento.slot_url} className={styles.secondary}>
                   Ver mi turno
                 </Link>
-                <Link
-                  to={`/ranking/simulator/${encodeURIComponent(evento.id_interno)}`}
-                  className={styles.secondary}
-                >
+                <Link to={`/ranking/simulator/${encodeURIComponent(evento.id_interno)}`} className={styles.secondary}>
                   Simular
                 </Link>
               </div>

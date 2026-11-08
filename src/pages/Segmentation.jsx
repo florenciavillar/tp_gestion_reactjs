@@ -7,6 +7,13 @@ import pageStyles from './Page.module.css'
 import runStyles from './RankingRun.module.css'
 import styles from './Segmentation.module.css'
 
+// Resumen del cronograma de cada partido (HU-37).
+function scheduleLabel(schedule) {
+  if (schedule.status === 'confirmed') return `Cronograma confirmado · abre el ${formatDateTime(schedule.opening_at)}`
+  if (schedule.status === 'invalidated') return 'Cronograma invalidado: hay que generarlo de nuevo'
+  return 'Cronograma en borrador'
+}
+
 // HU-36: partidos próximos para generar sus olas. Solo admins.
 function Segmentation() {
   const [items, setItems] = useState(null)
@@ -54,7 +61,7 @@ function Segmentation() {
         {items?.length === 0 && <p className={runStyles.muted}>No hay partidos próximos publicados.</p>}
         {items?.length > 0 && (
           <ul className={styles.list}>
-            {items.map(({ event, segmentation }) => (
+            {items.map(({ event, segmentation, schedule }) => (
               <li key={event.id_interno} className={styles.item}>
                 <div className={styles.itemText}>
                   <h3 className={styles.itemTitle}>{event.titulo}</h3>
@@ -68,10 +75,34 @@ function Segmentation() {
                   ) : (
                     <span className={`${runStyles.pill} ${runStyles.pillFailed}`}>Sin olas</span>
                   )}
+                  {segmentation &&
+                    (schedule ? (
+                      <span
+                        className={
+                          schedule.status === 'invalidated'
+                            ? `${runStyles.pill} ${runStyles.pillFailed}`
+                            : runStyles.pill
+                        }
+                      >
+                        {scheduleLabel(schedule)}
+                      </span>
+                    ) : (
+                      <span className={runStyles.muted}>Sin cronograma</span>
+                    ))}
                 </div>
-                <Link to={`/admin/segmentation/${encodeURIComponent(event.id_interno)}`} className={styles.link}>
-                  {segmentation ? 'Ver olas' : 'Generar olas'}
-                </Link>
+                <div className={styles.itemText}>
+                  <Link to={`/admin/segmentation/${encodeURIComponent(event.id_interno)}`} className={styles.link}>
+                    {segmentation ? 'Ver olas' : 'Generar olas'}
+                  </Link>
+                  {segmentation && (
+                    <Link
+                      to={`/admin/segmentation/${encodeURIComponent(event.id_interno)}/schedule`}
+                      className={styles.link}
+                    >
+                      {schedule ? 'Ver cronograma' : 'Armar cronograma'}
+                    </Link>
+                  )}
+                </div>
               </li>
             ))}
           </ul>

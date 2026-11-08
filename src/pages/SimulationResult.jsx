@@ -2,12 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { formatEventDate, formatEventTime } from '../services/eventFormat.js'
 import { formatPosition, formatScore } from '../services/memberScore.js'
-import {
-  formatDifference,
-  formatLevel,
-  simulateEvent,
-  simulatorErrorMessage,
-} from '../services/simulator.js'
+import { formatDifference, formatLevel, simulateEvent, simulatorErrorMessage } from '../services/simulator.js'
 import authStyles from './Auth.module.css'
 import styles from './Formula.module.css'
 import pageStyles from './Page.module.css'
@@ -137,7 +132,9 @@ function Result({ data }) {
       {estimated ? (
         <div className={resultStyles.label}>
           <p>{estimate.label}</p>
-          <p className={styles.muted}>«Probable» significa con un {formatLevel(estimate.range_level)} de probabilidad.</p>
+          <p className={styles.muted}>
+            «Probable» significa con un {formatLevel(estimate.range_level)} de probabilidad.
+          </p>
         </div>
       ) : (
         // "No disponible" y "no estimado" son informativos, no errores: sin role="alert".

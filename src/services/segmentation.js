@@ -3,7 +3,9 @@ import { apiGet, apiPost } from './api.js'
 // HU-36: segmentación de socios en olas de un partido. El club sale de la cuenta del Admin.
 
 // Partidos publicados que todavía no empezaron:
-// [{ event: { id_interno, titulo, fecha_hora, lugar }, segmentation: { generated_at, waves_count } | null }]
+// [{ event: { id_interno, titulo, fecha_hora, lugar }, segmentation: { generated_at, waves_count } | null,
+//    schedule: { status: 'draft' | 'confirmed' | 'invalidated', opening_at, closing_at } | null }]
+// `schedule` es el cronograma de las olas (HU-37).
 export function getSegmentableEvents() {
   return apiGet('/admin/segmentation/events')
 }
@@ -15,7 +17,7 @@ export function getSegmentationPreflight() {
 }
 
 // Olas de un partido: { event, ranking: { id, completed_at, rules_version }, ranked_total,
-// percentile_step, generated_at, generated_by, waves: [{ order, percentile_from, percentile_to,
+// percentile_step, min_step_minutes, generated_at, generated_by, waves: [{ order, percentile_from, percentile_to,
 // position_from, position_to, socios }] }. 404 SEGMENTATION_NOT_FOUND si todavía no tiene.
 export function getSegmentation(idInterno) {
   return apiGet(`/admin/events/${encodeURIComponent(idInterno)}/segmentation`)
