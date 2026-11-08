@@ -40,19 +40,6 @@
   min-width: 0;
 }
 
-.titleRow {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-}
-
-.summarySubtitle {
-  margin: 0;
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  line-height: 1.4;
-}
-
 .badges {
   display: flex;
   gap: 0.5rem;

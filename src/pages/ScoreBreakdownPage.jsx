@@ -27,48 +27,32 @@ function ScoreBreakdownPage() {
 
   return (
     <main className={pageStyles.page}>
+      <header className={pageStyles.header}>
+        <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </Link>
+        <h1 className={pageStyles.title}>{TITLE}</h1>
+        {state.status === 'ready' && state.data.has_ranking && (
+          <p className={pageStyles.lead}>Evaluado con la versión de reglas del ranking #{state.data.rules_version}</p>
+        )}
+      </header>
+
       {state.status === 'loading' && (
-        <section className={pageStyles.card}>
-          <header className={pageStyles.header}>
-            <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </Link>
-            <h1 className={pageStyles.title}>{TITLE}</h1>
-          </header>
-          <p className={styles.muted} role="status">
-            Cargando desglose de puntaje…
-          </p>
-        </section>
+        <p className={styles.muted} role="status">
+          Cargando desglose de puntaje…
+        </p>
       )}
 
       {state.status === 'error' && (
-        <section className={pageStyles.card}>
-          <header className={pageStyles.header}>
-            <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </Link>
-            <h1 className={pageStyles.title}>{TITLE}</h1>
-          </header>
-          <p className={authStyles.error} role="alert">
-            {state.message}
-          </p>
-        </section>
+        <p className={authStyles.error} role="alert">
+          {state.message}
+        </p>
       )}
 
       {state.status === 'ready' && !state.data.has_ranking && (
         <section className={pageStyles.card}>
-          <header className={pageStyles.header}>
-            <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </Link>
-            <h1 className={pageStyles.title}>{TITLE}</h1>
-          </header>
           <div className={styles.emptyBody}>
             <div className={styles.emptyIcon}>
               <svg
@@ -99,22 +83,9 @@ function ScoreBreakdownPage() {
       {state.status === 'ready' && state.data.has_ranking && (
         <div className={styles.dashboardLayout}>
           {/* Tarjeta de Resumen superior */}
-          <section className={styles.summaryCard} aria-labelledby="breakdown-title">
+          <section className={styles.summaryCard} aria-label="Resumen del puntaje">
             <div className={styles.summaryHeader}>
               <div className={styles.summaryInfo}>
-                <div className={styles.titleRow}>
-                  <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M19 12H5M12 19l-7-7 7-7" />
-                    </svg>
-                  </Link>
-                  <h1 id="breakdown-title" className={pageStyles.title}>
-                    {TITLE}
-                  </h1>
-                </div>
-                <p className={styles.summarySubtitle}>
-                  Evaluado con la versión de reglas del ranking #{state.data.rules_version}
-                </p>
                 <div className={styles.badges}>
                   {state.data.rules_version && <span className={styles.badge}>Reglas v{state.data.rules_version}</span>}
                   {state.data.calculation_date && (
