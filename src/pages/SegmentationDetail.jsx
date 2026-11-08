@@ -174,7 +174,6 @@ function SegmentationDetail() {
                 Ver cronograma de habilitación
               </Link>
             )}
-            s
           </section>
 
           <section className={`${runStyles.section} ${styles.fitContent}`} aria-labelledby="generate-title">
