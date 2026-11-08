@@ -21,7 +21,8 @@ function toForm(settings) {
 // Misma validación que el back: un valor inválido no se manda.
 function validate(form) {
   const errors = {}
-  if (!/^\d{1,2}$/.test(form.level) || Number(form.level) < 1) errors.level = 'Ingresá un porcentaje entero entre 1 y 99.'
+  if (!/^\d{1,2}$/.test(form.level) || Number(form.level) < 1)
+    errors.level = 'Ingresá un porcentaje entero entre 1 y 99.'
   const prior = form.prior.replace(',', '.')
   if (!/^\d{1,4}(\.\d{1,2})?$/.test(prior) || Number(prior) <= 0)
     errors.prior = 'Ingresá un número mayor a 0, con hasta 4 enteros y 2 decimales.'
@@ -124,12 +125,12 @@ function SimulatorSettings() {
       {settings && form && (
         <>
           <p className={pageStyles.lead}>
-            Los socios pueden simular cuánto cambia su puntaje si van o no a un evento. En los partidos también ven
-            una posición estimada, que podés ajustar o apagar acá.
+            Los socios pueden simular cuánto cambia su puntaje si van o no a un evento. En los partidos también ven una
+            posición estimada, que podés ajustar o apagar acá.
           </p>
           <p className={styles.banner}>
-            Con menos de {settings.position_min_population} socios en el ranking, los socios ven «No podemos estimar
-            tu posición…» aunque la proyección esté encendida.
+            Con menos de {settings.position_min_population} socios en el ranking, los socios ven «No podemos estimar tu
+            posición…» aunque la proyección esté encendida.
           </p>
 
           <form className={`${pageStyles.card} ${styles.paramsForm}`} onSubmit={handleSubmit} noValidate>

@@ -48,6 +48,9 @@ function Home() {
                 <Link to="/admin/ranking" className={styles.secondary}>
                   Ranking de socios
                 </Link>
+                <Link to="/admin/segmentation" className={styles.secondary}>
+                  Oleadas
+                </Link>
                 <Link to="/admin/simulator" className={styles.secondary}>
                   Simulador
                 </Link>

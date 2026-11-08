@@ -1,0 +1,74 @@
+/* Olas de acceso de los partidos (HU-36). */
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.item:first-child {
+  padding-top: 0.25rem;
+  border-top: none;
+}
+
+.itemText {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.itemTitle {
+  margin: 0;
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+
+/* La tabla de olas puede ser muy larga: la card de generar no se estira para acompañarla. */
+.fitContent {
+  align-self: start;
+}
+
+.link {
+  font-weight: 600;
+  color: var(--color-pitch-dark);
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  padding: 0.625rem 0.875rem;
+  text-align: left;
+  border-top: 1px solid var(--color-border);
+}
+
+.table th {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+  border-top: none;
+}

@@ -1,6 +1,6 @@
 # TP Gestión — Frontend
 
-Frontend web en **React** + **Vite**. El backend (Python) todavía no está conectado.
+Frontend web en **React** + **Vite**, conectado al backend de Python (`GDSI2026c2`).
 
 ## Requisitos
 

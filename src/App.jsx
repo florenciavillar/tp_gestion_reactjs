@@ -22,6 +22,9 @@ import Simulator from './pages/Simulator.jsx'
 import SimulatorSettings from './pages/SimulatorSettings.jsx'
 import SignUp from './pages/SignUp.jsx'
 import RankingRun from './pages/RankingRun.jsx'
+import Segmentation from './pages/Segmentation.jsx'
+import SegmentationDetail from './pages/SegmentationDetail.jsx'
+import WaveSchedule from './pages/WaveSchedule.jsx'
 
 function App() {
   return (
@@ -73,6 +76,30 @@ function App() {
           element={
             <RequireAuth role="admin">
               <RankingRun />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/segmentation"
+          element={
+            <RequireAuth role="admin">
+              <Segmentation />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/segmentation/:id"
+          element={
+            <RequireAuth role="admin">
+              <SegmentationDetail />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/segmentation/:id/schedule"
+          element={
+            <RequireAuth role="admin">
+              <WaveSchedule />
             </RequireAuth>
           }
         />
