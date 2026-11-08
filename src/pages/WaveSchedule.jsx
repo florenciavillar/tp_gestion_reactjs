@@ -144,6 +144,7 @@ function WaveSchedule() {
           eventId={id}
           eventStart={segmentation.event.fecha_hora}
           wavesCount={segmentation.waves.length}
+          minStepMinutes={segmentation.min_step_minutes}
           replacing={schedule !== null && schedule.status !== 'invalidated'}
           onGenerated={setSchedule}
           onStale={reloadSchedule}
@@ -153,10 +154,20 @@ function WaveSchedule() {
   )
 }
 
+// Abre el calendario al tocar cualquier parte del campo, no solo el ícono. `showPicker` no existe en
+// navegadores viejos y puede tirar error (por ejemplo, dentro de un iframe): ahí queda el comportamiento nativo.
+function openPicker(event) {
+  try {
+    event.currentTarget.showPicker?.()
+  } catch {
+    // Se sigue pudiendo abrir desde el ícono o escribir la fecha.
+  }
+}
+
 // Período de reserva: apertura de la primera oleada y cierre general (escenario 2).
 // Las reglas las valida el backend; acá solo se ayuda con los límites del selector.
 // Si ya hay un cronograma, reemplazarlo pide confirmación y lo vuelve a borrador (escenario 6).
-function PeriodForm({ eventId, eventStart, wavesCount, replacing, onGenerated, onStale }) {
+function PeriodForm({ eventId, eventStart, wavesCount, minStepMinutes, replacing, onGenerated, onStale }) {
   const openingId = useId()
   const closingId = useId()
   const [opening, setOpening] = useState('')
@@ -222,8 +233,9 @@ function PeriodForm({ eventId, eventStart, wavesCount, replacing, onGenerated, o
       </h2>
       <p className={runStyles.muted}>
         Las {wavesCount} oleadas se habilitan repartidas en partes iguales entre la apertura y el cierre, empezando por
-        la ola 1. Entre una oleada y la siguiente tiene que haber un mínimo de minutos (5 por defecto), y el cierre no
-        puede ser posterior al inicio del partido. Las horas son de Buenos Aires.
+        la ola 1. Entre una oleada y la siguiente tiene que haber al menos {minStepMinutes} minutos: el período tiene
+        que durar al menos {wavesCount * minStepMinutes} minutos. El cierre no puede ser posterior al inicio del
+        partido. Las horas son de Buenos Aires.
       </p>
       <form className={authStyles.form} onSubmit={handleSubmit} noValidate>
         <div className={authStyles.field}>
@@ -237,6 +249,7 @@ function PeriodForm({ eventId, eventStart, wavesCount, replacing, onGenerated, o
             value={opening}
             max={toBuenosAiresInput(eventStart)}
             onChange={(e) => setOpening(e.target.value)}
+            onClick={openPicker}
             required
           />
         </div>
@@ -252,6 +265,7 @@ function PeriodForm({ eventId, eventStart, wavesCount, replacing, onGenerated, o
             min={opening || undefined}
             max={toBuenosAiresInput(eventStart)}
             onChange={(e) => setClosing(e.target.value)}
+            onClick={openPicker}
             required
           />
         </div>

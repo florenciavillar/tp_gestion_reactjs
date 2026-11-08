@@ -17,7 +17,7 @@ export function getSegmentationPreflight() {
 }
 
 // Olas de un partido: { event, ranking: { id, completed_at, rules_version }, ranked_total,
-// percentile_step, generated_at, generated_by, waves: [{ order, percentile_from, percentile_to,
+// percentile_step, min_step_minutes, generated_at, generated_by, waves: [{ order, percentile_from, percentile_to,
 // position_from, position_to, socios }] }. 404 SEGMENTATION_NOT_FOUND si todavía no tiene.
 export function getSegmentation(idInterno) {
   return apiGet(`/admin/events/${encodeURIComponent(idInterno)}/segmentation`)
