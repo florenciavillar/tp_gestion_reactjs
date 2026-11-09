@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from 'react'
 import { Link } from 'react-router'
 import { getUpcomingEvents } from '../services/events.js'
 import { formatEventDate, formatEventTime } from '../services/eventFormat.js'
+import pageStyles from '../pages/Page.module.css'
 import styles from './Events.module.css'
 
 // HU-17: próximos eventos publicados del club del socio, de solo lectura. Cada evento lleva al
@@ -27,9 +28,16 @@ function UpcomingEvents() {
 
   return (
     <section className={styles.section} aria-labelledby={headingId}>
-      <h2 id={headingId} className={styles.heading}>
-        Próximos eventos
-      </h2>
+      <header className={pageStyles.header}>
+        <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </Link>
+        <h1 id={headingId} className={pageStyles.title}>
+          Próximos eventos
+        </h1>
+      </header>
 
       {state.status === 'loading' && <p className={styles.muted}>Cargando eventos…</p>}
 

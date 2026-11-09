@@ -22,3 +22,10 @@ export function getEventClasses() {
 export function publishEvent(idInterno, choice) {
   return apiPost(`/admin/events/${encodeURIComponent(idInterno)}/publish`, choice)
 }
+
+// HU-39: turno del socio para un evento. Siempre por id_interno, el mismo del `slot_url` de HU-17.
+// Devuelve { event, status, message, wave, starts_at, closing_at, seconds_until_start,
+// seconds_until_closing, now }; `status` es no_turns, no_schedule, no_wave, pending, open o closed.
+export function getOwnSlot(idInterno) {
+  return apiGet(`/member/events/${encodeURIComponent(idInterno)}/slot`)
+}
