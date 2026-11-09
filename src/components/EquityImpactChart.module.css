@@ -1,0 +1,318 @@
+.chartContainer {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius, 12px);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card, 0 1px 3px rgba(0, 0, 0, 0.05));
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.chartTitle {
+  margin: 0;
+  font-size: var(--text-lg, 1.125rem);
+  font-weight: 700;
+  color: var(--color-text, #0f172a);
+}
+
+.chartSubtitle {
+  margin: 0.25rem 0 0 0;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text-muted, #64748b);
+}
+
+.headerControls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.filterPills {
+  display: flex;
+  background: var(--color-surface-muted, #f8fafc);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 9999px;
+  padding: 0.2rem;
+  gap: 0.2rem;
+}
+
+.filterBtn {
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  padding: 0.35rem 0.75rem;
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  color: var(--color-text-muted, #64748b);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filterBtn:hover {
+  color: var(--color-text, #0f172a);
+}
+
+.filterBtnActive {
+  background: #ffffff;
+  color: var(--color-text, #0f172a);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.downloadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border, #cbd5e1);
+  color: var(--color-text, #1e293b);
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  font-size: var(--text-xs, 0.75rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.downloadBtn:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.downloadBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Leyenda */
+.legendBar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 0.6rem 0.85rem;
+  background: var(--color-surface-muted, #f8fafc);
+  border-radius: 8px;
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--color-text, #334155);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.swatchGreen {
+  width: 12px;
+  height: 12px;
+  background: #16a34a;
+  border-radius: 3px;
+}
+
+.swatchRed {
+  width: 12px;
+  height: 12px;
+  background: #dc2626;
+  border-radius: 3px;
+}
+
+.swatchZero {
+  width: 16px;
+  height: 3px;
+  background: #1e293b;
+  border-radius: 2px;
+}
+
+/* Contenedor del SVG con scroll */
+.svgScrollWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border, #f1f5f9);
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 0.5rem 0;
+}
+
+.svgChart {
+  display: block;
+  user-select: none;
+}
+
+/* SVG Text styles */
+.tickLabel {
+  font-size: 11px;
+  fill: #64748b;
+  font-family: inherit;
+}
+
+.tickLabelZero {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #0f172a;
+  font-family: inherit;
+}
+
+.zeroLineLabel {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #0f172a;
+  font-family: inherit;
+}
+
+.yAxisTitle {
+  font-size: 11px;
+  font-weight: 600;
+  fill: #475569;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+}
+
+.barRect {
+  transition: opacity 0.15s ease;
+  cursor: pointer;
+}
+
+.barRect:hover {
+  opacity: 0.9;
+}
+
+.barValuePositive {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #15803d;
+  font-family: inherit;
+}
+
+.barValueNegative {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #b91c1c;
+  font-family: inherit;
+}
+
+.xLabel {
+  font-size: 11px;
+  fill: #475569;
+  font-family: inherit;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.xLabelHovered {
+  font-size: 11px;
+  fill: #0f172a;
+  font-family: inherit;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.barItem {
+  outline: none;
+}
+
+.barItem:focus-visible rect {
+  stroke: #0284c7;
+  stroke-width: 2px;
+}
+
+/* Tooltip */
+.tooltipBox {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-size: var(--text-xs, 0.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: fadeIn 0.12s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tooltipHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltipPillGreen {
+  background: #dcfce7;
+  color: #166534;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.tooltipPillRed {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+.tooltipAttr {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.tooltipTitle {
+  margin: 0;
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tooltipGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.5rem 1rem;
+}
+
+.tooltipLabel {
+  display: block;
+  color: #64748b;
+  font-size: 10px;
+  margin-bottom: 0.1rem;
+}
+
+.tooltipValPos {
+  color: #16a34a;
+}
+
+.tooltipValNeg {
+  color: #dc2626;
+}
+
+.emptyState {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+  font-size: var(--text-sm, 0.875rem);
+}

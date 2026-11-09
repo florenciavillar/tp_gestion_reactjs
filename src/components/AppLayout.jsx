@@ -92,6 +92,12 @@ function AppLayout() {
                 </svg>
                 Simulador
               </NavLink>
+              <NavLink to="/admin/equity-analysis" className={navLinkClass}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v17M6 20h12M4 7l8-3 8 3M6 7l-3 6h6L6 7zm12 0l-3 6h6l-3-6z" />
+                </svg>
+                Equidad
+              </NavLink>
               <NavLink to="/admin/attendance" className={navLinkClass}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M9 4h6v3H9zM9 5H6v16h12V5h-3M9 13l2 2 4-4" />

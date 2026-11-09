@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router'
 import AppLayout from './components/AppLayout.jsx'
 import { useAuth } from './components/authContext.js'
+import AdminEquityAnalysis from './pages/AdminEquityAnalysis.jsx'
 import AdminInvitation from './pages/AdminInvitation.jsx'
 import AdminSignIn from './pages/AdminSignIn.jsx'
 import AttendanceManagement from './pages/AttendanceManagement.jsx'
@@ -108,6 +109,14 @@ function App() {
           element={
             <RequireAuth role="admin">
               <SimulatorSettings />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/equity-analysis"
+          element={
+            <RequireAuth role="admin">
+              <AdminEquityAnalysis />
             </RequireAuth>
           }
         />
