@@ -188,25 +188,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.875rem 1rem;
-  cursor: pointer;
-  list-style: none;
-  user-select: none;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   gap: 0.5rem;
-}
-
-.componentCard:not([open]) .componentSummary {
-  border-bottom: none;
-}
-
-.componentSummary::-webkit-details-marker {
-  display: none;
-}
-
-.componentSummary:focus-visible {
-  outline: 2px solid var(--color-ink);
-  outline-offset: -2px;
 }
 
 .nameRow {
@@ -214,23 +198,6 @@
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
-}
-
-.chevron {
-  width: 16px;
-  height: 16px;
-  stroke: var(--color-text-muted);
-  stroke-width: 2.25;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: transform 0.2s ease;
-  transform: rotate(-90deg);
-  flex-shrink: 0;
-}
-
-.componentCard[open] .chevron {
-  transform: rotate(0deg);
 }
 
 .componentName {
