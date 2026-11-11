@@ -1,5 +1,6 @@
 // Cliente base para el backend. En desarrollo, Vite redirige /api al backend (ver vite.config.js).
-const API_URL = import.meta.env.VITE_API_URL ?? '/api'
+const RAW_API_URL = import.meta.env.VITE_API_URL ?? '/api'
+const API_URL = RAW_API_URL.replace(/\/+$/, '')
 const TOKEN_KEY = 'sessionToken'
 
 // El storage puede no estar disponible (modo privado, cookies bloqueadas): ahí la sesión dura lo que la pestaña.
@@ -48,6 +49,11 @@ export function setSessionRejectedHandler(handler) {
   onSessionRejected = handler
 }
 
+function buildUrl(path) {
+  const cleanPath = path.startsWith('/') ? path : `/${path}`
+  return `${API_URL}${cleanPath}`
+}
+
 async function request(method, path, body) {
   const { data } = await send(method, path, body)
   return data
@@ -59,7 +65,7 @@ async function send(method, path, body) {
   if (body) headers['Content-Type'] = 'application/json'
   if (token) headers.Authorization = `Bearer ${token}`
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(buildUrl(path), {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
@@ -97,7 +103,7 @@ export async function apiUpload(path, formData) {
   const headers = {}
   if (token) headers.Authorization = `Bearer ${token}`
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(buildUrl(path), {
     method: 'POST',
     headers,
     body: formData,
@@ -116,7 +122,7 @@ export async function apiDownload(path, defaultFilename = 'archivo.csv') {
   const headers = {}
   if (token) headers.Authorization = `Bearer ${token}`
 
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(buildUrl(path), {
     method: 'GET',
     headers,
   })
