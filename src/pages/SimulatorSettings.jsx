@@ -107,7 +107,7 @@ function SimulatorSettings() {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className={pageStyles.title}>Simulador de puntaje</h1>
+        <h1 className={pageStyles.title}>Configuración Socios</h1>
       </header>
 
       {state.status === 'loading' && (

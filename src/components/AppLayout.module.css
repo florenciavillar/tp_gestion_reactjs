@@ -100,3 +100,93 @@
   min-width: 0;
   container-type: inline-size;
 }
+
+/* Grupo "Simulación": las subopciones se despliegan al pasar el mouse, al enfocar o en su pantalla. */
+.navGroupButton {
+  width: 100%;
+  font-family: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navGroupButton .navGroupChevron {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.subnav {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.2s ease,
+    opacity 0.2s ease,
+    visibility 0.2s;
+}
+
+.subnavInner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.navGroup:hover .subnav,
+.navGroup:focus-within .subnav,
+.navGroupOpen .subnav {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+}
+
+.navGroup:hover .navGroupChevron,
+.navGroup:focus-within .navGroupChevron,
+.navGroupOpen .navGroupChevron {
+  transform: rotate(180deg);
+}
+
+.subNavLink {
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
+  margin: 0.125rem 0 0 1.5rem;
+  padding: 0 0.875rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.65);
+  text-decoration: none;
+  border-left: 1px solid rgb(255 255 255 / 0.16);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.subNavLink:hover {
+  color: var(--color-white);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.subNavLink:focus-visible {
+  outline-color: var(--color-yellow);
+  outline-offset: -3px;
+}
+
+.subNavLinkActive {
+  color: var(--color-white);
+  background: rgb(255 255 255 / 0.1);
+  border-left: 3px solid var(--color-lime);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subnav,
+  .navGroupChevron {
+    transition: none;
+  }
+}

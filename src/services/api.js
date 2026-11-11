@@ -136,3 +136,29 @@ export async function apiDownload(path, defaultFilename = 'archivo.csv') {
   a.remove()
   window.URL.revokeObjectURL(url)
 }
+
+// POST que baja un archivo (HU-29: CSV de la simulación). El nombre sale de Content-Disposition;
+// los errores vienen en JSON, igual que en el resto de la API.
+export async function apiPostDownload(path, body, defaultFilename = 'archivo.csv') {
+  const token = getToken()
+  const headers = { 'Content-Type': 'application/json' }
+  if (token) headers.Authorization = `Bearer ${token}`
+
+  const response = await fetch(`${API_URL}${path}`, { method: 'POST', headers, body: JSON.stringify(body) })
+  if (response.status === 401 && token) onSessionRejected?.()
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+    throw new ApiError('POST', path, response.status, data?.detail ?? data?.error)
+  }
+  const disposition = response.headers.get('Content-Disposition') ?? ''
+  const filename = /filename="([^"]+)"/.exec(disposition)?.[1] ?? defaultFilename
+  // El blob trae el BOM UTF-8 del back para que Excel lea los acentos: no se toca.
+  const url = window.URL.createObjectURL(await response.blob())
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  window.URL.revokeObjectURL(url)
+}

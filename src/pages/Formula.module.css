@@ -314,3 +314,8 @@
 .pair {
   display: contents;
 }
+
+/* Botón con el ancho de su texto, alineado a la izquierda. */
+.inlineLink {
+  align-self: flex-start;
+}

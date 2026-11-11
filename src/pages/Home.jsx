@@ -52,7 +52,10 @@ function Home() {
                   Oleadas
                 </Link>
                 <Link to="/admin/simulator" className={styles.secondary}>
-                  Simulador
+                  Configuración Socios
+                </Link>
+                <Link to="/admin/rules-simulation" className={styles.secondary}>
+                  Simular reglas
                 </Link>
                 <Link to="/admin/attendance" className={styles.secondary}>
                   Cargar asistencias

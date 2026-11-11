@@ -22,6 +22,9 @@ import Simulator from './pages/Simulator.jsx'
 import SimulatorSettings from './pages/SimulatorSettings.jsx'
 import SignUp from './pages/SignUp.jsx'
 import RankingRun from './pages/RankingRun.jsx'
+import RulesSimulation from './pages/RulesSimulation.jsx'
+import RulesSimulationFlow from './pages/RulesSimulationFlow.jsx'
+import RulesSimulationResult from './pages/RulesSimulationResult.jsx'
 import Segmentation from './pages/Segmentation.jsx'
 import SegmentationDetail from './pages/SegmentationDetail.jsx'
 import WaveSchedule from './pages/WaveSchedule.jsx'
@@ -111,6 +114,17 @@ function App() {
             </RequireAuth>
           }
         />
+        <Route
+          path="/admin/rules-simulation"
+          element={
+            <RequireAuth role="admin">
+              <RulesSimulationFlow />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<RulesSimulation />} />
+          <Route path="result" element={<RulesSimulationResult />} />
+        </Route>
         <Route
           path="/admin/events/:id/publish"
           element={

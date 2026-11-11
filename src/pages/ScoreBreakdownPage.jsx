@@ -147,16 +147,13 @@ function ComponentItem({ component }) {
   const signedPoints = isNegative ? `${component.points} pts` : `+${component.points} pts`
 
   return (
-    <details className={styles.componentCard} open>
-      <summary className={styles.componentSummary}>
+    <div className={styles.componentCard}>
+      <div className={styles.componentSummary}>
         <div className={styles.nameRow}>
-          <svg className={styles.chevron} viewBox="0 0 24 24" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-          <span className={styles.componentName}>{component.name}</span>
+          <span className={styles.componentName}>{capitalize(component.name)}</span>
         </div>
         <span className={badgeClass}>{signedPoints}</span>
-      </summary>
+      </div>
 
       <div className={styles.componentBody}>
         {component.explanation && (
@@ -182,8 +179,12 @@ function ComponentItem({ component }) {
 
         <SupportingFigures keyName={component.key} figures={component.supporting_figures || {}} />
       </div>
-    </details>
+    </div>
   )
+}
+
+function capitalize(text) {
+  return text ? text.charAt(0).toUpperCase() + text.slice(1) : text
 }
 
 function SupportingFigures({ keyName, figures }) {

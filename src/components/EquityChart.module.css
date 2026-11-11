@@ -1,0 +1,229 @@
+/* HU-30: gráfico de desvío por grupo. */
+.chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  min-width: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.filters {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+
+.filter {
+  padding: 0.4rem 1rem;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
+}
+
+.filter:hover {
+  color: var(--color-text);
+}
+
+.filter[aria-pressed='true'] {
+  color: var(--color-white);
+  background: var(--color-pitch);
+}
+
+.filter:focus-visible,
+.download:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 1px;
+}
+
+.download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-pitch-dark);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.download:hover:not(:disabled) {
+  background: var(--color-tint);
+  border-color: var(--color-pitch);
+}
+
+.download:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.download svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.legendUp,
+.legendDown,
+.legendGuide {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legendUp::before,
+.legendDown::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.legendUp::before {
+  background: var(--color-pitch);
+}
+
+.legendDown::before {
+  background: var(--color-red);
+}
+
+.legendGuide::before {
+  content: '';
+  width: 18px;
+  border-top: 2px dashed var(--color-border-strong);
+}
+
+/* En pantallas angostas el gráfico scrollea a lo ancho en vez de achicarse. */
+.scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.scroll svg {
+  display: block;
+  min-width: 100%;
+  height: auto;
+}
+
+.bar {
+  cursor: pointer;
+  outline: none;
+}
+
+.bar:focus-visible rect:last-of-type {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+}
+
+/* Detalle del grupo bajo el mouse o con foco. */
+.detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  min-height: 3.5rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.detailHint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.detailTag {
+  padding: 0.15rem 0.6rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.detailUp {
+  color: var(--color-pitch-deep);
+  background: color-mix(in srgb, var(--color-lime) 22%, white);
+}
+
+.detailDown {
+  color: var(--color-red-dark);
+  background: color-mix(in srgb, var(--color-red) 10%, white);
+}
+
+.detailGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.detailAttribute {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.detailFigures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.detailFigures strong {
+  color: var(--color-text);
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter,
+  .download {
+    transition: none;
+  }
+}
