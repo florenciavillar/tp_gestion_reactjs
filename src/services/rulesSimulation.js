@@ -56,3 +56,26 @@ const integerFormat = new Intl.NumberFormat('es-AR')
 export function formatInteger(value) {
   return integerFormat.format(value)
 }
+
+// HU-30: grupos de todos los atributos disponibles con desvío distinto de cero, del que más sube al que más baja.
+export function equityGroups(segmentations) {
+  return segmentations
+    .filter((seg) => seg.status === 'available')
+    .flatMap((seg) =>
+      seg.segments.map((segment) => ({
+        id: `${seg.attribute}-${segment.band.label}`,
+        attribute: seg.attribute,
+        attributeLabel: seg.label,
+        band: segment.band.label,
+        lower: segment.band.lower,
+        upper: segment.band.upper,
+        value: Number(segment.deviation),
+        deviation: segment.deviation,
+        positionChange: segment.avg_position_change,
+        count: segment.count,
+        mark: segment.mark,
+      })),
+    )
+    .filter((group) => group.value !== 0)
+    .sort((a, b) => b.value - a.value)
+}

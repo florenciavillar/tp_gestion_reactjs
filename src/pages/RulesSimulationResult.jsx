@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, Navigate, useOutletContext } from 'react-router'
+import EquityChart from '../components/EquityChart.jsx'
 import { withUnit } from '../services/formula.js'
 import {
   BREAKDOWN_UNAVAILABLE,
+  equityGroups,
   exportRulesSimulation,
   formatDecimal,
   formatInteger,
@@ -282,7 +284,7 @@ function Result({ result, formula, breakdown, exporting, exportError, onExport }
         )}
       </div>
 
-      {/* HU-30 todavía no existe en el back: cuando llegue, `result.equity` va acá. */}
+      {result.equity && <Equity equity={result.equity} rankingId={result.ranking.id} />}
 
       <section className={`${formulaStyles.section} ${styles.actionsCard}`} aria-labelledby="actions-title">
         <h3 id="actions-title" className={formulaStyles.srOnly}>
@@ -532,6 +534,9 @@ function BreakdownTeaser({ status, breakdown }) {
 }
 
 const WIDGET_ICONS = {
+  chart: 'M4 12h16M7 12V6M11 12V9M15 12v5M19 12v3',
+  segments: 'M12 3v18M5 7h14M5 7l-3 7h6L5 7ZM19 7l-3 7h6l-3-7Z',
+  profile: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM2 21a7 7 0 0 1 14 0M17 11h5M19.5 8.5v5',
   distribution: 'M3 20h18M5 20c2-9 4-14 7-14s5 5 7 14',
   histogram: 'M4 20h16M6 20v-5M10 20V8M14 20v-9M18 20v-3',
   cap: 'M4 6h16M8 6v14M16 6v14M8 13h8',
@@ -582,6 +587,377 @@ function MiniHistogram({ bins, max }) {
       {bins.map((b) => (
         <span key={b.label} style={{ height: `${Math.max(4, (b.after / max) * 100)}%` }} />
       ))}
+    </span>
+  )
+}
+
+// ---------------------------------------------------------------------------------------------
+// HU-30: análisis de equidad. Llega dentro del mismo resultado (`result.equity`): no hay otro pedido.
+// Los textos (veredictos, mensajes, bandas) vienen del back en español y se muestran tal cual.
+
+const VERDICT_TONES = {
+  EQUITY_OK: 'verdictOk',
+  EQUITY_ATTENTION: 'verdictAttention',
+  EQUITY_BIAS: 'verdictBias',
+}
+
+// Las cinco variables del perfil (escenario 5), con su unidad.
+const PROFILE_VARIABLES = [
+  ['distance_km', 'Distancia al estadio', 'km', 'Mediana'],
+  ['seniority_years', 'Antigüedad', 'años', 'Mediana'],
+  ['age_years', 'Edad', 'años', 'Mediana'],
+  ['class_c_attendance', 'Asistencia a partidos Clase C', '%', 'Mediana, entre quienes tuvieron al menos 1'],
+  ['institutional_points', 'Puntos de participación institucional', 'pts', 'Mediana, antes del tope'],
+  ['with_institutional', 'Socios con participación institucional', '%', 'Porcentaje del grupo'],
+]
+
+// Sección plegable (no es un widget): el título con la flecha abre y cierra todo lo de adentro.
+function Equity({ equity, rankingId }) {
+  const segmentations = equity.segmentations ?? []
+  return (
+    <details className={styles.equity} open>
+      <summary className={styles.equitySummary}>
+        <h2 className={styles.equityTitle}>Análisis de equidad</h2>
+        <svg className={styles.equityChevron} viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </summary>
+      <div className={styles.equityBody}>
+        {equity.status !== 'available' ? (
+          <p className={formulaStyles.banner} role="status">
+            {equity.message}
+          </p>
+        ) : (
+          <>
+            <Verdict verdict={equity.verdict} segmentations={segmentations} />
+            <div className={styles.widgets}>
+              {segmentations.length > 0 && <ChartWidget segmentations={segmentations} rankingId={rankingId} />}
+              {segmentations.length > 0 && <Segments segmentations={segmentations} />}
+              {equity.profile && <Profile profile={equity.profile} />}
+            </div>
+          </>
+        )}
+      </div>
+    </details>
+  )
+}
+
+// Titular de cada veredicto. El detalle de los grupos sale de `verdict.items`, que son las mismas
+// piezas del texto del back, ordenadas de mayor a menor desvío.
+const VERDICT_HEADLINES = {
+  EQUITY_OK: ['Sin diferencias marcadas', 'El cambio no favorece ni perjudica de más a ningún grupo.'],
+  EQUITY_ATTENTION: ['Hay grupos con diferencias para revisar', 'Ningún grupo tiene una diferencia fuerte.'],
+  EQUITY_BIAS: ['El cambio favorece o perjudica de forma marcada', 'Al menos un grupo se mueve 5 % del ranking o más.'],
+}
+
+// Ícono neutro (una balanza) para cualquier veredicto: la tarjeta no cambia de color según el resultado.
+const VERDICT_ICON = 'M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7ZM19 7l-3 7a3 3 0 0 0 6 0l-3-7Z'
+
+// Veredicto general (escenario 14). El de cada atributo se ve en "Equidad por segmentos".
+function Verdict({ verdict, segmentations }) {
+  const labels = Object.fromEntries(segmentations.map((seg) => [seg.attribute, seg.label]))
+  if (!verdict) {
+    return (
+      <div className={`${styles.verdict} ${styles.verdictNone}`} role="status">
+        <p className={styles.verdictLead}>No hay suficientes socios para dar un veredicto de equidad.</p>
+      </div>
+    )
+  }
+
+  const [headline, lead] = VERDICT_HEADLINES[verdict.code]
+  return (
+    <div className={styles.verdict} role="status">
+      <div className={styles.verdictHead}>
+        <span className={styles.verdictIcon} aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d={VERDICT_ICON} />
+          </svg>
+        </span>
+        <div className={styles.verdictHeadText}>
+          <p className={styles.verdictHeadline}>{headline}</p>
+          <p className={styles.verdictLead}>{verdict.items.length > 0 ? 'Grupos marcados:' : lead}</p>
+        </div>
+      </div>
+
+      {verdict.items.length > 0 && (
+        <ul className={styles.verdictItems}>
+          {verdict.items.map((item) => {
+            const favored = item.direction === 'favored'
+            return (
+              <li key={`${item.attribute}-${item.band}`} className={styles.verdictItem}>
+                <span
+                  className={`${styles.verdictArrow} ${favored ? styles.tagFavored : styles.tagHarmed}`}
+                  aria-hidden="true"
+                >
+                  {favored ? '↑' : '↓'}
+                </span>
+                <span className={styles.verdictGroup}>
+                  <span className={styles.verdictAttribute}>{labels[item.attribute] ?? item.attribute}</span>
+                  <strong>{item.band}</strong>
+                </span>
+                <span className={`${styles.segmentTag} ${favored ? styles.tagFavored : styles.tagHarmed}`}>
+                  {favored ? 'Favorecido' : 'Perjudicado'}
+                  {item.mark === 'strong' ? ', fuerte' : ''}
+                </span>
+                <span className={styles.verdictDeviation}>
+                  <strong>{formatDecimal(item.deviation.replace('-', ''))} %</strong> del ranking
+                </span>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+
+      <p className={styles.verdictScope}>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 16v-4M12 8h.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z" />
+        </svg>
+        {verdict.scope}
+      </p>
+    </div>
+  )
+}
+
+function ChartWidget({ segmentations, rankingId }) {
+  const groups = equityGroups(segmentations)
+  const up = groups.filter((g) => g.value > 0).length
+  const down = groups.length - up
+  return (
+    <Widget
+      icon="chart"
+      title="Gráfico de equidad por grupos"
+      teaser={
+        <span>
+          {up} {up === 1 ? 'grupo sube' : 'grupos suben'} · {down} {down === 1 ? 'grupo baja' : 'grupos bajan'}
+        </span>
+      }
+    >
+      <EquityChart segmentations={segmentations} rankingId={rankingId} />
+    </Widget>
+  )
+}
+
+function percent(value) {
+  return `${formatSigned(value)} %`
+}
+
+// Equidad por segmentos: se cambia de atributo sin volver a simular (escenario 8).
+function Segments({ segmentations }) {
+  const [attribute, setAttribute] = useState(segmentations[0].attribute)
+  const selected = segmentations.find((seg) => seg.attribute === attribute) ?? segmentations[0]
+  // Una sola escala para los tres atributos, así las barras se comparan entre sí. Mínimo 5 %: el umbral fuerte.
+  const scale = Math.max(
+    5,
+    ...segmentations.flatMap((seg) => seg.segments.map((segment) => Math.abs(Number(segment.deviation)))),
+  )
+  const largest = segmentations
+    .flatMap((seg) => seg.segments.filter((segment) => segment.largest_deviation).map((segment) => ({ seg, segment })))
+    .sort((a, b) => Math.abs(Number(b.segment.deviation)) - Math.abs(Number(a.segment.deviation)))[0]
+
+  return (
+    <Widget
+      icon="segments"
+      title="Equidad por segmentos"
+      teaser={
+        largest ? (
+          <span>
+            Mayor desvío: {largest.seg.label}, {largest.segment.band.label} (
+            <strong>{percent(largest.segment.deviation)}</strong>)
+          </span>
+        ) : (
+          <span>Sin desvíos entre grupos</span>
+        )
+      }
+    >
+      <p className={formulaStyles.hint}>
+        El desvío es el cambio medio de posición del grupo como porcentaje del ranking: positivo, el grupo sube. Se
+        marca desde 2 % y es fuerte desde 5 %.
+      </p>
+      <div className={styles.segmentTabs} role="group" aria-label="Atributo">
+        {segmentations.map((seg) => (
+          <button
+            key={seg.attribute}
+            type="button"
+            className={styles.segmentTab}
+            aria-pressed={seg.attribute === selected.attribute}
+            onClick={() => setAttribute(seg.attribute)}
+          >
+            {seg.label}
+          </button>
+        ))}
+      </div>
+
+      {selected.status !== 'available' ? (
+        <p className={formulaStyles.banner} role="status">
+          {selected.message}
+        </p>
+      ) : (
+        <>
+          {selected.verdict && (
+            <p className={`${styles.attributeVerdict} ${styles[VERDICT_TONES[selected.verdict.code]]}`}>
+              {selected.verdict.text}
+            </p>
+          )}
+          <div className={formulaStyles.tableWrap}>
+            <table className={formulaStyles.table}>
+              <caption className={formulaStyles.srOnly}>Equidad por {selected.label.toLowerCase()}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Grupo</th>
+                  <th scope="col">Socios</th>
+                  <th scope="col">Puntaje medio</th>
+                  <th scope="col">Posición media</th>
+                  <th scope="col">Desvío</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selected.segments.map((segment) => (
+                  <tr key={segment.band.label}>
+                    <th scope="row" className={styles.rowHead}>
+                      <span className={styles.factorName}>{segment.band.label}</span>
+                      <SegmentTags segment={segment} />
+                    </th>
+                    <td>{formatInteger(segment.count)}</td>
+                    <td>
+                      <span className={styles.change}>
+                        <span className={styles.teaserBefore}>{formatDecimal(segment.avg_score_before)}</span>
+                        <span aria-label="pasa a">→</span>
+                        <strong className={styles.teaserAfter}>{formatDecimal(segment.avg_score_after)}</strong>
+                        <Difference value={segment.avg_score_difference} />
+                      </span>
+                    </td>
+                    <td>
+                      <span className={styles.change}>
+                        <span className={styles.teaserBefore}>{formatDecimal(segment.avg_position_before)}</span>
+                        <span aria-label="pasa a">→</span>
+                        <strong className={styles.teaserAfter}>{formatDecimal(segment.avg_position_after)}</strong>
+                        <Difference value={segment.avg_position_change} />
+                      </span>
+                    </td>
+                    <td>
+                      <DeviationBar value={segment.deviation} scale={scale} mark={segment.mark} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+    </Widget>
+  )
+}
+
+function SegmentTags({ segment }) {
+  if (segment.mark === 'none' && !segment.largest_deviation) return null
+  const favored = segment.direction === 'favored'
+  return (
+    <span className={styles.segmentTags}>
+      {segment.mark !== 'none' && (
+        <span className={`${styles.segmentTag} ${favored ? styles.tagFavored : styles.tagHarmed}`}>
+          {favored ? 'Favorecido' : 'Perjudicado'}
+          {segment.mark === 'strong' ? ', fuerte' : ''}
+        </span>
+      )}
+      {segment.largest_deviation && <span className={`${styles.segmentTag} ${styles.tagLargest}`}>Mayor desvío</span>}
+    </span>
+  )
+}
+
+// Barra divergente: a la derecha (verde) el grupo sube; a la izquierda (rojo) baja.
+function DeviationBar({ value, scale, mark }) {
+  const number = Number(value)
+  const width = Math.min(50, (Math.abs(number) / scale) * 50)
+  const side = number >= 0 ? styles.deviationUp : styles.deviationDown
+  return (
+    <span className={styles.deviation}>
+      <span className={styles.deviationTrack} aria-hidden="true">
+        <span
+          className={`${styles.deviationFill} ${side} ${mark === 'strong' ? styles.deviationStrong : ''}`}
+          style={{ width: `${width}%` }}
+        />
+      </span>
+      <strong className={styles.deviationValue}>{percent(value)}</strong>
+    </span>
+  )
+}
+
+// Perfil de los que se mueven: descriptivo, sin marcas ni colores de bueno o malo (escenario 7).
+function Profile({ profile }) {
+  const groups = profile.groups
+  const threshold = profile.relevant_threshold
+  return (
+    <Widget
+      icon="profile"
+      title="Perfil de los socios que se mueven"
+      teaser={
+        <span>
+          {groups
+            .filter((g) => g.group !== 'all')
+            .map((g) => `${g.label}: ${formatInteger(g.count)}`)
+            .join(' · ')}
+        </span>
+      }
+    >
+      <p className={formulaStyles.hint}>
+        Suben o bajan quienes cambian {formatInteger(threshold)} {threshold === 1 ? 'puesto' : 'puestos'} o más. Es
+        descriptivo: qué perfil premiar es decisión del club.
+      </p>
+      <div className={formulaStyles.tableWrap}>
+        <table className={formulaStyles.table}>
+          <caption className={formulaStyles.srOnly}>Perfil de los socios que se mueven</caption>
+          <thead>
+            <tr>
+              <th scope="col">Variable</th>
+              {groups.map((g) => (
+                <th key={g.group} scope="col">
+                  {g.label}
+                  <span className={styles.groupMeta}>
+                    {formatInteger(g.count)} socios · {formatDecimal(g.share)} %
+                  </span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {PROFILE_VARIABLES.map(([key, label, unit, how]) => (
+              <tr key={key}>
+                <th scope="row" className={styles.rowHead}>
+                  <span className={styles.factorName}>{label}</span>
+                  <span className={styles.factorParams}>{how}</span>
+                </th>
+                {groups.map((g) => (
+                  <td key={g.group}>
+                    <ProfileCell group={g} variable={key} unit={unit} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Widget>
+  )
+}
+
+function ProfileCell({ group, variable, unit }) {
+  if (group.too_small || !group.variables) return <span className={styles.tooSmall}>{group.message}</span>
+  const data = group.variables[variable]
+  if (data.too_small || data.value == null) {
+    return (
+      <span className={styles.tooSmall}>
+        {data.message}
+        {data.count != null && ` (${formatInteger(data.count)} socios)`}
+      </span>
+    )
+  }
+  return (
+    <span className={styles.profileValue}>
+      <strong>
+        {formatDecimal(data.value)} {unit}
+      </strong>
+      {group.group !== 'all' && <span className={styles.profileDiff}>{formatSigned(data.difference)} vs. todos</span>}
+      {data.count != null && <span className={styles.profileDiff}>sobre {formatInteger(data.count)} socios</span>}
     </span>
   )
 }
