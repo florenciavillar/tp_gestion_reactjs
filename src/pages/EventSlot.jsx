@@ -114,13 +114,6 @@ function SlotCard({ data, onExpired }) {
         </dl>
       </div>
 
-      {data.wave && (
-        <p className={styles.wave}>
-          Ola {data.wave.order}
-          <span className={styles.waveTotal}> de {data.wave.total}</span>
-        </p>
-      )}
-
       {data.status === 'pending' && <Pending data={data} onExpired={onExpired} />}
       {data.status === 'open' && <Open data={data} onExpired={onExpired} />}
       {data.message && (

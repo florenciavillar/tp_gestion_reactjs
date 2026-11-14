@@ -74,7 +74,15 @@ function RulesSimulationResult() {
 
   return (
     <main className={pageStyles.page}>
-      <header className={pageStyles.header}>
+      <button
+        type="button"
+        className={`${authStyles.doorSecondary} ${styles.floatingExport}`}
+        onClick={handleExport}
+        disabled={exporting}
+      >
+        {exporting ? 'Descargando…' : 'Descargar CSV'}
+      </button>
+      <header className={`${pageStyles.header} ${styles.headerWithExport}`}>
         <Link to="/admin/rules-simulation" className={pageStyles.back} aria-label="Volver a simular reglas">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -83,6 +91,11 @@ function RulesSimulationResult() {
         <h1 className={pageStyles.title}>Resultado de la simulación</h1>
         <p className={pageStyles.lead}>Así cambiaría el ranking con los valores que probaste. No se guardó nada.</p>
       </header>
+      {exportError && (
+        <p role="alert" className={authStyles.error}>
+          {exportError}
+        </p>
+      )}
 
       <p className={styles.baseline}>
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -94,15 +107,12 @@ function RulesSimulationResult() {
         result={simulation.result}
         formula={simulation.formula}
         breakdown={pending ? (simulation.breakdown ?? { status: 'loading' }) : null}
-        exporting={exporting}
-        exportError={exportError}
-        onExport={handleExport}
       />
     </main>
   )
 }
 
-function Result({ result, formula, breakdown, exporting, exportError, onExport }) {
+function Result({ result, formula, breakdown }) {
   const labels = plainLabels(result.labels)
   const units = Object.fromEntries(formula.parameters.map((p) => [p.key, p.unit]))
   const names = Object.fromEntries(formula.parameters.map((p) => [p.key, p.name]))
@@ -301,15 +311,7 @@ function Result({ result, formula, breakdown, exporting, exportError, onExport }
           <Link to="/admin/rules-simulation" className={authStyles.door}>
             Modificar valores
           </Link>
-          <button type="button" className={authStyles.doorSecondary} onClick={onExport} disabled={exporting}>
-            {exporting ? 'Descargando…' : 'Descargar CSV'}
-          </button>
         </div>
-        {exportError && (
-          <p role="alert" className={`${authStyles.error} ${styles.fullRow}`}>
-            {exportError}
-          </p>
-        )}
       </section>
     </div>
   )
@@ -544,10 +546,10 @@ const WIDGET_ICONS = {
   factors: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M16 6a2 2 0 1 0 0 .01M10 12a2 2 0 1 0 0 .01M18 18a2 2 0 1 0 0 .01',
 }
 
-// Tarjeta plegable: cerrada muestra el título y un adelanto; se abre a voluntad.
+// Tarjeta plegable: arranca abierta; cerrada muestra el título y un adelanto.
 function Widget({ icon, title, teaser, children }) {
   return (
-    <details className={styles.widget}>
+    <details className={styles.widget} open>
       <summary className={styles.widgetSummary}>
         <span className={styles.widgetIcon} aria-hidden="true">
           <svg viewBox="0 0 24 24">

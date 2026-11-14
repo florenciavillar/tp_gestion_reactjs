@@ -1,4 +1,4 @@
-/* Turno propio del socio (HU-39): el evento arriba, la ola grande y cuándo se habilita. */
+/* Turno propio del socio (HU-39): el evento arriba y cuándo se habilita. */
 .muted {
   margin: 0;
   color: var(--color-text-muted);
@@ -27,22 +27,6 @@
 .meta dd {
   margin: 0;
   font-weight: 600;
-}
-
-.wave {
-  margin: 0;
-  font-size: clamp(2.25rem, 1.75rem + 2.5vw, 3.25rem);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--color-pitch-deep);
-}
-
-.waveTotal {
-  font-size: var(--text-xl);
-  font-weight: 600;
-  letter-spacing: 0;
-  color: var(--color-text-muted);
 }
 
 .text {
