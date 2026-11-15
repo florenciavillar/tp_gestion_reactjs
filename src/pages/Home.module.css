@@ -1,105 +1,298 @@
-/* Bienvenida: franja de césped a todo el ancho, con el saludo y las acciones a la izquierda. */
-.hero {
-  --logo-text: var(--color-white);
+/* El inicio ocupa todo el ancho disponible, no solo la columna central de las otras pantallas. */
+main.page {
+  max-width: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Tarjetas de las secciones: tantas columnas como entren, todas del mismo alto por fila. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.grid > li {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: clamp(1.75rem, 5vw, 3.5rem);
-  color: var(--color-white);
-  background-color: var(--color-pitch);
-  background-image:
-    linear-gradient(120deg, var(--color-pitch-deep) 0%, transparent 70%),
-    repeating-linear-gradient(90deg, rgb(255 255 255 / 0.06) 0 64px, transparent 64px 128px);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
 }
 
-.hero > svg {
-  flex-shrink: 0;
-  width: clamp(140px, 18vw, 220px);
-  height: auto;
-  aspect-ratio: 1;
+/* Tonos: verde si está al día, amarillo si hay algo para hacer, rojo si algo se venció o falló. */
+.page [data-tone='ok'] {
+  --tone: var(--color-pitch);
+  --tone-bg: color-mix(in srgb, var(--color-lime) 14%, white);
+  --tone-text: var(--color-pitch-deep);
 }
 
-.heroText {
+.page [data-tone='warn'] {
+  --tone: #b88a00;
+  --tone-bg: color-mix(in srgb, var(--color-yellow) 22%, white);
+  --tone-text: #6b5000;
+}
+
+.page [data-tone='alert'] {
+  --tone: var(--color-red);
+  --tone-bg: color-mix(in srgb, var(--color-red) 9%, white);
+  --tone-text: var(--color-red-dark);
+}
+
+.card {
+  position: relative;
+  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 1rem;
+  min-height: 290px;
+  padding: 1.25rem 1.375rem 1.125rem;
+  color: var(--color-text);
+  text-decoration: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Filete superior con el tono del estado de la sección. Va en su propio elemento para que el tono
+   no se herede a los números y líneas neutros de la tarjeta. */
+.stripe {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  background: var(--tone, transparent);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-border-strong);
+  box-shadow: 0 8px 24px rgb(17 17 17 / 0.08);
+}
+
+.cardTop {
+  display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 0.75rem;
 }
 
-.greeting {
-  margin: 0;
-  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  color: var(--color-pitch-deep);
+  background: var(--color-tint);
+  border-radius: var(--radius-sm);
 }
 
-.lead {
+.icon svg,
+.go svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.badge {
+  padding: 0.25rem 0.625rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--tone-text, var(--color-text-muted));
+  background: var(--tone-bg, var(--color-surface-muted));
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.cardTitle {
   margin: 0;
   font-size: var(--text-lg);
-  color: rgb(255 255 255 / 0.85);
+  font-weight: 700;
+  line-height: 1.3;
 }
 
-.actions {
+.description,
+.muted {
+  margin: 0.125rem 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* Números del resumen: el valor grande arriba y lo que cuenta abajo. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(76px, 1fr));
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.stats > div {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.125rem;
+  padding: 0.625rem 0.75rem;
+  background: var(--tone-bg, var(--color-surface-muted));
+  border-radius: var(--radius-xs);
 }
 
-/* Sobre el césped, el botón principal va en blanco. */
-.cta,
-.secondary {
+.stats dt {
+  font-size: var(--text-xs);
+  line-height: 1.3;
+  color: var(--tone-text, var(--color-text-muted));
+}
+
+.stats dd {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--tone-text, var(--color-text));
+  font-variant-numeric: tabular-nums;
+}
+
+/* Filas: etiqueta a la izquierda y valor a la derecha, en una línea cada una. */
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+}
+
+.rows > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--tone-bg, var(--color-surface-muted));
+  border-radius: var(--radius-xs);
+}
+
+.rows dt {
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rows dt::first-letter {
+  text-transform: uppercase;
+}
+
+.rows dd {
+  flex-shrink: 0;
+  margin: 0;
+  font-weight: 800;
+  color: var(--tone-text, var(--color-text));
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+
+.lines [data-tone] {
+  padding-left: 0.625rem;
+  font-weight: 600;
+  color: var(--tone-text);
+  border-left: 3px solid var(--tone);
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton span {
+  height: 0.875rem;
+  background: linear-gradient(90deg, var(--color-surface-muted), var(--color-border), var(--color-surface-muted));
+  background-size: 200% 100%;
+  border-radius: var(--radius-xs);
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.skeleton span:first-child {
+  height: 3.25rem;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.go {
   display: inline-flex;
   align-items: center;
-  min-height: var(--control-height);
-  padding: 0.625rem 1.5rem;
-  font-weight: 600;
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-  transition:
-    background-color 0.15s,
-    border-color 0.15s,
-    color 0.15s;
+  gap: 0.375rem;
+  margin-top: auto;
+  padding-top: 0.25rem;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-pitch);
 }
 
-.cta {
-  color: var(--color-pitch-deep);
-  background: var(--color-white);
-  border: 1.5px solid var(--color-white);
+.go svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.15s ease;
 }
 
-.cta:hover {
-  background: color-mix(in srgb, var(--color-lime) 18%, white);
+.card:hover .go svg {
+  transform: translateX(3px);
 }
 
-/* Acceso secundario del socio (HU-13): mismo tamaño que .cta, con borde en vez de relleno. */
-.secondary {
-  color: var(--color-white);
-  border: 1.5px solid rgb(255 255 255 / 0.6);
-}
-
-.secondary:hover {
-  background: rgb(255 255 255 / 0.12);
-  border-color: var(--color-white);
-}
-
-.cta:focus-visible,
-.secondary:focus-visible {
-  outline-color: var(--color-yellow);
-}
-
-@media (max-width: 640px) {
-  .hero {
-    flex-direction: column-reverse;
-    align-items: flex-start;
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .go svg {
+    transition: none;
   }
 
-  .hero > svg {
-    width: 120px;
+  .card:hover {
+    transform: none;
+  }
+
+  .skeleton span {
+    animation: none;
   }
 }
 

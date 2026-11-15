@@ -69,7 +69,7 @@ function EventSlot() {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className={pageStyles.title}>Tu turno</h1>
+        <h1 className={pageStyles.title}>Mi turno</h1>
         <p className={pageStyles.lead}>Desde cuándo podés reservar tu lugar para este evento.</p>
       </header>
 
@@ -113,13 +113,6 @@ function SlotCard({ data, onExpired }) {
           </div>
         </dl>
       </div>
-
-      {data.wave && (
-        <p className={styles.wave}>
-          Ola {data.wave.order}
-          <span className={styles.waveTotal}> de {data.wave.total}</span>
-        </p>
-      )}
 
       {data.status === 'pending' && <Pending data={data} onExpired={onExpired} />}
       {data.status === 'open' && <Open data={data} onExpired={onExpired} />}

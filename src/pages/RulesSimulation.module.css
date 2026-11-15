@@ -371,11 +371,22 @@ tr.remainderRow > td {
   gap: 0.75rem;
 }
 
-.fullRow {
-  flex-basis: 100%;
+/* Descarga del CSV: arranca a la altura del título y queda fija arriba a la derecha al scrollear.
+   El margen negativo descuenta su alto y el gap de la página para no empujar el encabezado. */
+.floatingExport {
+  position: sticky;
+  top: 1rem;
+  z-index: 5;
+  align-self: flex-end;
+  margin-bottom: calc(-1 * var(--control-height) - 1.5rem);
+  box-shadow: var(--shadow-card);
 }
 
-/* Widgets plegables del resultado: cerrados en grilla; el que se abre ocupa todo el ancho. */
+.headerWithExport {
+  padding-right: 11rem;
+}
+
+/* Widgets plegables del resultado: abiertos ocupan todo el ancho; los que se cierran quedan en grilla. */
 .widgets {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
