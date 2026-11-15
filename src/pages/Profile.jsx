@@ -1,4 +1,4 @@
-import { Link } from 'react-router'
+import HeroHeader from '../components/HeroHeader.jsx'
 import { useAuth } from '../components/authContext.js'
 import pageStyles from './Page.module.css'
 import styles from './Profile.module.css'
@@ -10,17 +10,10 @@ function Profile() {
   const { user } = useAuth()
 
   return (
-    <main className={`${pageStyles.page} ${pageStyles.single}`}>
-      <header className={pageStyles.header}>
-        <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </Link>
-        <h1 className={pageStyles.title}>Perfil</h1>
-      </header>
+    <main className={pageStyles.page}>
+      <HeroHeader title="Mi perfil" lead="Mirá los datos de tu cuenta." backTo="/" />
 
-      <section className={pageStyles.card} aria-label="Datos de la cuenta">
+      <section className={`${pageStyles.card} ${styles.card}`} aria-label="Datos de la cuenta">
         <div className={styles.avatar} aria-hidden="true">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="8" r="4" />

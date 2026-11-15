@@ -69,7 +69,7 @@ function EventSlot() {
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
         </Link>
-        <h1 className={pageStyles.title}>Tu turno</h1>
+        <h1 className={pageStyles.title}>Mi turno</h1>
         <p className={pageStyles.lead}>Desde cuándo podés reservar tu lugar para este evento.</p>
       </header>
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import Logo from '../components/Logo.jsx'
+import HeroHeader from '../components/HeroHeader.jsx'
 import { useAuth } from '../components/authContext.js'
 import {
   attendanceSummary,
@@ -131,15 +131,10 @@ function Home() {
 
   return (
     <main className={`${pageStyles.page} ${styles.page}`}>
-      <section className={styles.hero}>
-        <div className={styles.heroText}>
-          <h1 className={styles.greeting}>Hola, {user.name}</h1>
-          <p className={styles.lead}>
-            {isAdmin ? 'Esto es lo que está pasando hoy en el club.' : 'Tu puntaje y los próximos eventos del club.'}
-          </p>
-        </div>
-        <Logo />
-      </section>
+      <HeroHeader
+        title={`Hola, ${user.name}`}
+        lead={isAdmin ? 'Esto es lo que está pasando hoy en el club.' : 'Tu puntaje y los próximos eventos del club.'}
+      />
 
       <section aria-labelledby="home-sections">
         <h2 id="home-sections" className={styles.srOnly}>
