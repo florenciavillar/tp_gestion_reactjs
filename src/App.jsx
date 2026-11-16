@@ -17,6 +17,7 @@ import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
 import ScoreBreakdownPage from './pages/ScoreBreakdownPage.jsx'
 import SignIn from './pages/SignIn.jsx'
+import UserGuide from './pages/UserGuide.jsx'
 import SimulationResult from './pages/SimulationResult.jsx'
 import Simulator from './pages/Simulator.jsx'
 import SimulatorSettings from './pages/SimulatorSettings.jsx'
@@ -42,6 +43,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/events" element={<Events />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/help" element={<UserGuide />} />
         <Route
           path="/admin/invite"
           element={
