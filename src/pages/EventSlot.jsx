@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router'
 import { getOwnSlot } from '../services/events.js'
 import { formatCountdown, formatEventDate, formatEventDateInline, formatEventTime } from '../services/eventFormat.js'
 import authStyles from './Auth.module.css'
@@ -8,10 +8,12 @@ import styles from './EventSlot.module.css'
 
 const LOAD_ERROR = 'No pudimos cargar tu turno. Probá de nuevo en un rato.'
 const NOT_FOUND = 'No encontramos este evento.'
+// Si se llegó desde una notificación (bandeja o botón del correo de HU-19), el evento existió: ya no está (HU-20).
+const UNAVAILABLE = 'Este evento ya no está disponible.'
 const NO_CLUB = 'Tu cuenta no tiene un club asignado. Consultá con el club.'
 
-function errorMessage(err) {
-  if (err.status === 404) return NOT_FOUND
+function errorMessage(err, fromNotification) {
+  if (err.status === 404) return fromNotification ? UNAVAILABLE : NOT_FOUND
   if (err.code === 'MEMBER_WITHOUT_CLUB') return NO_CLUB
   return LOAD_ERROR
 }
@@ -43,6 +45,9 @@ function useCountdown(seconds, onDone) {
 // HU-39: la ola del socio para un evento y cuándo se le habilita la reserva. Solo lectura.
 function EventSlot() {
   const { id } = useParams()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const fromNotification = location.state?.fromNotification === true || searchParams.get('from') === 'notification'
   const [state, setState] = useState({ status: 'loading' })
   const [version, setVersion] = useState(0)
   const reload = useCallback(() => setVersion((v) => v + 1), [])
@@ -54,12 +59,12 @@ function EventSlot() {
         if (!ignore) setState({ status: 'ready', data })
       })
       .catch((err) => {
-        if (!ignore) setState({ status: 'error', message: errorMessage(err) })
+        if (!ignore) setState({ status: 'error', message: errorMessage(err, fromNotification) })
       })
     return () => {
       ignore = true
     }
-  }, [id, version])
+  }, [id, version, fromNotification])
 
   return (
     <main className={`${pageStyles.page} ${pageStyles.reading}`}>

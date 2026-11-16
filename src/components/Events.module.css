@@ -230,3 +230,42 @@
   display: flex;
   gap: 0.5rem;
 }
+
+/* Aviso arriba de la lista (HU-17 escenario 6: el evento de la notificación ya no está). */
+.notice {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: #5c4300;
+  background: color-mix(in srgb, var(--color-yellow) 22%, white);
+  border: 1px solid color-mix(in srgb, var(--color-yellow) 60%, white);
+  border-radius: var(--radius-sm);
+}
+
+/* Evento al que lleva una notificación: borde grueso, línea más ancha y etiqueta de texto (no solo color). */
+.highlighted {
+  border: 2px solid var(--color-pitch);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--color-lime) 30%, transparent),
+    var(--shadow-card);
+}
+
+.highlighted::before {
+  width: 6px;
+  background: var(--color-lime);
+}
+
+.highlighted:focus-visible {
+  outline: 3px solid var(--color-pitch-deep);
+  outline-offset: 3px;
+}
+
+.highlightTag {
+  align-self: flex-start;
+  padding: 0.125rem 0.625rem;
+  font-size: var(--text-xs);
+  font-weight: 800;
+  color: var(--color-white);
+  background: var(--color-pitch-deep);
+  border-radius: 999px;
+}
