@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from 'react'
 import { Link } from 'react-router'
 import { getPendingEvents } from '../services/events.js'
 import { eventTypeLabel, formatEventDate, formatEventTime, formatRemaining } from '../services/eventFormat.js'
+import pageStyles from '../pages/Page.module.css'
 import styles from './Events.module.css'
 
 const PAGE_SIZE = 10
@@ -45,15 +46,20 @@ function PendingEvents() {
   return (
     <section className={styles.section} aria-labelledby={headingId}>
       <div className={styles.headerRow}>
-        <div className={styles.headerText}>
-          <h2 id={headingId} className={styles.heading}>
+        <header className={`${pageStyles.header} ${styles.headerText}`}>
+          <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </Link>
+          <h1 id={headingId} className={pageStyles.title}>
             Eventos pendientes de publicar
-          </h2>
-          <p className={styles.muted}>
+          </h1>
+          <p className={pageStyles.lead}>
             Los envía el club. Elegí la clase de cada Partido o los puntos de cada evento institucional y publicalo. Si
             se cumple el plazo, se publica solo con los valores por defecto.
           </p>
-        </div>
+        </header>
         <Link to="/admin/attendance" className={styles.secondary}>
           Cargar asistencias
         </Link>

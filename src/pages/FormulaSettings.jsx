@@ -213,6 +213,9 @@ function FormulaSettings() {
                   </tbody>
                 </table>
               </div>
+              <Link to="/admin/rules-simulation" className={`${authStyles.doorSecondary} ${styles.inlineLink}`}>
+                Simular un cambio
+              </Link>
               <details className={styles.details}>
                 <summary>Ver la explicación que leen los socios</summary>
                 <RankingExplanation explanation={data.in_force.explanation} />

@@ -116,7 +116,7 @@
   }
 }
 
-/* Pantallas de una sola tarjeta (perfil, formularios cortos): encabezado y tarjeta centrados, del mismo ancho. */
+/* Pantallas de una sola tarjeta (formularios cortos): encabezado y tarjeta centrados, del mismo ancho. */
 .single {
   max-width: calc(480px + 2 * var(--gutter));
 }

@@ -34,7 +34,7 @@ function Simulator() {
   const eventos = ready ? state.events.eventos : []
 
   return (
-    <main className={`${pageStyles.page} ${pageStyles.reading}`}>
+    <main className={pageStyles.page}>
       <header className={pageStyles.header}>
         <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
           <svg viewBox="0 0 24 24" aria-hidden="true">

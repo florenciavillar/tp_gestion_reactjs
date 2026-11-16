@@ -1,3 +1,10 @@
+/* Pocos datos: la tarjeta no se estira a todo el ancho, queda centrada debajo del encabezado. */
+.card {
+  width: 100%;
+  max-width: 560px;
+  align-self: center;
+}
+
 .avatar {
   display: flex;
   align-items: center;

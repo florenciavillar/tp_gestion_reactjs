@@ -34,16 +34,25 @@
   line-height: 1.6;
 }
 
-/* Pantalla del socio (HU-13): una sola tarjeta con las secciones una debajo de la otra. */
+/* Pantalla del socio (HU-13): una sola tarjeta a todo el ancho, con las secciones repartidas en tantas columnas
+   como entren, para que los renglones no queden larguísimos en monitores grandes. */
 .page {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  column-width: 26rem;
+  column-gap: clamp(2rem, 4vw, 3.5rem);
   padding: clamp(1.5rem, 3vw, 2.25rem);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow-card);
+}
+
+.page .section {
+  break-inside: avoid;
+  margin-bottom: 1.5rem;
+}
+
+.page .section:last-child {
+  margin-bottom: 0;
 }
 
 .page .heading {

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import { useAuth } from '../components/authContext.js'
 import { formatDateTime } from '../services/eventFormat.js'
 import { formatPosition, formatScore, getCurrentScore } from '../services/memberScore.js'
 import authStyles from './Auth.module.css'
@@ -58,7 +59,19 @@ function MyScore() {
 }
 
 function ScoreCard({ data }) {
+  const { user } = useAuth()
+  const storageKey = `myScore:last:${user?.member_id ?? user?.email ?? 'anon'}`
   const provisional = data.status === 'provisional'
+  const target = Math.min(100, Math.max(0, parseFloat(data.score) || 0))
+  // Lo último que vio el socio: la animación arranca desde ahí y no desde 0.
+  const [previous] = useState(() => readLastSeen(storageKey))
+  const animatedScore = useCountUp(target, previous?.score)
+  const animatedPosition = useCountUp(data.position ?? 0, previous?.position)
+
+  useEffect(() => {
+    writeLastSeen(storageKey, { score: target, position: data.position })
+  }, [storageKey, target, data.position])
+
   return (
     <section className={pageStyles.card} aria-labelledby="score-title">
       {provisional && <span className={styles.pill}>{data.label}</span>}
@@ -69,7 +82,7 @@ function ScoreCard({ data }) {
             Puntaje actual
           </h2>
           <p className={`${styles.score} ${provisional ? styles.scoreProvisional : ''}`}>
-            {formatScore(data.score)}
+            {formatScore(animatedScore.toFixed(2))}
             <span className={styles.scale}> / 100</span>
           </p>
         </div>
@@ -78,9 +91,22 @@ function ScoreCard({ data }) {
             Ver desglose
           </Link>
           <p className={styles.position}>
-            {data.position === null ? 'Sin posición en el ranking' : formatPosition(data.position, data.ranked_total)}
+            {data.position === null
+              ? 'Sin posición en el ranking'
+              : formatPosition(Math.round(animatedPosition), data.ranked_total)}
           </p>
         </div>
+      </div>
+
+      <div
+        className={styles.bar}
+        role="meter"
+        aria-label="Puntaje actual sobre 100"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={target}
+      >
+        <div className={styles.barFill} style={{ width: `${animatedScore}%` }} />
       </div>
 
       {data.message && (
@@ -105,6 +131,57 @@ function ScoreCard({ data }) {
       </Link>
     </section>
   )
+}
+
+const COUNT_DURATION_MS = 1200
+
+// Último puntaje y puesto mostrados, por socio. Si el storage no está disponible, no hay animación.
+function readLastSeen(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key))
+  } catch {
+    return null
+  }
+}
+
+function writeLastSeen(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value))
+  } catch {
+    // Sin storage se pierde solo el punto de partida de la próxima animación.
+  }
+}
+
+// Anima un número desde `from` (el valor anterior) hasta `target`; si después cambia `target`,
+// sigue desde el valor actual. Sin valor anterior, o con prefers-reduced-motion, muestra el final directo.
+function useCountUp(target, from) {
+  const initial = typeof from === 'number' ? from : target
+  const [value, setValue] = useState(initial)
+  const current = useRef(initial)
+
+  useEffect(() => {
+    const start = current.current
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion || start === target) {
+      current.current = target
+      setValue(target)
+      return
+    }
+    let frame
+    const startTime = performance.now()
+    const tick = (now) => {
+      const t = Math.min(1, (now - startTime) / COUNT_DURATION_MS)
+      const eased = 1 - Math.pow(1 - t, 3)
+      const next = start + (target - start) * eased
+      current.current = next
+      setValue(next)
+      if (t < 1) frame = requestAnimationFrame(tick)
+    }
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [target])
+
+  return value
 }
 
 export default MyScore

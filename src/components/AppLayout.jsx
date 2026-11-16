@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router'
 import { useAuth } from './authContext.js'
 import UserMenu from './UserMenu.jsx'
@@ -86,12 +86,7 @@ function AppLayout() {
                 </svg>
                 Oleadas
               </NavLink>
-              <NavLink to="/admin/simulator" className={navLinkClass}>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
-                </svg>
-                Simulador
-              </NavLink>
+              <SimulationGroup pathname={pathname} />
               <NavLink to="/admin/equity-analysis" className={navLinkClass}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 3v17M6 20h12M4 7l8-3 8 3M6 7l-3 6h6L6 7zm12 0l-3 6h6l-3-6z" />
@@ -117,5 +112,47 @@ function AppLayout() {
     </div>
   )
 }
+
+// Grupo "Simulación" del Admin: las dos subopciones aparecen al pasar el mouse. Con teclado se abren
+// al enfocar el grupo, y en pantallas táctiles con un toque. Si se está en una de ellas, quedan abiertas.
+function SimulationGroup({ pathname }) {
+  const [open, setOpen] = useState(false)
+  const listId = useId()
+  const active = pathname.startsWith('/admin/simulator') || pathname.startsWith('/admin/rules-simulation')
+  const expanded = open || active
+
+  return (
+    <div className={`${styles.navGroup} ${expanded ? styles.navGroupOpen : ''}`} onMouseLeave={() => setOpen(false)}>
+      <button
+        type="button"
+        className={`${styles.navLink} ${styles.navGroupButton} ${active ? styles.navLinkActive : ''}`}
+        aria-expanded={expanded}
+        aria-controls={listId}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
+        </svg>
+        Simulación
+        <svg className={styles.navGroupChevron} viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      <div id={listId} className={styles.subnav}>
+        <div className={styles.subnavInner}>
+          <NavLink to="/admin/rules-simulation" className={subNavLinkClass}>
+            Simular Reglas
+          </NavLink>
+          {/* Configuración del simulador de los socios (HU-18). */}
+          <NavLink to="/admin/simulator" className={subNavLinkClass}>
+            Configuración Socios
+          </NavLink>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const subNavLinkClass = ({ isActive }) => `${styles.subNavLink} ${isActive ? styles.subNavLinkActive : ''}`
 
 export default AppLayout

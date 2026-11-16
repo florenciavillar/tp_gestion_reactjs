@@ -1,27 +1,260 @@
+/* HU-18: resultado de simular un evento. Datos del evento, situación de hoy y las dos hipótesis lado a lado. */
+
+/* Datos del evento como chips. */
 .eventMeta {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
-  color: var(--color-text-muted);
+  gap: 0.5rem;
 }
 
-.difference {
-  color: var(--color-text-muted);
-  white-space: nowrap;
+.chip,
+.typeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.75rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: 999px;
 }
 
-/* La etiqueta de la estimación va siempre visible junto a la tabla (escenario 13). */
-.label {
+.chip {
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+.chip svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.typeChip {
+  color: var(--color-white);
+  background: var(--color-pitch);
+  border: 1px solid var(--color-pitch);
+}
+
+/* Situación de hoy: franja de marca con los dos números exactos. */
+.today {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  color: var(--color-white);
+  background: radial-gradient(circle at 100% 0%, rgb(76 187 23 / 0.35), transparent 55%), var(--color-pitch-deep);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.todayItem {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  padding: 0.75rem 1rem;
+  min-width: 0;
+}
+
+.todayItem + .todayItem {
+  padding-left: 1rem;
+  border-left: 1px solid rgb(255 255 255 / 0.18);
+}
+
+.todayLabel {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: rgb(255 255 255 / 0.75);
+}
+
+.todayValue {
+  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.todayOf {
+  font-size: var(--text-base);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: rgb(255 255 255 / 0.75);
+}
+
+/* Las dos hipótesis. En pantallas angostas, una debajo de la otra. */
+.scenarios {
+  display: grid;
+  gap: 1rem;
+}
+
+@container (min-width: 560px) {
+  .scenarios {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.scenario {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  padding: clamp(1.25rem, 2.5vw, 1.5rem);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.scenarioAttend {
+  border-top-color: var(--color-pitch);
+  background: linear-gradient(180deg, var(--color-tint), var(--color-surface) 45%);
+}
+
+.scenarioTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.scenarioTitle svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.scenarioAttend .scenarioTitle svg {
+  stroke: var(--color-pitch);
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric + .metric {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.metricLabel {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.scoreLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+}
+
+.scoreValue,
+.positionValue {
+  font-size: clamp(2rem, 1.6rem + 1.5vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--color-pitch-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+.diff {
+  padding: 0.15rem 0.55rem;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.diffUp {
+  color: var(--color-pitch-deep);
+  background: color-mix(in srgb, var(--color-lime) 22%, white);
+}
+
+.diffDown {
+  color: var(--color-red-dark);
+  background: color-mix(in srgb, var(--color-red) 10%, white);
+}
+
+.diffFlat {
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+}
+
+.range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.levelChip {
+  padding: 0.1rem 0.5rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-pitch-dark);
+  background: var(--color-tint);
+  border-radius: 999px;
+}
+
+/* La etiqueta de la estimación va siempre visible junto a las hipótesis (escenario 13). */
+.label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.875rem 1rem;
   border-left: 4px solid var(--color-pitch);
   background: var(--color-tint);
   border-radius: var(--radius-sm);
 }
 
+.label svg {
+  width: 20px;
+  height: 20px;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--color-pitch);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .label p {
   margin: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

@@ -72,3 +72,28 @@ const dateTimeFormat = new Intl.DateTimeFormat('es-AR', {
 export function formatDateTime(iso) {
   return dateTimeFormat.format(new Date(iso)).replace(',', '')
 }
+
+function plural(count, singular, pluralForm) {
+  return `${count} ${count === 1 ? singular : pluralForm}`
+}
+
+// Cuenta regresiva del turno (HU-39): "Faltan 2 días, 3 h y 15 min", "Falta 1 h", "Falta menos de un minuto".
+export function formatCountdown(seconds) {
+  if (seconds < 60) return 'Falta menos de un minuto'
+  const days = Math.floor(seconds / 86400)
+  const hours = Math.floor((seconds % 86400) / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const parts = [
+    days > 0 && plural(days, 'día', 'días'),
+    hours > 0 && `${hours} h`,
+    minutes > 0 && `${minutes} min`,
+  ].filter(Boolean)
+  const text = parts.length > 1 ? `${parts.slice(0, -1).join(', ')} y ${parts.at(-1)}` : parts[0]
+  const first = days || hours || minutes
+  return `${first === 1 ? 'Falta' : 'Faltan'} ${text}`
+}
+
+// "sábado 21 de noviembre", para usar en medio de una frase.
+export function formatEventDateInline(iso) {
+  return dateFormat.format(new Date(iso))
+}

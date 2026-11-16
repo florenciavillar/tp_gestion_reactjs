@@ -48,7 +48,7 @@
   --control-height: 44px;
 
   /* Layout de las pantallas con sesión */
-  --container: 1200px;
+  --container: 1600px;
   --gutter: clamp(1rem, 4vw, 2.5rem);
 
   font-family: var(--font-body);
