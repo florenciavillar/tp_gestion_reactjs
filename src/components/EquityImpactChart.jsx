@@ -225,8 +225,8 @@ function EquityImpactChart({ segmentations, rankingId }) {
         >
           <title id={`${chartId}-title`}>Gráfico de variación de equidad por grupos de socios</title>
           <desc id={`${chartId}-desc`}>
-            Gráfico de barras divergentes donde el eje 0% representa el estado anterior. Muestra {filteredGroups.length} grupos
-            evaluados según el porcentaje de variación en su posición en el ranking.
+            Gráfico de barras divergentes donde el eje 0% representa el estado anterior. Muestra {filteredGroups.length}{' '}
+            grupos evaluados según el porcentaje de variación en su posición en el ranking.
           </desc>
 
           {/* Fondo para la exportación PNG */}
@@ -345,19 +345,8 @@ function EquityImpactChart({ segmentations, rankingId }) {
           </g>
 
           {/* Línea base destacada 0% (Estado anterior) */}
-          <line
-            x1={margin.left}
-            y1={yZero}
-            x2={width - margin.right}
-            y2={yZero}
-            stroke="#1e293b"
-            strokeWidth={2}
-          />
-          <text
-            x={width - margin.right + 8}
-            y={yZero + 4}
-            className={styles.zeroLineLabel}
-          >
+          <line x1={margin.left} y1={yZero} x2={width - margin.right} y2={yZero} stroke="#1e293b" strokeWidth={2} />
+          <text x={width - margin.right + 8} y={yZero + 4} className={styles.zeroLineLabel}>
             0% (Anterior)
           </text>
         </svg>
@@ -367,11 +356,7 @@ function EquityImpactChart({ segmentations, rankingId }) {
       {hoveredGroup && (
         <div className={styles.tooltipBox}>
           <div className={styles.tooltipHeader}>
-            <span
-              className={
-                hoveredGroup.value >= 0 ? styles.tooltipPillGreen : styles.tooltipPillRed
-              }
-            >
+            <span className={hoveredGroup.value >= 0 ? styles.tooltipPillGreen : styles.tooltipPillRed}>
               {hoveredGroup.value >= 0 ? '▲ Grupo favorecido' : '▼ Grupo perjudicado'}
             </span>
             <span className={styles.tooltipAttr}>{hoveredGroup.attributeLabel}</span>
@@ -380,11 +365,7 @@ function EquityImpactChart({ segmentations, rankingId }) {
           <div className={styles.tooltipGrid}>
             <div>
               <span className={styles.tooltipLabel}>Variación posición:</span>
-              <strong
-                className={
-                  hoveredGroup.value >= 0 ? styles.tooltipValPos : styles.tooltipValNeg
-                }
-              >
+              <strong className={hoveredGroup.value >= 0 ? styles.tooltipValPos : styles.tooltipValNeg}>
                 {hoveredGroup.value >= 0 ? `+${hoveredGroup.deviationStr}` : hoveredGroup.deviationStr} %
               </strong>
             </div>
@@ -405,8 +386,8 @@ function EquityImpactChart({ segmentations, rankingId }) {
                 {hoveredGroup.mark === 'strong'
                   ? 'Fuerte (≥ 5%)'
                   : hoveredGroup.mark === 'marked'
-                  ? 'Marcado (≥ 2%)'
-                  : 'Neutro'}
+                    ? 'Marcado (≥ 2%)'
+                    : 'Neutro'}
               </strong>
             </div>
           </div>

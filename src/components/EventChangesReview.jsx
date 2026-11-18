@@ -187,8 +187,8 @@ export default function EventChangesReview() {
       setError(
         extractErrorMessage(
           err,
-          'Error al ajustar clase/puntos. Recuerda que la ventana es de 24 horas tras la aprobación de una reprogramación.'
-        )
+          'Error al ajustar clase/puntos. Recuerda que la ventana es de 24 horas tras la aprobación de una reprogramación.',
+        ),
       )
     }
   }
@@ -199,9 +199,7 @@ export default function EventChangesReview() {
   // Eventos retirables: publicados activos y pendientes que no están descartados
   const withdrawableEvents = [
     ...activeEvents.map((e) => ({ ...e, origen: 'Publicado' })),
-    ...pendingEvents
-      .filter((p) => p.estado !== 'descartado')
-      .map((p) => ({ ...p, origen: 'Pendiente' })),
+    ...pendingEvents.filter((p) => p.estado !== 'descartado').map((p) => ({ ...p, origen: 'Pendiente' })),
   ]
 
   return (
@@ -216,7 +214,11 @@ export default function EventChangesReview() {
       </div>
 
       {notice && (
-        <p className={styles.deadline} role="status" style={{ background: '#e6f4ea', color: '#137333', marginBottom: '1rem' }}>
+        <p
+          className={styles.deadline}
+          role="status"
+          style={{ background: '#e6f4ea', color: '#137333', marginBottom: '1rem' }}
+        >
           {notice}
         </p>
       )}
@@ -381,8 +383,8 @@ export default function EventChangesReview() {
             Gestión de eventos: Retirar, Restaurar y Ajustar clase
           </h3>
           <p className={styles.muted} style={{ margin: 0, fontSize: '0.85rem' }}>
-            Operá sobre eventos ingresando su nombre o ID. Permite retirar eventos (publicados o pendientes), restaurar retirados y
-            ajustar clase/puntos dentro de las 24 horas posteriores a una reprogramación.
+            Operá sobre eventos ingresando su nombre o ID. Permite retirar eventos (publicados o pendientes), restaurar
+            retirados y ajustar clase/puntos dentro de las 24 horas posteriores a una reprogramación.
           </p>
         </div>
 
@@ -418,7 +420,11 @@ export default function EventChangesReview() {
               style={{ padding: '0.4rem', border: '1px solid var(--color-border)', borderRadius: '4px' }}
               required
             />
-            <button type="submit" className={styles.primary} style={{ background: '#d93025', borderColor: '#d93025', marginTop: '0.25rem' }}>
+            <button
+              type="submit"
+              className={styles.primary}
+              style={{ background: '#d93025', borderColor: '#d93025', marginTop: '0.25rem' }}
+            >
               Retirar evento
             </button>
           </form>
@@ -496,7 +502,12 @@ export default function EventChangesReview() {
                   max="100"
                   value={adjustPuntos}
                   onChange={(e) => setAdjustPuntos(e.target.value)}
-                  style={{ width: '80px', padding: '0.4rem', border: '1px solid var(--color-border)', borderRadius: '4px' }}
+                  style={{
+                    width: '80px',
+                    padding: '0.4rem',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: '4px',
+                  }}
                 />
               )}
             </div>

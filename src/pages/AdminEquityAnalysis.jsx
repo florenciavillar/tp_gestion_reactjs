@@ -100,9 +100,7 @@ function AdminEquityAnalysis() {
         </Link>
         <div>
           <h1 className={pageStyles.title}>Análisis de equidad</h1>
-          <p className={styles.cardSubtitle}>
-            Simulación del impacto en los perfiles de socios y equidad por grupos
-          </p>
+          <p className={styles.cardSubtitle}>Simulación del impacto en los perfiles de socios y equidad por grupos</p>
         </div>
       </header>
 
@@ -122,11 +120,7 @@ function AdminEquityAnalysis() {
             {formConfig.rules_in_force?.differs && (
               <div className={styles.noticeDiffers}>
                 <span>{formConfig.rules_in_force.notice}</span>
-                <button
-                  type="button"
-                  onClick={handleLoadRulesInForce}
-                  className={styles.btnSecondarySmall}
-                >
+                <button type="button" onClick={handleLoadRulesInForce} className={styles.btnSecondarySmall}>
                   Cargar reglas vigentes
                 </button>
               </div>
@@ -137,12 +131,7 @@ function AdminEquityAnalysis() {
           <section className={styles.formSection}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>Parámetros de la simulación</h2>
-              <button
-                type="button"
-                onClick={handleReset}
-                className={styles.btnSecondarySmall}
-                disabled={simulating}
-              >
+              <button type="button" onClick={handleReset} className={styles.btnSecondarySmall} disabled={simulating}>
                 Restablecer a valores del ranking
               </button>
             </div>
@@ -154,9 +143,7 @@ function AdminEquityAnalysis() {
                     <label htmlFor={`param-${p.key}`} className={styles.label}>
                       {p.name}
                     </label>
-                    <span className={styles.sublabel}>
-                      {p.description}
-                    </span>
+                    <span className={styles.sublabel}>{p.description}</span>
                     <input
                       id={`param-${p.key}`}
                       type="text"
@@ -176,11 +163,7 @@ function AdminEquityAnalysis() {
               )}
 
               <div className={styles.actions}>
-                <button
-                  type="submit"
-                  className={styles.btnPrimary}
-                  disabled={simulating}
-                >
+                <button type="submit" className={styles.btnPrimary} disabled={simulating}>
                   {simulating ? 'Simulando…' : 'Simular impacto y equidad'}
                 </button>
               </div>
@@ -191,7 +174,8 @@ function AdminEquityAnalysis() {
           {equity && equity.status === 'unavailable' && (
             <section className={styles.introCard}>
               <p className={authStyles.error} role="alert">
-                {equity.message || 'No pudimos calcular el análisis de equidad. Los resultados generales siguen siendo válidos.'}
+                {equity.message ||
+                  'No pudimos calcular el análisis de equidad. Los resultados generales siguen siendo válidos.'}
               </p>
             </section>
           )}
@@ -201,9 +185,7 @@ function AdminEquityAnalysis() {
               {/* Veredicto General */}
               {equity.verdict && (
                 <section className={styles.verdictCard}>
-                  {equity.verdict.code === 'EQUITY_OK' && (
-                    <span className={styles.verdictBadgeOk}>Equidad OK</span>
-                  )}
+                  {equity.verdict.code === 'EQUITY_OK' && <span className={styles.verdictBadgeOk}>Equidad OK</span>}
                   {equity.verdict.code === 'EQUITY_ATTENTION' && (
                     <span className={styles.verdictBadgeAttention}>Atención / Revisar diferencias</span>
                   )}
@@ -214,8 +196,8 @@ function AdminEquityAnalysis() {
                     {equity.verdict.code === 'EQUITY_BIAS'
                       ? 'El cambio favorece o perjudica de forma marcada a grupos específicos del padrón. En el gráfico siguiente se detalla el porcentaje de impacto por grupo.'
                       : equity.verdict.code === 'EQUITY_ATTENTION'
-                      ? 'El cambio genera diferencias moderadas entre grupos de socios para revisar antes de publicar.'
-                      : 'Sin diferencias marcadas: el cambio propuesto no favorece ni perjudica de más a ningún grupo.'}
+                        ? 'El cambio genera diferencias moderadas entre grupos de socios para revisar antes de publicar.'
+                        : 'Sin diferencias marcadas: el cambio propuesto no favorece ni perjudica de más a ningún grupo.'}
                   </p>
                   <p className={styles.verdictScope}>{equity.verdict.scope}</p>
 
@@ -230,10 +212,7 @@ function AdminEquityAnalysis() {
 
               {/* Gráfico interactivo y visual de impacto en equidad */}
               {equity.segmentations && (
-                <EquityImpactChart
-                  segmentations={equity.segmentations}
-                  rankingId={result?.ranking?.id}
-                />
+                <EquityImpactChart segmentations={equity.segmentations} rankingId={result?.ranking?.id} />
               )}
 
               {/* Perfil de los socios que se mueven */}
@@ -241,8 +220,8 @@ function AdminEquityAnalysis() {
                 <section className={styles.tableCard}>
                   <h2 className={styles.sectionTitle}>Perfil de los socios que se mueven</h2>
                   <p className={styles.cardSubtitle}>
-                    Compara a los socios que suben o bajan al menos {equity.profile.relevant_threshold} posiciones
-                    con respecto al total del ranking. Este perfil es descriptivo: qué perfil premiar es decisión del club.
+                    Compara a los socios que suben o bajan al menos {equity.profile.relevant_threshold} posiciones con
+                    respecto al total del ranking. Este perfil es descriptivo: qué perfil premiar es decisión del club.
                   </p>
 
                   <table className={styles.table}>
@@ -261,7 +240,9 @@ function AdminEquityAnalysis() {
                     </thead>
                     <tbody>
                       <tr>
-                        <td><strong>Distancia al estadio (mediana km)</strong></td>
+                        <td>
+                          <strong>Distancia al estadio (mediana km)</strong>
+                        </td>
                         {equity.profile.groups.map((g) => (
                           <td key={g.group}>
                             {g.too_small ? (
@@ -275,8 +256,8 @@ function AdminEquityAnalysis() {
                                       Number(g.variables.distance_km.difference) > 0
                                         ? styles.valueDiffPositive
                                         : Number(g.variables.distance_km.difference) < 0
-                                        ? styles.valueDiffNegative
-                                        : styles.valueDiffZero
+                                          ? styles.valueDiffNegative
+                                          : styles.valueDiffZero
                                     }
                                   >
                                     ({Number(g.variables.distance_km.difference) > 0 ? '+' : ''}
@@ -290,7 +271,9 @@ function AdminEquityAnalysis() {
                       </tr>
 
                       <tr>
-                        <td><strong>Antigüedad ininterrumpida (mediana años)</strong></td>
+                        <td>
+                          <strong>Antigüedad ininterrumpida (mediana años)</strong>
+                        </td>
                         {equity.profile.groups.map((g) => (
                           <td key={g.group}>
                             {g.too_small ? (
@@ -304,8 +287,8 @@ function AdminEquityAnalysis() {
                                       Number(g.variables.seniority_years.difference) > 0
                                         ? styles.valueDiffPositive
                                         : Number(g.variables.seniority_years.difference) < 0
-                                        ? styles.valueDiffNegative
-                                        : styles.valueDiffZero
+                                          ? styles.valueDiffNegative
+                                          : styles.valueDiffZero
                                     }
                                   >
                                     ({Number(g.variables.seniority_years.difference) > 0 ? '+' : ''}
@@ -319,7 +302,9 @@ function AdminEquityAnalysis() {
                       </tr>
 
                       <tr>
-                        <td><strong>Edad del socio (mediana años)</strong></td>
+                        <td>
+                          <strong>Edad del socio (mediana años)</strong>
+                        </td>
                         {equity.profile.groups.map((g) => (
                           <td key={g.group}>
                             {g.too_small ? (
@@ -333,8 +318,8 @@ function AdminEquityAnalysis() {
                                       Number(g.variables.age_years.difference) > 0
                                         ? styles.valueDiffPositive
                                         : Number(g.variables.age_years.difference) < 0
-                                        ? styles.valueDiffNegative
-                                        : styles.valueDiffZero
+                                          ? styles.valueDiffNegative
+                                          : styles.valueDiffZero
                                     }
                                   >
                                     ({Number(g.variables.age_years.difference) > 0 ? '+' : ''}
@@ -357,23 +342,20 @@ function AdminEquityAnalysis() {
                             {g.too_small || g.variables.class_c_attendance.too_small ? (
                               <span className={styles.groupTooSmall}>
                                 {g.variables?.class_c_attendance?.message || g.message}
-                                {g.variables?.class_c_attendance?.count !== undefined && (
-                                  ` (${g.variables.class_c_attendance.count} socios)`
-                                )}
+                                {g.variables?.class_c_attendance?.count !== undefined &&
+                                  ` (${g.variables.class_c_attendance.count} socios)`}
                               </span>
                             ) : (
                               <>
-                                <span className={styles.valuePrimary}>
-                                  {g.variables.class_c_attendance.value} %
-                                </span>
+                                <span className={styles.valuePrimary}>{g.variables.class_c_attendance.value} %</span>
                                 {g.group !== 'all' && (
                                   <span
                                     className={
                                       Number(g.variables.class_c_attendance.difference) > 0
                                         ? styles.valueDiffPositive
                                         : Number(g.variables.class_c_attendance.difference) < 0
-                                        ? styles.valueDiffNegative
-                                        : styles.valueDiffZero
+                                          ? styles.valueDiffNegative
+                                          : styles.valueDiffZero
                                     }
                                   >
                                     ({Number(g.variables.class_c_attendance.difference) > 0 ? '+' : ''}
@@ -390,22 +372,26 @@ function AdminEquityAnalysis() {
                       </tr>
 
                       <tr>
-                        <td><strong>Puntos institucionales crudos (mediana)</strong></td>
+                        <td>
+                          <strong>Puntos institucionales crudos (mediana)</strong>
+                        </td>
                         {equity.profile.groups.map((g) => (
                           <td key={g.group}>
                             {g.too_small ? (
                               <span className={styles.groupTooSmall}>{g.message}</span>
                             ) : (
                               <>
-                                <span className={styles.valuePrimary}>{g.variables.institutional_points.value} pts</span>
+                                <span className={styles.valuePrimary}>
+                                  {g.variables.institutional_points.value} pts
+                                </span>
                                 {g.group !== 'all' && (
                                   <span
                                     className={
                                       Number(g.variables.institutional_points.difference) > 0
                                         ? styles.valueDiffPositive
                                         : Number(g.variables.institutional_points.difference) < 0
-                                        ? styles.valueDiffNegative
-                                        : styles.valueDiffZero
+                                          ? styles.valueDiffNegative
+                                          : styles.valueDiffZero
                                     }
                                   >
                                     ({Number(g.variables.institutional_points.difference) > 0 ? '+' : ''}
@@ -419,7 +405,9 @@ function AdminEquityAnalysis() {
                       </tr>
 
                       <tr>
-                        <td><strong>Socios con participación institucional (%)</strong></td>
+                        <td>
+                          <strong>Socios con participación institucional (%)</strong>
+                        </td>
                         {equity.profile.groups.map((g) => (
                           <td key={g.group}>
                             {g.too_small ? (
@@ -433,8 +421,8 @@ function AdminEquityAnalysis() {
                                       Number(g.variables.with_institutional.difference) > 0
                                         ? styles.valueDiffPositive
                                         : Number(g.variables.with_institutional.difference) < 0
-                                        ? styles.valueDiffNegative
-                                        : styles.valueDiffZero
+                                          ? styles.valueDiffNegative
+                                          : styles.valueDiffZero
                                     }
                                   >
                                     ({Number(g.variables.with_institutional.difference) > 0 ? '+' : ''}
@@ -528,9 +516,7 @@ function AdminEquityAnalysis() {
                             <tr key={idx}>
                               <td>
                                 <strong>{seg.band.label}</strong>
-                                {seg.largest_deviation && (
-                                  <span className={styles.tagLargest}>Mayor desvío</span>
-                                )}
+                                {seg.largest_deviation && <span className={styles.tagLargest}>Mayor desvío</span>}
                               </td>
                               <td>{seg.count}</td>
                               <td>{seg.avg_score_before}</td>
@@ -540,8 +526,8 @@ function AdminEquityAnalysis() {
                                   Number(seg.avg_score_difference) > 0
                                     ? styles.valueDiffPositive
                                     : Number(seg.avg_score_difference) < 0
-                                    ? styles.valueDiffNegative
-                                    : ''
+                                      ? styles.valueDiffNegative
+                                      : ''
                                 }
                               >
                                 {Number(seg.avg_score_difference) > 0 ? '+' : ''}
@@ -554,8 +540,8 @@ function AdminEquityAnalysis() {
                                   Number(seg.avg_position_change) > 0
                                     ? styles.valueDiffPositive
                                     : Number(seg.avg_position_change) < 0
-                                    ? styles.valueDiffNegative
-                                    : ''
+                                      ? styles.valueDiffNegative
+                                      : ''
                                 }
                               >
                                 {Number(seg.avg_position_change) > 0 ? '+' : ''}
@@ -592,12 +578,7 @@ function AdminEquityAnalysis() {
 
               {/* Botón de Exportar CSV */}
               <div className={styles.exportBar}>
-                <button
-                  type="button"
-                  className={styles.btnExport}
-                  onClick={handleExportCsv}
-                  disabled={exporting}
-                >
+                <button type="button" className={styles.btnExport} onClick={handleExportCsv} disabled={exporting}>
                   <svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16">
                     <path
                       d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
