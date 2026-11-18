@@ -10,6 +10,9 @@ const LOAD_ERROR = 'No pudimos cargar tu turno. Probá de nuevo en un rato.'
 const NOT_FOUND = 'No encontramos este evento.'
 // Si se llegó desde una notificación (bandeja o botón del correo de HU-19), el evento existió: ya no está (HU-20).
 const UNAVAILABLE = 'Este evento ya no está disponible.'
+// Aviso de turno habilitado cuyo cronograma ya no está confirmado (HU-20, notificaciones §3).
+const SCHEDULE_CHANGED = 'El cronograma de reservas de este evento cambió y todavía no está definido de nuevo.'
+const WITHDRAWN = 'Este evento fue retirado.'
 const NO_CLUB = 'Tu cuenta no tiene un club asignado. Consultá con el club.'
 
 function errorMessage(err, fromNotification) {
@@ -90,13 +93,16 @@ function EventSlot() {
         </p>
       )}
 
-      {state.status === 'ready' && <SlotCard data={state.data} onExpired={reload} />}
+      {state.status === 'ready' && (
+        <SlotCard data={state.data} onExpired={reload} fromNotification={fromNotification} />
+      )}
     </main>
   )
 }
 
-function SlotCard({ data, onExpired }) {
+function SlotCard({ data, onExpired, fromNotification }) {
   const { event } = data
+  const scheduleChanged = fromNotification && data.status === 'no_schedule'
   return (
     <section className={pageStyles.card} aria-labelledby="slot-event">
       <div className={styles.event}>
@@ -122,9 +128,20 @@ function SlotCard({ data, onExpired }) {
       </div>
 
       {data.status === 'withdrawn' ? (
-        <p className={styles.banner} role="alert" style={{ color: 'var(--color-error, #b00020)' }}>
-          {data.message || 'Este evento fue retirado.'}
-        </p>
+        // HU-23 escenario 6: se dice que fue retirado, vengas o no de una notificación.
+        <div className={`${styles.banner} ${styles.withdrawn}`} role="alert">
+          <p className={styles.bannerText}>{data.message || WITHDRAWN}</p>
+          <Link to="/events" className={styles.bannerLink}>
+            Ver los eventos
+          </Link>
+        </div>
+      ) : scheduleChanged ? (
+        <div className={styles.banner} role="status">
+          <p className={styles.bannerText}>{SCHEDULE_CHANGED}</p>
+          <Link to="/events" className={styles.bannerLink}>
+            Ver los eventos
+          </Link>
+        </div>
       ) : (
         <>
           {data.status === 'pending' && <Pending data={data} onExpired={onExpired} />}

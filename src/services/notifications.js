@@ -28,7 +28,9 @@ export function notificationTarget(notification) {
   const eventId = notification.reference?.event_id
   switch (notification.type) {
     case 'event_published':
-    case 'event_rescheduled': // Inactivo hasta HU-23.
+    case 'event_rescheduled':
+    case 'event_restored':
+    case 'event_withdrawn': // El evento retirado no está en la lista: se ve el aviso de "no disponible".
       return eventId ? `/events?highlight=${encodeURIComponent(eventId)}` : null
     case 'wave_opened':
       return eventId ? `/member/events/${encodeURIComponent(eventId)}/slot` : null
