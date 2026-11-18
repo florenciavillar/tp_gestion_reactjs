@@ -63,3 +63,22 @@
   border-left: 4px solid var(--color-yellow);
   border-radius: var(--radius-sm);
 }
+
+/* Evento retirado (HU-23B US5): mismo aviso, en rojo. */
+.withdrawn {
+  color: var(--color-red-dark);
+  background: color-mix(in srgb, var(--color-red) 8%, white);
+  border-color: color-mix(in srgb, var(--color-red) 35%, white);
+  border-left-color: var(--color-red);
+}
+
+.bannerText {
+  margin: 0;
+}
+
+.bannerLink {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: inherit;
+}

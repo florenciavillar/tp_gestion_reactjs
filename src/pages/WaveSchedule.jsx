@@ -29,6 +29,38 @@ const WAVE_STATES = {
   closed: { label: 'Cerrada', className: `${runStyles.pill} ${runStyles.pillFailed}` },
 }
 
+// Por qué el cronograma quedó invalidado (HU-37, HU-23B US3 escenarios 6 y 7): siempre hay que generar otro.
+const INVALIDATION_TEXTS = {
+  waves_regenerated: 'Las olas se regeneraron: este cronograma ya no vale y los socios no lo ven. Generá uno nuevo.',
+  event_rescheduled:
+    'El partido se reprogramó y sus olas quedaban después del nuevo inicio: este cronograma ya no vale y los socios no lo ven. Generá uno nuevo.',
+}
+const INVALIDATED_TEXT = 'Este cronograma ya no vale y los socios no lo ven. Generá uno nuevo.'
+
+// HU-23B US3 escenario 4: las olas que una reprogramación sumó a la ola k se muestran en una sola fila,
+// "Ola k (incluye las olas k+1 a N)", con los socios y las posiciones de todas.
+function groupMergedWaves(waves, mergedIntoOrder) {
+  if (!mergedIntoOrder || mergedIntoOrder >= waves.length) {
+    return waves.map((wave) => ({ ...wave, label: String(wave.order) }))
+  }
+  const separate = waves.slice(0, mergedIntoOrder - 1).map((wave) => ({ ...wave, label: String(wave.order) }))
+  const joined = waves.slice(mergedIntoOrder - 1)
+  const target = joined[0]
+  const last = joined.at(-1)
+  const included =
+    joined.length === 2 ? `incluye la ola ${last.order}` : `incluye las olas ${joined[1].order} a ${last.order}`
+  return [
+    ...separate,
+    {
+      ...target,
+      label: `${target.order} (${included})`,
+      percentile_to: last.percentile_to,
+      position_to: last.position_to,
+      socios: joined.reduce((total, wave) => total + wave.socios, 0),
+    },
+  ]
+}
+
 // HU-37: cronograma de habilitación de las olas de un partido. Solo admins.
 function WaveSchedule() {
   const { id } = useParams()
@@ -129,7 +161,7 @@ function WaveSchedule() {
 
       {loaded && !loadError && schedule?.status === 'invalidated' && (
         <p className={`${runStyles.banner} ${runStyles.bannerError}`} role="status">
-          Las olas se regeneraron: este cronograma ya no vale y los socios no lo ven. Generá uno nuevo.
+          {INVALIDATION_TEXTS[schedule.invalidation_reason] ?? INVALIDATED_TEXT}
         </p>
       )}
 
@@ -146,6 +178,7 @@ function WaveSchedule() {
           wavesCount={segmentation.waves.length}
           minStepMinutes={segmentation.min_step_minutes}
           replacing={schedule !== null && schedule.status !== 'invalidated'}
+          adjusted={schedule !== null && schedule.status !== 'invalidated' && isAdjusted(schedule)}
           onGenerated={setSchedule}
           onStale={reloadSchedule}
         />
@@ -167,7 +200,7 @@ function openPicker(event) {
 // Período de reserva: apertura de la primera oleada y cierre general (escenario 2).
 // Las reglas las valida el backend; acá solo se ayuda con los límites del selector.
 // Si ya hay un cronograma, reemplazarlo pide confirmación y lo vuelve a borrador (escenario 6).
-function PeriodForm({ eventId, eventStart, wavesCount, minStepMinutes, replacing, onGenerated, onStale }) {
+function PeriodForm({ eventId, eventStart, wavesCount, minStepMinutes, replacing, adjusted, onGenerated, onStale }) {
   const openingId = useId()
   const closingId = useId()
   const [opening, setOpening] = useState('')
@@ -274,6 +307,8 @@ function PeriodForm({ eventId, eventStart, wavesCount, minStepMinutes, replacing
             <p className={runStyles.confirmationTitle}>
               Este partido ya tiene un cronograma. Si continuás, se reemplaza y vuelve a borrador: los socios dejan de
               verlo hasta que lo confirmes de nuevo.
+              {adjusted &&
+                ' También se descartan los ajustes de las reprogramaciones: las olas sumadas y el cierre adelantado.'}
             </p>
             <div className={runStyles.actions}>
               <button type="button" className={authStyles.button} onClick={() => submit(true)}>
@@ -361,7 +396,22 @@ function ConfirmPanel({ eventId, schedule, onConfirmed }) {
   )
 }
 
+// HU-23B US3: una reprogramación pudo adelantar el cierre general; las horas de las olas no cambian.
+function closingMovedOf(schedule) {
+  return Boolean(
+    schedule.generated_closing_at &&
+    new Date(schedule.closing_at).getTime() !== new Date(schedule.generated_closing_at).getTime(),
+  )
+}
+
+// Escenario 8 de HU-23B US3: regenerar descarta las olas sumadas y el cierre adelantado.
+function isAdjusted(schedule) {
+  return Boolean(schedule.merged_into_order) || closingMovedOf(schedule)
+}
+
 function ScheduleSummary({ schedule }) {
+  const closingMoved = closingMovedOf(schedule)
+  const generatedClosing = closingMoved ? formatDateTime(schedule.generated_closing_at) : ''
   return (
     <>
       <dl className={runStyles.summary}>
@@ -370,7 +420,10 @@ function ScheduleSummary({ schedule }) {
         <dt>Apertura de la primera oleada</dt>
         <dd>{formatDateTime(schedule.opening_at)}</dd>
         <dt>Cierre general</dt>
-        <dd>{formatDateTime(schedule.closing_at)}</dd>
+        <dd>
+          {formatDateTime(schedule.closing_at)}
+          {closingMoved && ` (adelantado por una reprogramación; se generó con cierre ${generatedClosing})`}
+        </dd>
         <dt>Entre oleadas</dt>
         <dd>
           {formatRemaining(schedule.step_seconds)} (mínimo {schedule.min_step_minutes} min)
@@ -414,9 +467,9 @@ function ScheduledWaves({ schedule }) {
           </tr>
         </thead>
         <tbody>
-          {schedule.waves.map((wave) => (
+          {groupMergedWaves(schedule.waves, schedule.merged_into_order).map((wave) => (
             <tr key={wave.order}>
-              <td>{wave.order}</td>
+              <td>{wave.label}</td>
               <td>
                 {wave.percentile_from}–{wave.percentile_to} %
               </td>
