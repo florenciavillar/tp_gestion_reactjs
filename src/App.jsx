@@ -16,6 +16,7 @@ import Notifications from './pages/Notifications.jsx'
 import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
+import RescheduleEvent from './pages/RescheduleEvent.jsx'
 import ScoreBreakdownPage from './pages/ScoreBreakdownPage.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SimulationResult from './pages/SimulationResult.jsx'
@@ -131,6 +132,14 @@ function App() {
           element={
             <RequireAuth role="admin">
               <PublishEvent />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/events/:id/reschedule"
+          element={
+            <RequireAuth role="admin">
+              <RescheduleEvent />
             </RequireAuth>
           }
         />

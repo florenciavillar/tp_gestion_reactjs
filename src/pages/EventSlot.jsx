@@ -12,7 +12,7 @@ const NOT_FOUND = 'No encontramos este evento.'
 const UNAVAILABLE = 'Este evento ya no está disponible.'
 // Aviso de turno habilitado cuyo cronograma ya no está confirmado (HU-20, notificaciones §3).
 const SCHEDULE_CHANGED = 'El cronograma de reservas de este evento cambió y todavía no está definido de nuevo.'
-const WITHDRAWN = 'Este evento fue retirado.'
+const WITHDRAWN = 'Este evento fue suspendido.'
 const NO_CLUB = 'Tu cuenta no tiene un club asignado. Consultá con el club.'
 
 function errorMessage(err, fromNotification) {
@@ -128,7 +128,7 @@ function SlotCard({ data, onExpired, fromNotification }) {
       </div>
 
       {data.status === 'withdrawn' ? (
-        // HU-23 escenario 6: se dice que fue retirado, vengas o no de una notificación.
+        // HU-23B US5 escenario 6: se dice que se suspendió, vengas o no de una notificación.
         <div className={`${styles.banner} ${styles.withdrawn}`} role="alert">
           <p className={styles.bannerText}>{data.message || WITHDRAWN}</p>
           <Link to="/events" className={styles.bannerLink}>

@@ -1,15 +1,18 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { getUpcomingEvents } from '../services/events.js'
+import { getOwnSlot, getUpcomingEvents } from '../services/events.js'
 import { formatEventDate, formatEventTime } from '../services/eventFormat.js'
 import pageStyles from '../pages/Page.module.css'
 import styles from './Events.module.css'
+
+const UNAVAILABLE = 'Este evento ya no está disponible.'
 
 // HU-17: próximos eventos publicados del club del socio, de solo lectura. Cada evento lleva al
 // turno propio del socio (HU-39) y a su simulación de puntaje (HU-18). El back ya filtra por club y
 // saca los que empezaron.
 // Con `?highlight=<id_interno>` (desde una notificación, HU-17 escenario 6) resalta ese evento; si ya no
-// está en la lista, avisa que no está disponible y muestra la lista sin resaltar.
+// está en la lista, avisa que no está disponible (o que se suspendió, si el Admin lo retiró: HU-23B US5
+// escenario 6) y muestra la lista sin resaltar.
 function UpcomingEvents() {
   const [state, setState] = useState({ status: 'loading' })
   const headingId = useId()
@@ -18,6 +21,9 @@ function UpcomingEvents() {
   const highlightedRef = useRef(null)
   const ready = state.status === 'ready'
   const highlightFound = ready && Boolean(highlight) && state.data.eventos.some((e) => e.id_interno === highlight)
+  const highlightMissing = ready && Boolean(highlight) && !highlightFound
+  // El aviso de un evento que no está en la lista: el turno (HU-39) dice si se retiró.
+  const [missingNotice, setMissingNotice] = useState(UNAVAILABLE)
 
   useEffect(() => {
     let ignore = false
@@ -32,6 +38,21 @@ function UpcomingEvents() {
       ignore = true
     }
   }, [])
+
+  useEffect(() => {
+    if (!highlightMissing) return
+    let ignore = false
+    getOwnSlot(highlight)
+      .then((slot) => {
+        if (!ignore) setMissingNotice(slot.status === 'withdrawn' ? slot.message : UNAVAILABLE)
+      })
+      .catch(() => {
+        if (!ignore) setMissingNotice(UNAVAILABLE)
+      })
+    return () => {
+      ignore = true
+    }
+  }, [highlightMissing, highlight])
 
   // Cuando la lista está lista, lleva el evento resaltado al centro y le pasa el foco (lectores de pantalla).
   useEffect(() => {
@@ -61,9 +82,9 @@ function UpcomingEvents() {
         </p>
       )}
 
-      {ready && highlight && !highlightFound && (
+      {highlightMissing && (
         <p className={styles.notice} role="status">
-          Este evento ya no está disponible.
+          {missingNotice}
         </p>
       )}
 

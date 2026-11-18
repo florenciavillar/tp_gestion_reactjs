@@ -30,8 +30,10 @@ export function notificationTarget(notification) {
     case 'event_published':
     case 'event_rescheduled':
     case 'event_restored':
-    case 'event_withdrawn': // El evento retirado no está en la lista: se ve el aviso de "no disponible".
+    case 'event_withdrawn': // HU-23B US5: no está en la lista; se ve "Este evento fue suspendido".
       return eventId ? `/events?highlight=${encodeURIComponent(eventId)}` : null
+    case 'wave_schedule_confirmed': // Decisión 63: el Admin confirmó el cronograma del partido.
+    case 'wave_rescheduled': // HU-23B US4: una reprogramación sumó su ola a otra.
     case 'wave_opened':
       return eventId ? `/member/events/${encodeURIComponent(eventId)}/slot` : null
     case 'ranking_completed':

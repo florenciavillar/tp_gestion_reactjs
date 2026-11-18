@@ -50,6 +50,30 @@
   color: var(--color-text-muted);
 }
 
+/* HU-23B: qué cambia al reprogramar, antes de confirmar. */
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.875rem 1rem;
+  background: var(--color-tint);
+  border-left: 3px solid var(--color-pitch);
+  border-radius: var(--radius-xs);
+}
+
+.previewTitle {
+  margin: 0;
+  font-weight: 700;
+}
+
+.previewList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding-left: 1.125rem;
+}
+
 .classes {
   display: flex;
   flex-direction: column;

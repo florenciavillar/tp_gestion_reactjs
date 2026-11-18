@@ -1,18 +1,25 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { getPendingEvents } from '../services/events.js'
+import { discardEvent, getPendingEvents } from '../services/events.js'
 import { eventTypeLabel, formatEventDate, formatEventTime, formatRemaining } from '../services/eventFormat.js'
 import pageStyles from '../pages/Page.module.css'
+import dialogStyles from '../pages/PublishEvent.module.css'
 import styles from './Events.module.css'
 
 const PAGE_SIZE = 10
 const TICK_MS = 30_000
 
 // HU-21 sc. 2 y HU-22 sc. 1: eventos recibidos del club que falta publicar, con el tiempo que queda
-// hasta su publicación automática. El Admin publica cada uno eligiendo su clase o sus puntos.
+// hasta su publicación automática. El Admin publica cada uno eligiendo su clase o sus puntos, o lo
+// descarta (HU-21 sc. 10, por ejemplo si el club lo canceló): no se publica ni lo ven los socios.
 function PendingEvents() {
   const [page, setPage] = useState(0)
   const [state, setState] = useState({ status: 'loading' })
+  const [reloadKey, setReloadKey] = useState(0)
+  const [discardTarget, setDiscardTarget] = useState(null)
+  const [message, setMessage] = useState(null)
+  const dialogRef = useRef(null)
+  const dialogTitleId = useId()
   const now = useNow(TICK_MS)
   const headingId = useId()
 
@@ -36,7 +43,30 @@ function PendingEvents() {
     return () => {
       ignore = true
     }
-  }, [page])
+  }, [page, reloadKey])
+
+  // El diálogo se abre después de pintar el evento elegido, así "Cancelar" toma el foco inicial.
+  useEffect(() => {
+    if (discardTarget && !dialogRef.current.open) dialogRef.current.showModal()
+  }, [discardTarget])
+
+  async function confirmDiscard() {
+    const evento = discardTarget
+    dialogRef.current.close()
+    try {
+      await discardEvent(evento.id_interno)
+      setMessage({ kind: 'notice', text: `Descartaste «${evento.titulo}».` })
+    } catch (err) {
+      setMessage({
+        kind: 'error',
+        text:
+          err.status === 404 || err.status === 409
+            ? 'El evento ya no está pendiente.'
+            : 'No pudimos descartar el evento. Intentá de nuevo.',
+      })
+    }
+    setReloadKey((value) => value + 1)
+  }
 
   const elapsedSeconds = state.status === 'ready' ? Math.floor((now - state.receivedAt) / 1000) : 0
   const firstShown = page * PAGE_SIZE + 1
@@ -64,6 +94,15 @@ function PendingEvents() {
           Cargar asistencias
         </Link>
       </div>
+
+      {message && (
+        <p
+          className={message.kind === 'error' ? styles.error : styles.notice}
+          role={message.kind === 'error' ? 'alert' : 'status'}
+        >
+          {message.text}
+        </p>
+      )}
 
       {state.status === 'loading' && <p className={styles.muted}>Cargando eventos…</p>}
 
@@ -118,6 +157,16 @@ function PendingEvents() {
                     ) : (
                       <p className={styles.deadline}>Se publica solo en {formatRemaining(remaining)}</p>
                     )}
+                    <button
+                      type="button"
+                      className={styles.secondary}
+                      onClick={() => {
+                        setMessage(null)
+                        setDiscardTarget(evento)
+                      }}
+                    >
+                      Descartar
+                    </button>
                     <Link
                       to={`/admin/events/${encodeURIComponent(evento.id_interno)}/publish`}
                       state={{ evento }}
@@ -156,6 +205,33 @@ function PendingEvents() {
           </nav>
         </>
       )}
+
+      <dialog
+        ref={dialogRef}
+        className={dialogStyles.dialog}
+        aria-labelledby={dialogTitleId}
+        onClick={(event) => event.target === dialogRef.current && dialogRef.current.close()}
+        onClose={() => setDiscardTarget(null)}
+      >
+        {discardTarget && (
+          <div className={dialogStyles.dialogBody}>
+            <h2 id={dialogTitleId} className={dialogStyles.dialogTitle}>
+              ¿Descartar {discardTarget.titulo}?
+            </h2>
+            <p className={dialogStyles.dialogWarning}>
+              No se publica ni lo ven los socios. Esta acción no se puede deshacer.
+            </p>
+            <div className={dialogStyles.dialogActions}>
+              <button type="button" className={dialogStyles.cancel} onClick={() => dialogRef.current.close()} autoFocus>
+                Cancelar
+              </button>
+              <button type="button" className={dialogStyles.confirm} onClick={confirmDiscard}>
+                Descartar
+              </button>
+            </div>
+          </div>
+        )}
+      </dialog>
     </section>
   )
 }

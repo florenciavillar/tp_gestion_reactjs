@@ -97,3 +97,27 @@ export function formatCountdown(seconds) {
 export function formatEventDateInline(iso) {
   return dateFormat.format(new Date(iso))
 }
+
+// Fecha y hora de Buenos Aires para los campos <input type="date"> y <input type="time">:
+// { date: '2026-11-21', time: '17:00' }.
+const inputPartsFormat = new Intl.DateTimeFormat('en-CA', {
+  timeZone: TIME_ZONE,
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+})
+
+export function toDateTimeInputs(iso) {
+  const parts = Object.fromEntries(inputPartsFormat.formatToParts(new Date(iso)).map((p) => [p.type, p.value]))
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` }
+}
+
+// "21/11/2026", en hora de Buenos Aires (el formato de los textos fijos de HU-23B y las notificaciones).
+export function formatShortDate(iso) {
+  const { date } = toDateTimeInputs(iso)
+  const [year, month, day] = date.split('-')
+  return `${day}/${month}/${year}`
+}

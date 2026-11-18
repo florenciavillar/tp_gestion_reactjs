@@ -18,6 +18,12 @@
 }
 
 /* Es el título de la pantalla: mismo tamaño que el de Page.module.css. */
+.heading {
+  margin: 0 0 0.25rem;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
 
 .muted {
   margin: 0;

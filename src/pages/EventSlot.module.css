@@ -64,7 +64,7 @@
   border-radius: var(--radius-sm);
 }
 
-/* Evento retirado (HU-23): mismo aviso, en rojo. */
+/* Evento retirado (HU-23B US5): mismo aviso, en rojo. */
 .withdrawn {
   color: var(--color-red-dark);
   background: color-mix(in srgb, var(--color-red) 8%, white);
