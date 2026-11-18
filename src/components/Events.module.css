@@ -94,6 +94,14 @@
   line-height: 1.3;
 }
 
+.clubId {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Tipo de evento: Partido en verde, Institucional en gris. */
 .type {
   flex-shrink: 0;

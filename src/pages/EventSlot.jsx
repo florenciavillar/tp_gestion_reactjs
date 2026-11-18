@@ -101,30 +101,40 @@ function SlotCard({ data, onExpired }) {
     <section className={pageStyles.card} aria-labelledby="slot-event">
       <div className={styles.event}>
         <h2 id="slot-event" className={pageStyles.cardTitle}>
-          {event.titulo}
+          {event?.titulo || 'Evento'}
         </h2>
-        <dl className={styles.meta}>
-          <div>
-            <dt>Fecha</dt>
-            <dd>{formatEventDate(event.fecha_hora)}</dd>
-          </div>
-          <div>
-            <dt>Hora</dt>
-            <dd>{formatEventTime(event.fecha_hora)}</dd>
-          </div>
-          <div>
-            <dt>Lugar</dt>
-            <dd>{event.lugar}</dd>
-          </div>
-        </dl>
+        {event && (
+          <dl className={styles.meta}>
+            <div>
+              <dt>Fecha</dt>
+              <dd>{formatEventDate(event.fecha_hora)}</dd>
+            </div>
+            <div>
+              <dt>Hora</dt>
+              <dd>{formatEventTime(event.fecha_hora)}</dd>
+            </div>
+            <div>
+              <dt>Lugar</dt>
+              <dd>{event.lugar}</dd>
+            </div>
+          </dl>
+        )}
       </div>
 
-      {data.status === 'pending' && <Pending data={data} onExpired={onExpired} />}
-      {data.status === 'open' && <Open data={data} onExpired={onExpired} />}
-      {data.message && (
-        <p className={data.status === 'no_wave' ? styles.banner : styles.muted} role="status">
-          {data.message}
+      {data.status === 'withdrawn' ? (
+        <p className={styles.banner} role="alert" style={{ color: 'var(--color-error, #b00020)' }}>
+          {data.message || 'Este evento fue retirado.'}
         </p>
+      ) : (
+        <>
+          {data.status === 'pending' && <Pending data={data} onExpired={onExpired} />}
+          {data.status === 'open' && <Open data={data} onExpired={onExpired} />}
+          {data.message && (
+            <p className={data.status === 'no_wave' ? styles.banner : styles.muted} role="status">
+              {data.message}
+            </p>
+          )}
+        </>
       )}
     </section>
   )

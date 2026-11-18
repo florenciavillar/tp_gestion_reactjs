@@ -30,6 +30,7 @@ const ICONS = {
   ranking: 'M4 20h16M7 20v-6M12 20V6M17 20v-10',
   waves: 'M3 7c3-2 6 2 9 0s6-2 9 0M3 12c3-2 6 2 9 0s6-2 9 0M3 17c3-2 6 2 9 0s6-2 9 0',
   settings: 'M4 6h16M4 12h16M4 18h16M8 4v4M16 10v4M11 16v4',
+  equity: 'M12 3v17M6 20h12M4 7l8-3 8 3M6 7l-3 6h6L6 7zm12 0l-3 6h6l-3-6z',
   attendance: 'M9 4h6v3H9zM9 5H6v16h12V5h-3M9 13l2 2 4-4',
 }
 
@@ -113,6 +114,12 @@ const ADMIN_SECTIONS = [
     title: 'Configuración Socios',
     description: 'Qué ven los socios en su simulador.',
     load: simulatorSettingsSummary,
+  },
+  {
+    to: '/admin/equity-analysis',
+    icon: 'equity',
+    title: 'Análisis de equidad',
+    description: 'Impacto distributivo y equidad de acceso a entradas.',
   },
   {
     to: '/admin/attendance',

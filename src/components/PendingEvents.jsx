@@ -86,7 +86,10 @@ function PendingEvents() {
               return (
                 <li key={evento.id_interno} className={styles.card}>
                   <div className={styles.cardTop}>
-                    <h3 className={styles.cardTitle}>{evento.titulo}</h3>
+                    <div style={{ flex: '1 1 12rem' }}>
+                      <h3 className={styles.cardTitle}>{evento.titulo}</h3>
+                      <span className={styles.clubId}>ID Club: {evento.id_externo}</span>
+                    </div>
                     <span
                       className={`${styles.type} ${String(evento.tipo).toLowerCase() === 'partido' ? '' : styles.typeInstitutional}`}
                     >
