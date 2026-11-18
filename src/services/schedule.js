@@ -3,9 +3,12 @@ import { apiGet, apiPost } from './api.js'
 // HU-37: cronograma de habilitación de las olas de un partido. El club sale de la cuenta del Admin.
 
 // Cronograma de un partido: { event, status: 'draft' | 'confirmed' | 'invalidated', opening_at, closing_at,
-// step_seconds, min_step_minutes, locked, generated_at, generated_by, confirmed_at, confirmed_by,
+// generated_closing_at, merged_into_order, invalidation_reason, step_seconds, min_step_minutes, locked, generated_at, generated_by, confirmed_at, confirmed_by,
 // waves: [{ order, percentile_from, percentile_to, position_from, position_to, socios, starts_at, state }] }.
 // `state`: 'pending' | 'open' | 'closed'. 404 SCHEDULE_NOT_FOUND si todavía no tiene.
+// Una reprogramación (HU-23B US3) puede adelantar `closing_at` (el cierre vigente; `generated_closing_at` es el
+// del que salen las horas) y sumar las olas siguientes a la ola `merged_into_order`, que toman su hora.
+// `invalidation_reason` (solo invalidado): 'waves_regenerated' | 'event_rescheduled' | null.
 export function getSchedule(idInterno) {
   return apiGet(`/admin/events/${encodeURIComponent(idInterno)}/schedule`)
 }

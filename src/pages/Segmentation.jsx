@@ -9,7 +9,13 @@ import styles from './Segmentation.module.css'
 
 // Resumen del cronograma de cada partido (HU-37).
 function scheduleLabel(schedule) {
-  if (schedule.status === 'confirmed') return `Cronograma confirmado · abre el ${formatDateTime(schedule.opening_at)}`
+  if (schedule.status === 'confirmed') {
+    const label = `Cronograma confirmado · abre el ${formatDateTime(schedule.opening_at)}`
+    // HU-23B US3: una reprogramación sumó las olas siguientes a la ola k.
+    return schedule.merged_into_order
+      ? `${label} · las olas siguientes se sumaron a la ola ${schedule.merged_into_order}`
+      : label
+  }
   if (schedule.status === 'invalidated') return 'Cronograma invalidado: hay que generarlo de nuevo'
   return 'Cronograma en borrador'
 }

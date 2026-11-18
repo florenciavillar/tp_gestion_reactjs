@@ -12,9 +12,11 @@ import Home from './pages/Home.jsx'
 import InviteAdmin from './pages/InviteAdmin.jsx'
 import MemberSignIn from './pages/MemberSignIn.jsx'
 import MyScore from './pages/MyScore.jsx'
+import Notifications from './pages/Notifications.jsx'
 import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
+import RescheduleEvent from './pages/RescheduleEvent.jsx'
 import ScoreBreakdownPage from './pages/ScoreBreakdownPage.jsx'
 import SignIn from './pages/SignIn.jsx'
 import SimulationResult from './pages/SimulationResult.jsx'
@@ -134,10 +136,26 @@ function App() {
           }
         />
         <Route
+          path="/admin/events/:id/reschedule"
+          element={
+            <RequireAuth role="admin">
+              <RescheduleEvent />
+            </RequireAuth>
+          }
+        />
+        <Route
           path="/ranking"
           element={
             <RequireAuth role="member">
               <MyScore />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <RequireAuth role="member">
+              <Notifications />
             </RequireAuth>
           }
         />
