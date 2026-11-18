@@ -1,0 +1,109 @@
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.table th,
+.table td {
+  padding: 0.625rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table th {
+  font-weight: 700;
+  background: var(--color-surface-muted);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* El mensaje se ve como en la app: rojo de error. */
+.message {
+  width: 34%;
+  font-weight: 600;
+  color: var(--color-red-dark);
+}
+
+.glossary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.term dt {
+  font-weight: 700;
+}
+
+.term dd {
+  margin: 0.125rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding-left: 0 !important;
+  gap: 0.875rem !important;
+}
+
+.steps li {
+  counter-increment: step;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-left: 2.5rem;
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-white);
+  background: var(--color-pitch);
+  border-radius: 50%;
+}
+
+.steps span {
+  color: var(--color-text-muted);
+}
+
+.note {
+  padding: 0.75rem 1rem;
+  font-size: var(--text-md);
+  color: #4a3800;
+  background: color-mix(in srgb, var(--color-yellow) 22%, white);
+  border: 1px solid color-mix(in srgb, var(--color-yellow) 55%, white);
+  border-left: 4px solid var(--color-yellow);
+  border-radius: var(--radius-sm);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

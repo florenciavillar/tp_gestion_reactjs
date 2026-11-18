@@ -92,6 +92,11 @@ function UserMenu() {
                 Perfil
               </Link>
             </li>
+            <li>
+              <Link to="/help" className={styles.item} onClick={close}>
+                Manual de uso
+              </Link>
+            </li>
             {user.role === 'admin' && (
               <li>
                 <Link to="/admin/invite" className={styles.item} onClick={close}>

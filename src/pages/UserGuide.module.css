@@ -1,0 +1,43 @@
+.viewSwitch {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: var(--text-md);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.viewSwitch a {
+  font-weight: 600;
+  color: var(--color-pitch-dark);
+}
+
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -0.75rem;
+}
+
+.toggleAll {
+  min-height: 36px;
+  padding: 0.375rem 0.875rem;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-pitch-dark);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.toggleAll:hover {
+  background: var(--color-tint);
+  border-color: var(--color-pitch);
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
