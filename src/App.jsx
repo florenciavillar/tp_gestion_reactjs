@@ -5,11 +5,13 @@ import AdminInvitation from './pages/AdminInvitation.jsx'
 import AdminSignIn from './pages/AdminSignIn.jsx'
 import AttendanceManagement from './pages/AttendanceManagement.jsx'
 import EventSlot from './pages/EventSlot.jsx'
+import EventHistory from './pages/EventHistory.jsx'
 import Events from './pages/Events.jsx'
 import FormulaPublish from './pages/FormulaPublish.jsx'
 import FormulaSettings from './pages/FormulaSettings.jsx'
 import Home from './pages/Home.jsx'
 import InviteAdmin from './pages/InviteAdmin.jsx'
+import MemberRules from './pages/MemberRules.jsx'
 import MemberSignIn from './pages/MemberSignIn.jsx'
 import MyScore from './pages/MyScore.jsx'
 import Notifications from './pages/Notifications.jsx'
@@ -172,6 +174,22 @@ function App() {
           element={
             <RequireAuth role="member">
               <RankingExplanationPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/history"
+          element={
+            <RequireAuth role="member">
+              <EventHistory />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/ranking/rules/:number"
+          element={
+            <RequireAuth role="member">
+              <MemberRules />
             </RequireAuth>
           }
         />

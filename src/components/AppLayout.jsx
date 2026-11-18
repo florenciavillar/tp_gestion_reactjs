@@ -68,6 +68,14 @@ function AppLayout() {
               </NavLink>
             )}
             {user?.role === 'member' && (
+              <NavLink to="/ranking/history" className={navLinkClass}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2" />
+                </svg>
+                Mi historial
+              </NavLink>
+            )}
+            {user?.role === 'member' && (
               <NavLink to="/ranking/simulator" className={navLinkClass}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
