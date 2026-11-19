@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import ExecutiveReportView from '../components/ExecutiveReportView.jsx'
 import { formatDateTime } from '../services/eventFormat.js'
 import {
   getLatestRun,
@@ -199,63 +200,67 @@ function RankingRun() {
       {!loaded && <p className={styles.muted}>Cargando…</p>}
 
       {loaded && !loadError && (
-        <div className={`${pageStyles.split} ${pageStyles.splitEven}`}>
-          <section className={styles.section} aria-labelledby="status-title">
-            <h2 id="status-title" className={styles.sectionTitle}>
-              Estado
-            </h2>
-            <div aria-live="polite">
-              <RunStatus run={run} calculating={calculating} pollError={pollError} />
-            </div>
-          </section>
-
-          <section className={styles.section} aria-labelledby="run-title">
-            <h2 id="run-title" className={styles.sectionTitle}>
-              Calcular
-            </h2>
-            <p className={styles.muted}>
-              El cálculo usa las reglas vigentes y los datos cargados hasta ahora. Al terminar, el nuevo ranking
-              reemplaza al anterior.
-            </p>
-
-            {noFormula && (
-              <div className={styles.banner} role="status">
-                <p>El club todavía no publicó la fórmula del puntaje, así que no se puede calcular el ranking.</p>
-                <Link to="/admin/formula" className={authStyles.switchLink}>
-                  Ir a Fórmula
-                </Link>
+        <>
+          <div className={`${pageStyles.split} ${pageStyles.splitEven}`}>
+            <section className={styles.section} aria-labelledby="status-title">
+              <h2 id="status-title" className={styles.sectionTitle}>
+                Estado
+              </h2>
+              <div aria-live="polite">
+                <RunStatus run={run} calculating={calculating} pollError={pollError} />
               </div>
-            )}
+            </section>
 
-            {confirmation && (
-              <PreflightConfirmation
-                confirmation={confirmation}
-                onConfirm={handleStart}
-                onCancel={() => setConfirmation(null)}
-              />
-            )}
+            <section className={styles.section} aria-labelledby="run-title">
+              <h2 id="run-title" className={styles.sectionTitle}>
+                Calcular
+              </h2>
+              <p className={styles.muted}>
+                El cálculo usa las reglas vigentes y los datos cargados hasta ahora. Al terminar, el nuevo ranking
+                reemplaza al anterior.
+              </p>
 
-            {error && (
-              <div role="alert">
-                <p className={authStyles.error}>{error.message}</p>
-                {error.code === 'FORMULA_NOT_PUBLISHED' && (
+              {noFormula && (
+                <div className={styles.banner} role="status">
+                  <p>El club todavía no publicó la fórmula del puntaje, así que no se puede calcular el ranking.</p>
                   <Link to="/admin/formula" className={authStyles.switchLink}>
                     Ir a Fórmula
                   </Link>
-                )}
-                {error.code === 'CONNECTION_LOST' && (
-                  <button type="button" className={authStyles.doorSecondary} onClick={handleRefresh}>
-                    Actualizar estado
-                  </button>
-                )}
-              </div>
-            )}
+                </div>
+              )}
 
-            <button type="button" className={authStyles.button} onClick={handleCalculate} disabled={busy}>
-              {buttonLabel}
-            </button>
-          </section>
-        </div>
+              {confirmation && (
+                <PreflightConfirmation
+                  confirmation={confirmation}
+                  onConfirm={handleStart}
+                  onCancel={() => setConfirmation(null)}
+                />
+              )}
+
+              {error && (
+                <div role="alert">
+                  <p className={authStyles.error}>{error.message}</p>
+                  {error.code === 'FORMULA_NOT_PUBLISHED' && (
+                    <Link to="/admin/formula" className={authStyles.switchLink}>
+                      Ir a Fórmula
+                    </Link>
+                  )}
+                  {error.code === 'CONNECTION_LOST' && (
+                    <button type="button" className={authStyles.doorSecondary} onClick={handleRefresh}>
+                      Actualizar estado
+                    </button>
+                  )}
+                </div>
+              )}
+
+              <button type="button" className={authStyles.button} onClick={handleCalculate} disabled={busy}>
+                {buttonLabel}
+              </button>
+            </section>
+          </div>
+
+          {run?.status === 'completed' && <ExecutiveReportView rankingId={run.id} />}
+        </>
       )}
     </main>
   )
