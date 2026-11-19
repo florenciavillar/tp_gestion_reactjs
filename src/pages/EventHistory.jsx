@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { formatEventDate, formatEventTime, isMatch } from '../services/eventFormat.js'
+import { eventTypeLabel, formatDateTime, isMatch } from '../services/eventFormat.js'
 import { getEventHistory, historyErrorMessage, rulesLinkLabel, rulesPagePath } from '../services/eventHistory.js'
-import styles from '../components/Events.module.css'
+import eventStyles from '../components/Events.module.css'
+import styles from './EventHistory.module.css'
 import pageStyles from './Page.module.css'
 
 const TITLE = 'Mi historial de eventos'
@@ -40,53 +41,61 @@ function EventHistory() {
       </header>
 
       {state.status === 'loading' && (
-        <p className={styles.muted} role="status">
+        <p className={eventStyles.muted} role="status">
           Cargando tu historial…
         </p>
       )}
 
       {state.status === 'error' && (
-        <p className={styles.error} role="alert">
+        <p className={eventStyles.error} role="alert">
           {state.message}
         </p>
       )}
 
-      {data?.status === 'empty' && <p className={styles.empty}>{data.message}</p>}
+      {data?.status === 'empty' && <p className={eventStyles.empty}>{data.message}</p>}
 
       {data?.status === 'ok' && (
-        <ol className={styles.list}>
-          {data.events.map((evento) => (
-            <li key={evento.id_interno} className={styles.card}>
-              <div className={styles.cardTop}>
-                <h2 className={styles.cardTitle}>{evento.titulo}</h2>
-                <span className={`${styles.type} ${isMatch(evento.tipo) ? '' : styles.typeInstitutional}`}>
-                  {evento.tipo}
-                </span>
-              </div>
-
-              <dl className={styles.meta}>
-                <div>
-                  <dt>Fecha</dt>
-                  <dd>{formatEventDate(evento.fecha_hora)}</dd>
-                </div>
-                <div>
-                  <dt>Hora</dt>
-                  <dd>{formatEventTime(evento.fecha_hora)}</dd>
-                </div>
-              </dl>
-
-              <div className={styles.cardBottom}>
-                {evento.rules_version ? (
-                  <Link to={rulesPagePath(evento.rules_version.number)} className={styles.secondary}>
-                    {rulesLinkLabel(evento.rules_version.number)}
-                  </Link>
-                ) : (
-                  <p className={styles.muted}>{evento.rules_message}</p>
-                )}
-              </div>
-            </li>
-          ))}
-        </ol>
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
+            <caption className={styles.srOnly}>Eventos a los que asististe, del más reciente al más antiguo</caption>
+            <thead>
+              <tr>
+                <th scope="col">Evento</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Reglas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.events.map((evento) => (
+                <tr key={evento.id_interno}>
+                  <th scope="row" className={styles.name}>
+                    {evento.titulo}
+                  </th>
+                  <td className={styles.date}>{formatDateTime(evento.fecha_hora)}</td>
+                  <td>
+                    <span
+                      className={`${eventStyles.type} ${isMatch(evento.tipo) ? '' : eventStyles.typeInstitutional}`}
+                    >
+                      {eventTypeLabel(evento.tipo)}
+                    </span>
+                  </td>
+                  <td>
+                    {evento.rules_version ? (
+                      <Link to={rulesPagePath(evento.rules_version.number)} className={styles.rulesLink}>
+                        {rulesLinkLabel(evento.rules_version.number)}
+                      </Link>
+                    ) : (
+                      <span className={styles.unavailable} title={evento.rules_message ?? undefined}>
+                        No disponible
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </main>
   )

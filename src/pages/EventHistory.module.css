@@ -1,0 +1,82 @@
+/* Historial como tabla: escala con muchos eventos. En pantallas angostas se desplaza de costado. */
+.tableWrap {
+  overflow-x: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+
+.table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  font-size: var(--text-md);
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table thead th {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background: var(--color-surface-muted);
+}
+
+.table tbody tr:last-child > * {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: var(--color-tint);
+}
+
+.name {
+  font-weight: 600;
+}
+
+.date {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.rulesLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0.375rem 0.875rem;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-pitch-dark);
+  white-space: nowrap;
+  text-decoration: none;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.rulesLink:hover {
+  background: var(--color-tint);
+  border-color: var(--color-pitch);
+}
+
+.unavailable {
+  color: var(--color-text-muted);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
