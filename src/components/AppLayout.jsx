@@ -51,14 +51,6 @@ function AppLayout() {
               </NavLink>
             )}
             {user?.role === 'member' && (
-              <NavLink to="/ranking/breakdown" className={navLinkClass}>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />
-                </svg>
-                Desglose
-              </NavLink>
-            )}
-            {user?.role === 'member' && (
               <NavLink to="/ranking/explanation" className={navLinkClass}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" />
@@ -94,12 +86,7 @@ function AppLayout() {
                   </svg>
                   Fórmula
                 </NavLink>
-                <NavLink to="/admin/ranking" className={navLinkClass}>
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M4 20h16M7 20v-6M12 20V6M17 20v-10" />
-                  </svg>
-                  Ranking
-                </NavLink>
+                <RankingGroup pathname={pathname} />
                 <NavLink to="/admin/segmentation" className={navLinkClass}>
                   <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M3 7c3-2 6 2 9 0s6-2 9 0M3 12c3-2 6 2 9 0s6-2 9 0M3 17c3-2 6 2 9 0s6-2 9 0" />
@@ -176,12 +163,11 @@ function NotificationsLink({ count }) {
   )
 }
 
-// Grupo "Simulación" del Admin: las dos subopciones aparecen al pasar el mouse. Con teclado se abren
-// al enfocar el grupo, y en pantallas táctiles con un toque. Si se está en una de ellas, quedan abiertas.
-function SimulationGroup({ pathname }) {
+// Grupo del menú con subopciones: aparecen al pasar el mouse. Con teclado se abren al enfocar el grupo,
+// y en pantallas táctiles con un toque. Si se está en una de ellas, quedan abiertas.
+function NavGroup({ label, icon, active, children }) {
   const [open, setOpen] = useState(false)
   const listId = useId()
-  const active = pathname.startsWith('/admin/simulator') || pathname.startsWith('/admin/rules-simulation')
   const expanded = open || active
 
   return (
@@ -193,26 +179,62 @@ function SimulationGroup({ pathname }) {
         aria-controls={listId}
         onClick={() => setOpen((current) => !current)}
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
-        </svg>
-        Simulación
+        {icon}
+        {label}
         <svg className={styles.navGroupChevron} viewBox="0 0 24 24" aria-hidden="true">
           <path d="m6 9 6 6 6-6" />
         </svg>
       </button>
       <div id={listId} className={styles.subnav}>
-        <div className={styles.subnavInner}>
-          <NavLink to="/admin/rules-simulation" className={subNavLinkClass}>
-            Simular Reglas
-          </NavLink>
-          {/* Configuración del simulador de los socios (HU-18). */}
-          <NavLink to="/admin/simulator" className={subNavLinkClass}>
-            Configuración Socios
-          </NavLink>
-        </div>
+        <div className={styles.subnavInner}>{children}</div>
       </div>
     </div>
+  )
+}
+
+// Grupo "Ranking" del Admin: el cálculo (HU-25, con los rankings por pilar de HU-44) y el reporte
+// ejecutivo (HU-42).
+function RankingGroup({ pathname }) {
+  return (
+    <NavGroup
+      label="Ranking"
+      active={pathname.startsWith('/admin/ranking')}
+      icon={
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 20h16M7 20v-6M12 20V6M17 20v-10" />
+        </svg>
+      }
+    >
+      <NavLink to="/admin/ranking" end className={subNavLinkClass}>
+        Calcular ranking
+      </NavLink>
+      <NavLink to="/admin/ranking/executive-report" className={subNavLinkClass}>
+        Reporte ejecutivo
+      </NavLink>
+    </NavGroup>
+  )
+}
+
+// Grupo "Simulación" del Admin.
+function SimulationGroup({ pathname }) {
+  return (
+    <NavGroup
+      label="Simulación"
+      active={pathname.startsWith('/admin/simulator') || pathname.startsWith('/admin/rules-simulation')}
+      icon={
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 18l5-6 4 3 7-9M15 6h5v5" />
+        </svg>
+      }
+    >
+      <NavLink to="/admin/rules-simulation" className={subNavLinkClass}>
+        Simular Reglas
+      </NavLink>
+      {/* Configuración del simulador de los socios (HU-18). */}
+      <NavLink to="/admin/simulator" className={subNavLinkClass}>
+        Configuración Socios
+      </NavLink>
+    </NavGroup>
   )
 }
 

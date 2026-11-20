@@ -23,6 +23,14 @@ export function startRun() {
   return apiPost('/admin/ranking/runs')
 }
 
+// HU-44: top 10 de cada pilar del ranking vigente (contrato: docs/contrato-api-ranking-pilares.md del back).
+// Siempre 200 para un Admin con club; los estados vacíos vienen en el cuerpo:
+// { has_ranking, message, updating, ranking: { id, rules_version, calculation_date, completed_at } | null,
+//   pillars: [{ key, name, empty_message, rows: [{ position, numero_socio, nombre, points }] }] }
+export function getPillarRankings() {
+  return apiGet('/admin/ranking/pillars')
+}
+
 // "Todavía no se calculó ningún ranking" no es un error: es un estado normal de la pantalla.
 export function isNoRunError(err) {
   return err.status === 404 && err.code === 'NO_RANKING_RUN'

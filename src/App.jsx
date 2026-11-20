@@ -6,6 +6,7 @@ import AdminSignIn from './pages/AdminSignIn.jsx'
 import AttendanceManagement from './pages/AttendanceManagement.jsx'
 import EventSlot from './pages/EventSlot.jsx'
 import EventHistory from './pages/EventHistory.jsx'
+import ExecutiveReport from './pages/ExecutiveReport.jsx'
 import Events from './pages/Events.jsx'
 import FormulaPublish from './pages/FormulaPublish.jsx'
 import FormulaSettings from './pages/FormulaSettings.jsx'
@@ -19,7 +20,6 @@ import Profile from './pages/Profile.jsx'
 import PublishEvent from './pages/PublishEvent.jsx'
 import RankingExplanationPage from './pages/RankingExplanationPage.jsx'
 import RescheduleEvent from './pages/RescheduleEvent.jsx'
-import ScoreBreakdownPage from './pages/ScoreBreakdownPage.jsx'
 import SignIn from './pages/SignIn.jsx'
 import UserGuide from './pages/UserGuide.jsx'
 import SimulationResult from './pages/SimulationResult.jsx'
@@ -85,6 +85,14 @@ function App() {
           element={
             <RequireAuth role="admin">
               <RankingRun />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/ranking/executive-report"
+          element={
+            <RequireAuth role="admin">
+              <ExecutiveReport />
             </RequireAuth>
           }
         />
@@ -166,9 +174,8 @@ function App() {
         <Route
           path="/ranking/breakdown"
           element={
-            <RequireAuth role="member">
-              <ScoreBreakdownPage />
-            </RequireAuth>
+            // El desglose ahora es una sección de Mi puntaje; la ruta vieja sigue funcionando.
+            <Navigate to={{ pathname: '/ranking', hash: '#desglose' }} replace />
           }
         />
         <Route

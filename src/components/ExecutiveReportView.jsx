@@ -1,19 +1,17 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { formatDateTime } from '../services/eventFormat.js'
-import {
-  downloadExecutiveReportCsv,
-  executiveReportErrorMessage,
-  getExecutiveReport,
-} from '../services/executiveReport.js'
+import { executiveReportErrorMessage, getExecutiveReport } from '../services/executiveReport.js'
+import ExecutiveReportDocument from './ExecutiveReportDocument.jsx'
 import styles from './ExecutiveReportView.module.css'
 
-export default function ExecutiveReportView({ rankingId }) {
+// HU-42: reporte ejecutivo del ranking vigente. Si no hay ranking calculado, el backend responde NO_BASELINE.
+export default function ExecutiveReportView() {
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [downloading, setDownloading] = useState(false)
-  const [downloadError, setDownloadError] = useState('')
   const [hoveredBin, setHoveredBin] = useState(null)
+  // Documento del reporte en un pop-up, con descarga en PDF (reemplaza la descarga en CSV).
+  const [showDocument, setShowDocument] = useState(false)
   const [isScrolledPast, setIsScrolledPast] = useState(false)
 
   const headerRef = useRef(null)
@@ -37,7 +35,7 @@ export default function ExecutiveReportView({ rankingId }) {
     return () => {
       ignore = true
     }
-  }, [rankingId])
+  }, [])
 
   useEffect(() => {
     const el = headerRef.current
@@ -50,24 +48,12 @@ export default function ExecutiveReportView({ rankingId }) {
       {
         threshold: 0,
         rootMargin: '-60px 0px 0px 0px',
-      }
+      },
     )
 
     observer.observe(el)
     return () => observer.disconnect()
   }, [report])
-
-  async function handleDownloadCsv() {
-    setDownloading(true)
-    setDownloadError('')
-    try {
-      await downloadExecutiveReportCsv()
-    } catch {
-      setDownloadError('No se pudo descargar el archivo CSV.')
-    } finally {
-      setDownloading(false)
-    }
-  }
 
   if (loading) {
     return (
@@ -92,22 +78,15 @@ export default function ExecutiveReportView({ rankingId }) {
 
   return (
     <section className={styles.container} aria-labelledby="executive-report-title">
+      {showDocument && <ExecutiveReportDocument report={report} onClose={() => setShowDocument(false)} />}
       {/* Botón flotante sticky: aparece en la esquina superior derecha únicamente cuando se scrollea por debajo de la cabecera */}
       {isScrolledPast && (
         <div className={styles.floatingStickyBar}>
-          <button
-            type="button"
-            className={styles.btnDownloadFloating}
-            onClick={handleDownloadCsv}
-            disabled={downloading}
-            aria-label="Descargar reporte ejecutivo en formato CSV"
-          >
+          <button type="button" onClick={() => setShowDocument(true)} className={styles.btnDownloadFloating}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6" />
             </svg>
-            {downloading ? 'Descargando…' : 'Descargar Reporte (CSV)'}
+            Generar documento
           </button>
         </div>
       )}
@@ -135,20 +114,12 @@ export default function ExecutiveReportView({ rankingId }) {
         </div>
 
         <div className={styles.headerAction}>
-          <button
-            type="button"
-            className={styles.btnDownload}
-            onClick={handleDownloadCsv}
-            disabled={downloading}
-          >
+          <button type="button" onClick={() => setShowDocument(true)} className={styles.btnDownload}>
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 13h6M9 17h6" />
             </svg>
-            {downloading ? 'Descargando…' : 'Descargar Reporte (CSV)'}
+            Generar documento (PDF)
           </button>
-          {downloadError && <p className={styles.binTooltip} role="alert">{downloadError}</p>}
         </div>
       </div>
 
@@ -205,11 +176,11 @@ export default function ExecutiveReportView({ rankingId }) {
         <div className={styles.card}>
           <h3 className={styles.cardTitle}>Aporte Promedio por Pilar</h3>
           <dl className={styles.dataList}>
-            <dt>Asistencia a Eventos (wA = {metadata.rules_version.parameters.wA ?? '0.6'})</dt>
+            <dt>Asistencia a Eventos (wA = {metadata.rules_version.parameters.w_a ?? '—'})</dt>
             <dd>{pillars_average.asistencia} pts</dd>
-            <dt>Institucional / Distancia (wP = {metadata.rules_version.parameters.wP ?? '0.2'})</dt>
+            <dt>Institucional / Distancia (wP = {metadata.rules_version.parameters.w_p ?? '—'})</dt>
             <dd>{pillars_average.institucional} pts</dd>
-            <dt>Antigüedad societaria (wT = {metadata.rules_version.parameters.wT ?? '0.2'})</dt>
+            <dt>Antigüedad societaria (wT = {metadata.rules_version.parameters.w_t ?? '—'})</dt>
             <dd>{pillars_average.antiguedad} pts</dd>
             <dt>Bonificación socio nuevo</dt>
             <dd>{pillars_average.bonus_nuevo} pts</dd>
@@ -227,9 +198,7 @@ export default function ExecutiveReportView({ rankingId }) {
           </span>
           <span className={styles.widgetHeading}>
             <h3 className={styles.widgetTitle}>Distribución de Puntajes (Histograma)</h3>
-            <span className={styles.widgetTeaser}>
-              Frecuencia de socios en 20 intervalos de 5 puntos [0–100]
-            </span>
+            <span className={styles.widgetTeaser}>Frecuencia de socios en 20 intervalos de 5 puntos [0–100]</span>
           </span>
           <svg className={styles.chevron} viewBox="0 0 24 24" aria-hidden="true">
             <path d="m6 9 6 6 6-6" />
@@ -350,10 +319,18 @@ function DemographicWidget({ icon, title, teaser, equity }) {
               <thead>
                 <tr>
                   <th scope="col">Segmento</th>
-                  <th scope="col" className={styles.numCol}>Socios</th>
-                  <th scope="col" className={styles.numCol}>Participación</th>
-                  <th scope="col" className={styles.numCol}>Puntaje Promedio</th>
-                  <th scope="col" className={styles.numCol}>Posición Promedio</th>
+                  <th scope="col" className={styles.numCol}>
+                    Socios
+                  </th>
+                  <th scope="col" className={styles.numCol}>
+                    Participación
+                  </th>
+                  <th scope="col" className={styles.numCol}>
+                    Puntaje Promedio
+                  </th>
+                  <th scope="col" className={styles.numCol}>
+                    Posición Promedio
+                  </th>
                 </tr>
               </thead>
               <tbody>
