@@ -132,11 +132,13 @@ export async function apiDownload(path, defaultFilename = 'archivo.csv') {
     const detail = data?.detail ?? data?.error
     throw new ApiError('GET', path, response.status, detail)
   }
+  const disposition = response.headers.get('Content-Disposition') ?? ''
+  const filename = /filename="([^"]+)"/.exec(disposition)?.[1] ?? defaultFilename
   const blob = await response.blob()
   const url = window.URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = defaultFilename
+  a.download = filename
   document.body.appendChild(a)
   a.click()
   a.remove()
