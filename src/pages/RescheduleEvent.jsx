@@ -306,10 +306,6 @@ function RescheduleEvent() {
                 <dd>{evento.titulo}</dd>
               </div>
               <div className={styles.row}>
-                <dt>ID del club</dt>
-                <dd>{evento.id_externo}</dd>
-              </div>
-              <div className={styles.row}>
                 <dt>Tipo</dt>
                 <dd>{eventTypeLabel(evento.tipo)}</dd>
               </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import ExecutiveReportView from '../components/ExecutiveReportView.jsx'
+import PillarRankings from '../components/PillarRankings.jsx'
 import { formatDateTime } from '../services/eventFormat.js'
 import {
   getLatestRun,
@@ -21,7 +21,7 @@ const POLL_MS = 4000
 const CONNECTION_LOST_MESSAGE =
   'Se perdió la conexión con el servidor y no pudimos confirmar si el cálculo empezó. Esperá unos instantes y actualizá el estado.'
 
-// HU-25: cálculo del ranking de socios. Solo admins.
+// HU-25: cálculo del ranking de socios. Solo admins. Debajo, los rankings por pilar (HU-44).
 function RankingRun() {
   const [run, setRun] = useState(null)
   const [loaded, setLoaded] = useState(false)
@@ -259,7 +259,8 @@ function RankingRun() {
             </section>
           </div>
 
-          {run?.status === 'completed' && <ExecutiveReportView rankingId={run.id} />}
+          {/* HU-44: se vuelven a pedir al empezar y al terminar un cálculo (cambia la corrida o su estado). */}
+          <PillarRankings refreshKey={`${run?.id ?? 'none'}:${status ?? 'none'}:${calculating}`} />
         </>
       )}
     </main>
