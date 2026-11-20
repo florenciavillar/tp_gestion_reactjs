@@ -14,10 +14,12 @@ main.page {
   white-space: nowrap;
 }
 
-/* Tarjetas de las secciones: tantas columnas como entren, todas del mismo alto por fila. */
+/* Grilla de tarjetas de distinto tamaño. Una columna en el celular, dos en tablet y cuatro en pantallas grandes.
+   lg ocupa 2×2, md 2 columnas y sm 1; `dense` rellena los huecos con las chicas. */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-flow: row dense;
   gap: 1.25rem;
   margin: 0;
   padding: 0;
@@ -26,6 +28,33 @@ main.page {
 
 .grid > li {
   display: flex;
+  min-width: 0;
+}
+
+@container (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid > [data-size='lg'],
+  .grid > [data-size='md'],
+  .grid > .full {
+    grid-column: span 2;
+  }
+}
+
+@container (min-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .grid > [data-size='lg'] {
+    grid-row: span 2;
+  }
+
+  .grid > .full {
+    grid-column: 1 / -1;
+  }
 }
 
 /* Tonos: verde si está al día, amarillo si hay algo para hacer, rojo si algo se venció o falló. */
@@ -53,7 +82,7 @@ main.page {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-height: 290px;
+  min-width: 0;
   padding: 1.25rem 1.375rem 1.125rem;
   color: var(--color-text);
   text-decoration: none;
@@ -85,9 +114,37 @@ main.page {
 
 .cardTop {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem 0.875rem;
+}
+
+/* Si el título y la etiqueta no entran juntos, la etiqueta baja a la línea siguiente. */
+.heading {
+  flex: 1 1 9rem;
+  min-width: 0;
+}
+
+/* La tarjeta principal reparte el contenido en el alto de las dos filas. */
+.card[data-size='lg'] {
+  gap: 1.5rem;
+}
+
+.card[data-size='lg'] .cardTitle {
+  font-size: var(--text-xl);
+}
+
+/* El gráfico de la principal se centra en el alto que le sobra. */
+.card[data-size='lg'] > :nth-child(3) {
+  margin-top: auto;
+}
+
+.card[data-size='lg'] .go {
+  margin-top: auto;
+}
+
+.card[data-size='sm'] {
+  min-height: 190px;
 }
 
 .icon {
@@ -305,4 +362,119 @@ main.page {
   background: color-mix(in srgb, var(--color-lime) 16%, white);
   border: 1px solid color-mix(in srgb, var(--color-lime) 45%, white);
   border-radius: var(--radius-sm);
+}
+
+/* Para hacer hoy (admin): no es un link entero porque cada tarea tiene el suyo. */
+.todo:hover {
+  transform: none;
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+.tasks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tasks li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background: var(--tone-bg, var(--color-surface-muted));
+  border-radius: var(--radius-xs);
+}
+
+.taskDot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  background: var(--tone, var(--color-border-strong));
+  border-radius: 50%;
+}
+
+.taskText {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--tone-text, var(--color-text));
+}
+
+.taskAction {
+  flex-shrink: 0;
+  padding: 0.25rem 0.75rem;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-pitch-dark);
+  text-decoration: none;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+
+.taskAction:hover {
+  background: var(--color-tint);
+  border-color: var(--color-pitch);
+}
+
+.allDone {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--color-pitch-deep);
+  background: color-mix(in srgb, var(--color-lime) 14%, white);
+  border-radius: var(--radius-xs);
+}
+
+/* Accesos rápidos (admin) */
+.sectionTitle {
+  margin: 0 0 0.75rem;
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shortcut {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.875rem;
+  height: 100%;
+  padding: 0.875rem 1rem;
+  color: var(--color-text);
+  text-decoration: none;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease;
+}
+
+.shortcut:hover {
+  border-color: var(--color-pitch);
+}
+
+.shortcutText {
+  flex: 1 1 12rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: var(--text-sm);
+}
+
+.shortcutText span {
+  color: var(--color-text-muted);
 }
