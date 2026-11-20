@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import HeroHeader from '../components/HeroHeader.jsx'
+import HomeChart from '../components/HomeCharts.jsx'
 import { useAuth } from '../components/authContext.js'
 import {
   attendanceSummary,
@@ -8,6 +9,7 @@ import {
   explanationSummary,
   simulatorSummary,
   formulaSummary,
+  historySummary,
   myScoreSummary,
   pendingEventsSummary,
   rankingSummary,
@@ -31,30 +33,46 @@ const ICONS = {
   waves: 'M3 7c3-2 6 2 9 0s6-2 9 0M3 12c3-2 6 2 9 0s6-2 9 0M3 17c3-2 6 2 9 0s6-2 9 0',
   settings: 'M4 6h16M4 12h16M4 18h16M8 4v4M16 10v4M11 16v4',
   attendance: 'M9 4h6v3H9zM9 5H6v16h12V5h-3M9 13l2 2 4-4',
+  history: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2',
+  todo: 'M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2',
 }
 
 // Cada tarjeta repite una opción de la barra lateral del rol, con un resumen de lo que hay en esa sección.
+// size: 'lg' (lo principal del rol, con gráfico), 'md' (gráfico o lista), 'sm' (un dato y el acceso).
+// Van en orden de importancia: en el celular quedan en una columna, en ese orden.
 const MEMBER_SECTIONS = [
-  {
-    to: '/events',
-    icon: 'events',
-    title: 'Eventos',
-    description: 'Partidos y eventos del club, y tu turno para reservar.',
-    load: upcomingEventsSummary,
-  },
   {
     to: '/ranking',
     icon: 'score',
     title: 'Mi puntaje',
     description: 'Tu prioridad de acceso a la compra de entradas.',
     load: myScoreSummary,
+    size: 'lg',
+  },
+  {
+    to: '/events',
+    icon: 'events',
+    title: 'Próximo evento',
+    goLabel: 'Ver todos los eventos',
+    description: 'Partidos y eventos del club, y tu turno para reservar.',
+    load: upcomingEventsSummary,
+    size: 'md',
   },
   {
     to: '/ranking/breakdown',
     icon: 'breakdown',
     title: 'Desglose',
-    description: 'De dónde sale cada punto de tu puntaje.',
+    description: 'Lo que más suma y lo que más resta en tu puntaje.',
     load: breakdownSummary,
+    size: 'md',
+  },
+  {
+    to: '/ranking/history',
+    icon: 'history',
+    title: 'Mi historial',
+    description: 'Los eventos a los que fuiste, mes a mes.',
+    load: historySummary,
+    size: 'md',
   },
   {
     to: '/ranking/explanation',
@@ -62,6 +80,7 @@ const MEMBER_SECTIONS = [
     title: 'Cómo se calcula',
     description: 'La fórmula del club explicada en criollo.',
     load: explanationSummary,
+    size: 'sm',
   },
   {
     to: '/ranking/simulator',
@@ -69,6 +88,7 @@ const MEMBER_SECTIONS = [
     title: 'Simulador',
     description: 'Mirá cuánto cambia tu puntaje si vas o no a un evento.',
     load: simulatorSummary,
+    size: 'sm',
   },
 ]
 
@@ -76,16 +96,19 @@ const ADMIN_SECTIONS = [
   {
     to: '/events',
     icon: 'events',
-    title: 'Eventos',
-    description: 'Eventos que mandó el club y falta publicar.',
+    title: 'Eventos pendientes',
+    goLabel: 'Ir a Eventos',
+    description: 'Plazos de publicación de los próximos 7 días.',
     load: pendingEventsSummary,
+    size: 'md',
   },
   {
-    to: '/admin/formula',
-    icon: 'formula',
-    title: 'Fórmula',
-    description: 'Cómo se calcula el puntaje de los socios.',
-    load: formulaSummary,
+    to: '/admin/segmentation',
+    icon: 'waves',
+    title: 'Oleadas',
+    description: 'En qué estado están los partidos por jugarse.',
+    load: segmentationSummary,
+    size: 'md',
   },
   {
     to: '/admin/ranking',
@@ -93,19 +116,34 @@ const ADMIN_SECTIONS = [
     title: 'Ranking',
     description: 'El orden de prioridad de los socios.',
     load: rankingSummary,
+    size: 'md',
   },
   {
-    to: '/admin/segmentation',
-    icon: 'waves',
-    title: 'Oleadas',
-    description: 'Olas y cronogramas de reserva de cada partido.',
-    load: segmentationSummary,
+    to: '/admin/formula',
+    icon: 'formula',
+    title: 'Fórmula',
+    description: 'Cómo se calcula el puntaje de los socios.',
+    load: formulaSummary,
+    size: 'sm',
   },
+  {
+    to: '/admin/attendance',
+    icon: 'attendance',
+    title: 'Asistencias',
+    goLabel: 'Ir a Cargar asistencias',
+    description: 'Asistencias a eventos y actividades del club.',
+    load: attendanceSummary,
+    size: 'sm',
+  },
+]
+
+// Secciones sin mucho para resumir: van como accesos rápidos al pie.
+const ADMIN_SHORTCUTS = [
   {
     to: '/admin/rules-simulation',
     icon: 'simulator',
     title: 'Simular reglas',
-    description: 'Probá otros valores de la fórmula y compará el ranking, sin publicar nada.',
+    description: 'Probá otros valores de la fórmula sin publicar nada.',
   },
   {
     to: '/admin/simulator',
@@ -114,20 +152,26 @@ const ADMIN_SECTIONS = [
     description: 'Qué ven los socios en su simulador.',
     load: simulatorSettingsSummary,
   },
-  {
-    to: '/admin/attendance',
-    icon: 'attendance',
-    title: 'Cargar asistencias',
-    description: 'Asistencias a eventos y actividades del club.',
-    load: attendanceSummary,
-  },
 ]
+
+// Las secciones del admin que suman tareas a "Para hacer hoy", en orden de urgencia de la sección.
+const TASK_SOURCES = [pendingEventsSummary, formulaSummary, rankingSummary, segmentationSummary, attendanceSummary]
+const TONE_ORDER = { alert: 0, warn: 1 }
 
 // Inicio común a socios y administradores: saludo y una tarjeta por sección del rol.
 function Home() {
   const { user } = useAuth()
   const isAdmin = user.role === 'admin'
   const sections = isAdmin ? ADMIN_SECTIONS : MEMBER_SECTIONS
+  // Cada resumen se pide una sola vez aunque lo usen dos tarjetas (la de la sección y "Para hacer hoy").
+  const [cache] = useState(() => new Map())
+  const run = useCallback(
+    (load) => {
+      if (!cache.has(load)) cache.set(load, load())
+      return cache.get(load)
+    },
+    [cache],
+  )
 
   return (
     <main className={`${pageStyles.page} ${styles.page}`}>
@@ -141,40 +185,65 @@ function Home() {
           Secciones
         </h2>
         <ul className={styles.grid}>
+          {isAdmin && (
+            <li className={styles.full}>
+              <TodoCard run={run} />
+            </li>
+          )}
           {sections.map((section) => (
-            <li key={section.to}>
-              <SectionCard {...section} />
+            <li key={section.to} data-size={section.size}>
+              <SectionCard {...section} run={run} />
             </li>
           ))}
         </ul>
       </section>
+
+      {isAdmin && (
+        <section aria-labelledby="home-shortcuts">
+          <h2 id="home-shortcuts" className={styles.sectionTitle}>
+            Accesos rápidos
+          </h2>
+          <ul className={styles.shortcuts}>
+            {ADMIN_SHORTCUTS.map((shortcut) => (
+              <li key={shortcut.to}>
+                <Shortcut {...shortcut} run={run} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </main>
   )
 }
 
-function SectionCard({ to, icon, title, description, load }) {
-  const summary = useSummary(load)
+function Icon({ name }) {
+  return (
+    <span className={styles.icon} aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d={ICONS[name]} />
+      </svg>
+    </span>
+  )
+}
+
+function SectionCard({ to, icon, title, goLabel, description, load, size, run }) {
+  const summary = useSummary(load, run)
   const badge = summary.status === 'ready' ? summary.data.badge : undefined
 
   return (
-    <Link to={to} className={styles.card}>
+    <Link to={to} className={styles.card} data-size={size}>
       <span className={styles.stripe} data-tone={badge?.tone} aria-hidden="true" />
       <div className={styles.cardTop}>
-        <span className={styles.icon} aria-hidden="true">
-          <svg viewBox="0 0 24 24">
-            <path d={ICONS[icon]} />
-          </svg>
-        </span>
+        <Icon name={icon} />
+        <div className={styles.heading}>
+          <h3 className={styles.cardTitle}>{title}</h3>
+          {size !== 'sm' && <p className={styles.description}>{description}</p>}
+        </div>
         {badge && (
           <span className={styles.badge} data-tone={badge.tone}>
             {badge.text}
           </span>
         )}
-      </div>
-
-      <div>
-        <h3 className={styles.cardTitle}>{title}</h3>
-        <p className={styles.description}>{description}</p>
       </div>
 
       {summary.status === 'loading' && (
@@ -187,11 +256,109 @@ function SectionCard({ to, icon, title, description, load }) {
       {summary.status === 'ready' && <Summary data={summary.data} />}
 
       <span className={styles.go}>
-        Ir a {title}
+        {goLabel ?? `Ir a ${title}`}
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 12h14M13 6l6 6-6 6" />
         </svg>
       </span>
+    </Link>
+  )
+}
+
+// Junta lo pendiente de todas las secciones del admin, lo más urgente primero.
+function TodoCard({ run }) {
+  const [state, setState] = useState({ status: 'loading' })
+
+  useEffect(() => {
+    let ignore = false
+    Promise.allSettled(TASK_SOURCES.map(run)).then((results) => {
+      if (ignore) return
+      const tasks = results
+        .filter((r) => r.status === 'fulfilled')
+        .flatMap((r) => r.value.tasks ?? [])
+        .sort((a, b) => (TONE_ORDER[a.tone] ?? 2) - (TONE_ORDER[b.tone] ?? 2))
+      const failed = results.some((r) => r.status === 'rejected')
+      setState({ status: 'ready', tasks, failed })
+    })
+    return () => {
+      ignore = true
+    }
+  }, [run])
+
+  const tasks = state.tasks ?? []
+  const urgent = tasks.some((t) => t.tone === 'alert')
+  const badge =
+    state.status !== 'ready'
+      ? undefined
+      : tasks.length === 0
+        ? { text: 'Todo al día', tone: 'ok' }
+        : {
+            text: `${tasks.length} ${tasks.length === 1 ? 'pendiente' : 'pendientes'}`,
+            tone: urgent ? 'alert' : 'warn',
+          }
+
+  return (
+    <div className={`${styles.card} ${styles.todo}`}>
+      <span className={styles.stripe} data-tone={badge?.tone} aria-hidden="true" />
+      <div className={styles.cardTop}>
+        <Icon name="todo" />
+        <div className={styles.heading}>
+          <h3 className={styles.cardTitle}>Para hacer hoy</h3>
+          <p className={styles.description}>Lo que está esperando una acción tuya, lo más urgente primero.</p>
+        </div>
+        {badge && (
+          <span className={styles.badge} data-tone={badge.tone}>
+            {badge.text}
+          </span>
+        )}
+      </div>
+
+      {state.status === 'loading' && (
+        <div className={styles.skeleton} aria-hidden="true">
+          <span />
+          <span />
+        </div>
+      )}
+
+      {state.status === 'ready' && tasks.length === 0 && (
+        <p className={styles.allDone}>No hay nada esperando. Todas las secciones están al día.</p>
+      )}
+
+      {tasks.length > 0 && (
+        <ul className={styles.tasks}>
+          {tasks.map((task) => (
+            <li key={task.text} data-tone={task.tone}>
+              <span className={styles.taskDot} aria-hidden="true" />
+              <span className={styles.taskText}>{task.text}</span>
+              <Link to={task.to} className={styles.taskAction}>
+                {task.action}
+                <span className={styles.srOnly}>: {task.text}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {state.failed && <p className={styles.muted}>No pudimos revisar todas las secciones.</p>}
+    </div>
+  )
+}
+
+function Shortcut({ to, icon, title, description, load, run }) {
+  const summary = useSummary(load, run)
+  const badge = summary.status === 'ready' ? summary.data.badge : undefined
+  return (
+    <Link to={to} className={styles.shortcut}>
+      <Icon name={icon} />
+      <span className={styles.shortcutText}>
+        <strong>{title}</strong>
+        <span>{description}</span>
+      </span>
+      {badge && (
+        <span className={styles.badge} data-tone={badge.tone}>
+          {badge.text}
+        </span>
+      )}
     </Link>
   )
 }
@@ -202,6 +369,7 @@ function Summary({ data }) {
   const lines = data.lines ?? []
   return (
     <>
+      {data.chart && <HomeChart chart={data.chart} />}
       {stats.length > 0 && (
         <dl className={styles.stats}>
           {stats.map((s) => (
@@ -236,13 +404,13 @@ function Summary({ data }) {
 }
 
 // Sin `load`, la tarjeta muestra solo su descripción.
-function useSummary(load) {
+function useSummary(load, run) {
   const [state, setState] = useState(load ? { status: 'loading' } : { status: 'none' })
 
   useEffect(() => {
     if (!load) return
     let ignore = false
-    load()
+    run(load)
       .then((data) => {
         if (!ignore) setState({ status: 'ready', data })
       })
@@ -252,7 +420,7 @@ function useSummary(load) {
     return () => {
       ignore = true
     }
-  }, [load])
+  }, [load, run])
 
   return state
 }
