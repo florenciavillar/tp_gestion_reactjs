@@ -150,6 +150,16 @@ export function Ranking() {
         </li>
         <li>Si el cálculo falla, el ranking anterior sigue vigente.</li>
         <li>Solo entran los socios con la cuota al día.</li>
+        <li>
+          Debajo vas a ver los rankings por pilar: los 10 socios con más puntos en Asistencia, en Participación
+          institucional y en Antigüedad y edad, del último ranking calculado. Mientras se calcula uno nuevo dicen
+          "actualizando".
+        </li>
+        <li>
+          En Ranking → <Link to="/admin/ranking/executive-report">Reporte ejecutivo</Link> ves el resumen de puntajes y
+          equidad del ranking vigente. Con "Generar documento" lo ves armado como documento, con una explicación de cada
+          punto, y lo podés descargar en PDF.
+        </li>
       </ul>
       <p>
         El padrón de socios lo manda el sistema del club. Si aparece la advertencia de padrón desactualizado, hay que

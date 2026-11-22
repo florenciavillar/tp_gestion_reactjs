@@ -103,8 +103,8 @@ export function Breakdown() {
   return (
     <>
       <p>
-        En <Link to="/ranking/breakdown">Desglose</Link> ves de dónde sale cada punto de tu puntaje, componente por
-        componente:
+        En <Link to="/ranking#desglose">Mi puntaje</Link>, en la sección Desglose, ves de dónde sale cada punto de tu
+        puntaje, componente por componente:
       </p>
       <ul>
         <li>

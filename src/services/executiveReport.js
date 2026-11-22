@@ -1,14 +1,10 @@
-import { apiDownload, apiGet } from './api.js'
+import { apiGet } from './api.js'
 
 // HU-42: Reporte Ejecutivo de Scoring y Equidad (WISH / Comisión Directiva).
 // Solo administradores. Los datos salen del ranking vigente completado del club.
 
 export function getExecutiveReport() {
   return apiGet('/admin/reports/executive-scoring')
-}
-
-export function downloadExecutiveReportCsv() {
-  return apiDownload('/admin/reports/executive-scoring/csv', 'reporte-ejecutivo-scoring.csv')
 }
 
 export function isNoBaselineError(err) {

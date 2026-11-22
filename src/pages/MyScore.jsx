@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { useAuth } from '../components/authContext.js'
+import ScoreBreakdown from '../components/ScoreBreakdown.jsx'
 import { formatDateTime } from '../services/eventFormat.js'
 import { formatPosition, formatScore, getCurrentScore } from '../services/memberScore.js'
 import authStyles from './Auth.module.css'
@@ -12,8 +13,13 @@ const NO_CLUB = 'Tu cuenta no tiene un club asignado. Consultá con el club.'
 
 // HU-14: puntaje actual y posición del socio, de solo lectura. Los datos salen del último ranking
 // completado (HU-25); sin datos, el backend devuelve la vista provisional con su etiqueta y su mensaje.
+// Debajo, la sección Desglose (HU-16); `/ranking#desglose` baja directo hasta ella.
 function MyScore() {
   const [state, setState] = useState({ status: 'loading' })
+  const { hash } = useLocation()
+  // Pedido de abrir el desglose y bajar hasta él: de entrada si se llegó con #desglose, y en cada
+  // toque de "Ver desglose".
+  const [reveal, setReveal] = useState(() => (hash === '#desglose' ? { n: 1, smooth: false } : null))
 
   useEffect(() => {
     let ignore = false
@@ -53,12 +59,16 @@ function MyScore() {
         </p>
       )}
 
-      {state.status === 'ready' && <ScoreCard data={state.data} />}
+      {state.status === 'ready' && (
+        <ScoreCard data={state.data} onShowBreakdown={() => setReveal((r) => ({ n: (r?.n ?? 0) + 1, smooth: true }))} />
+      )}
+
+      <ScoreBreakdown reveal={reveal} pageReady={state.status !== 'loading'} />
     </main>
   )
 }
 
-function ScoreCard({ data }) {
+function ScoreCard({ data, onShowBreakdown }) {
   const { user } = useAuth()
   const storageKey = `myScore:last:${user?.member_id ?? user?.email ?? 'anon'}`
   const provisional = data.status === 'provisional'
@@ -87,9 +97,16 @@ function ScoreCard({ data }) {
           </p>
         </div>
         <div className={styles.positionBlock}>
-          <Link to="/ranking/breakdown" className={styles.breakdownLink}>
+          <a
+            href="#desglose"
+            className={styles.breakdownLink}
+            onClick={(event) => {
+              event.preventDefault()
+              onShowBreakdown()
+            }}
+          >
             Ver desglose
-          </Link>
+          </a>
           <p className={styles.position}>
             {data.position === null
               ? 'Sin posición en el ranking'

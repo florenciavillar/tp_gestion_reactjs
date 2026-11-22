@@ -52,6 +52,7 @@
 
 /* Botón estándar en la cabecera */
 .btnDownload {
+  font-family: inherit;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -67,7 +68,10 @@
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
 }
 
 .btnDownload:hover:not(:disabled) {
@@ -109,6 +113,7 @@
 }
 
 .btnDownloadFloating {
+  font-family: inherit;
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
@@ -125,7 +130,10 @@
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
   animation: fadeIn 0.15s ease-out;
 }
 
@@ -410,7 +418,9 @@
   background: var(--color-pitch);
   border-radius: 3px 3px 0 0;
   min-height: 3px;
-  transition: height 0.3s ease, background-color 0.15s ease;
+  transition:
+    height 0.3s ease,
+    background-color 0.15s ease;
   cursor: pointer;
 }
 

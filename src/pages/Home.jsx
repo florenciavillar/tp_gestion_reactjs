@@ -59,7 +59,7 @@ const MEMBER_SECTIONS = [
     size: 'md',
   },
   {
-    to: '/ranking/breakdown',
+    to: '/ranking#desglose',
     icon: 'breakdown',
     title: 'Desglose',
     description: 'Lo que más suma y lo que más resta en tu puntaje.',

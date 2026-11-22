@@ -1,15 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { getScoreBreakdown } from '../services/formula.js'
-import authStyles from './Auth.module.css'
-import pageStyles from './Page.module.css'
+import authStyles from '../pages/Auth.module.css'
+import pageStyles from '../pages/Page.module.css'
 import styles from './ScoreBreakdown.module.css'
 
-const TITLE = 'Desglose de mi puntaje'
 const LOAD_ERROR = 'No pudimos cargar el desglose de tu puntaje. Probá de nuevo en un rato.'
 
-function ScoreBreakdownPage() {
+// HU-16: desglose del puntaje del socio, como sección de "Mi puntaje". Empieza colapsada y se abre
+// tocando el título. `reveal` ({ n, smooth }) la abre y baja hasta ella: cambia cada vez que se toca
+// "Ver desglose", o viene de entrada si se llegó con /ranking#desglose (desde el inicio). Espera a que
+// carguen el desglose y el resto de la página (`pageReady`) para no bajar a una posición que se corre.
+export default function ScoreBreakdown({ reveal = null, pageReady = true }) {
   const [state, setState] = useState({ status: 'loading' })
+  // Lo último que eligió el socio con el título, y a qué pedido de `reveal` respondía. Un pedido
+  // nuevo (más alto que `at`) abre la sección aunque el socio la hubiera cerrado antes.
+  const [toggle, setToggle] = useState({ open: false, at: 0 })
+  const sectionRef = useRef(null)
+  const bodyId = useId()
 
   useEffect(() => {
     let ignore = false
@@ -25,67 +33,68 @@ function ScoreBreakdownPage() {
     }
   }, [])
 
+  const loaded = state.status !== 'loading'
+  const revealCount = reveal?.n ?? 0
+  const smooth = reveal?.smooth
+  const open = revealCount > toggle.at ? true : toggle.open
+
+  // Bajar hasta la sección cuando hay un pedido y la página ya no se va a mover.
+  useEffect(() => {
+    if (!revealCount || !loaded || !pageReady) return
+    const frame = requestAnimationFrame(() =>
+      sectionRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' }),
+    )
+    return () => cancelAnimationFrame(frame)
+  }, [revealCount, smooth, loaded, pageReady])
+
   return (
-    <main className={pageStyles.page}>
-      <header className={pageStyles.header}>
-        <Link to="/" className={pageStyles.back} aria-label="Volver al inicio">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
+    <section id="desglose" ref={sectionRef} className={styles.section} aria-labelledby="breakdown-title">
+      <h2 id="breakdown-title" className={styles.sectionTitle}>
+        <button
+          type="button"
+          className={styles.toggle}
+          aria-expanded={open}
+          aria-controls={bodyId}
+          onClick={() => setToggle({ open: !open, at: revealCount })}
+        >
+          <span className={styles.toggleText}>
+            <span>Desglose</span>
+            <span className={styles.toggleHint}>
+              De dónde sale cada punto de tu puntaje, componente por componente.
+            </span>
+          </span>
+          <svg className={styles.chevron} viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
           </svg>
-        </Link>
-        <h1 className={pageStyles.title}>{TITLE}</h1>
-        {state.status === 'ready' && state.data.has_ranking && (
-          <p className={pageStyles.lead}>Evaluado con la versión de reglas del ranking #{state.data.rules_version}</p>
+        </button>
+      </h2>
+
+      <div id={bodyId} className={styles.body} hidden={!open}>
+        {state.status === 'loading' && (
+          <p className={styles.muted} role="status">
+            Cargando desglose de puntaje…
+          </p>
         )}
-      </header>
 
-      {state.status === 'loading' && (
-        <p className={styles.muted} role="status">
-          Cargando desglose de puntaje…
-        </p>
-      )}
+        {state.status === 'error' && (
+          <p className={authStyles.error} role="alert">
+            {state.message}
+          </p>
+        )}
 
-      {state.status === 'error' && (
-        <p className={authStyles.error} role="alert">
-          {state.message}
-        </p>
-      )}
-
-      {state.status === 'ready' && !state.data.has_ranking && (
-        <section className={pageStyles.card}>
-          <div className={styles.emptyBody}>
-            <div className={styles.emptyIcon}>
-              <svg
-                viewBox="0 0 24 24"
-                width="28"
-                height="28"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+        {state.status === 'ready' && !state.data.has_ranking && (
+          <div className={pageStyles.card}>
+            <div className={styles.emptyBody}>
+              <h3 className={styles.emptyTitle}>Sin ranking completado</h3>
+              <p className={styles.emptyMessage}>{state.data.message}</p>
             </div>
-            <h2 className={styles.emptyTitle}>Sin ranking completado</h2>
-            <p className={styles.emptyMessage}>{state.data.message}</p>
-            <Link to="/ranking/explanation" className={authStyles.button}>
-              Ver cómo funciona la fórmula
-            </Link>
           </div>
-        </section>
-      )}
+        )}
 
-      {state.status === 'ready' && state.data.has_ranking && (
-        <div className={styles.dashboardLayout}>
-          {/* Tarjeta de Resumen superior */}
-          <section className={styles.summaryCard} aria-label="Resumen del puntaje">
-            <div className={styles.summaryHeader}>
-              <div className={styles.summaryInfo}>
+        {state.status === 'ready' && state.data.has_ranking && (
+          <div className={styles.dashboardLayout}>
+            <div className={styles.summaryCard}>
+              <div className={styles.summaryHeader}>
                 <div className={styles.badges}>
                   {state.data.rules_version && <span className={styles.badge}>Reglas v{state.data.rules_version}</span>}
                   {state.data.calculation_date && (
@@ -93,45 +102,25 @@ function ScoreBreakdownPage() {
                   )}
                 </div>
               </div>
-
-              <div className={styles.scoreRow}>
-                <div className={styles.scoreItem}>
-                  <span className={styles.scoreLabel}>Puntaje total</span>
-                  <span className={styles.scoreValue}>{state.data.total} pts</span>
-                </div>
-                {state.data.position && (
-                  <div className={styles.scoreItem}>
-                    <span className={styles.scoreLabel}>Posición en el club</span>
-                    <span className={styles.positionValue}>#{state.data.position}</span>
-                  </div>
-                )}
-              </div>
+              <footer className={styles.summaryFooter}>
+                <span>
+                  Suma de componentes: <strong>{state.data.total} pts</strong>
+                </span>
+                <Link to="/ranking/explanation" className={styles.explanationLink}>
+                  ¿Cómo se calcula cada componente?
+                </Link>
+              </footer>
             </div>
 
-            <footer className={styles.summaryFooter}>
-              <span>
-                Suma de componentes: <strong>{state.data.total} pts</strong>
-              </span>
-              <Link to="/ranking/explanation" className={styles.explanationLink}>
-                ¿Cómo se calcula cada componente?
-              </Link>
-            </footer>
-          </section>
-
-          {/* Sección de Componentes en grilla */}
-          <section className={styles.componentsSection} aria-labelledby="components-title">
-            <h2 id="components-title" className={styles.componentsTitle}>
-              Componentes del puntaje
-            </h2>
             <div className={styles.componentsGrid}>
               {state.data.components.map((comp) => (
                 <ComponentItem key={comp.key} component={comp} />
               ))}
             </div>
-          </section>
-        </div>
-      )}
-    </main>
+          </div>
+        )}
+      </div>
+    </section>
   )
 }
 
@@ -332,5 +321,3 @@ function SupportingFigures({ keyName, figures }) {
 
   return null
 }
-
-export default ScoreBreakdownPage
